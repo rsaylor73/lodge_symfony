@@ -66,17 +66,21 @@
 <nav class="navbar navbar-default no-margin">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header fixed-brand">
+    {% if app.user %}
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  id="menu-toggle">
     <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
     </button>
+    {% endif %}
     <a class="navbar-brand" href="/"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
     </div><!-- navbar-header-->
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
+      {% if app.user %}
     <li class="active" ><button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"> 
     <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
     </button></li>
+    {% endif %}
     </ul>
   </div><!-- bs-example-navbar-collapse-1 -->
 </nav>

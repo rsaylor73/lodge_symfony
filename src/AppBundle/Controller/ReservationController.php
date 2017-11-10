@@ -345,6 +345,20 @@ class ReservationController extends Controller
             AND `r`.`userID` = `u`.`id`
         ";
 
+        // init
+        $nights = "";
+        $checkin_date = "";
+        $checkout_date = "";
+        $first_name = "";
+        $last_name = "";
+        $email = "";
+        $date_booked = "";
+        $status = "";
+        $pax = "";
+        $children = "";
+        $child1_age = "";
+        $child2_age = "";
+
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
         while ($row = $result->fetch()) {
@@ -386,6 +400,7 @@ class ReservationController extends Controller
     public function viewreservationguestAction(Request $request,$reservationID='')
     {
         $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
 
         $sql = "
         SELECT
@@ -400,6 +415,7 @@ class ReservationController extends Controller
 
         LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
         LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
+        #LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
 
         WHERE
             `i`.`reservationID` = '$reservationID'

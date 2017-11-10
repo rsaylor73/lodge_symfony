@@ -22,3 +22,4 @@ parameters:
     site_url: 'https://sub.domain.com'
     site_name: 'Site Name'
     site_email: user@domain.com
+    AF_DB: 2nd database name
