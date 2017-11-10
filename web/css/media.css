@@ -1,0 +1,118 @@
+@media (min-width:1024px) and (max-width:1179px) {
+	.wrapper{width:980px}
+	ul.step li {padding: 13px 43px 13px 31px;}
+}
+
+@media (min-width:768px) and (max-width:1023px) {
+	.wrapper{width:730px}
+	.grey-box {padding: 50px 15px 20px; width: 350px; margin-top: 45px;}
+	footer {margin-top: 90px;}
+	.logo {box-sizing: border-box; padding: 33px 0 0 3px; width: 300px;}
+	ul.step li {padding: 12px 17px 13px 7px;}
+	.form-left, .form-right  {width:338px;}
+	.form-box {padding: 30px 20px 10px; width:100%;}
+	.foot-form {margin-top:50px;}
+	.two-field .years-input {width:56px;}
+	.state1 {margin-right:45px; width:143px !important;}
+	.zip {width:100px !important;}
+	.hire-date {margin-right:40px;}
+	h4 {font-size:27px;}
+	.inline-field .other-input {width: 211px;}
+	.form-box .state {width: 166px;}
+	.two-field1 .years-input {width: 52px;}
+	.form-box .hire-date {width: 100%;}
+	.form-box .gross-incm { width: 139px;}
+	.form-box .hourly-rate {width: 127px;}
+	.form-box .balance {width: 110px;}
+	.form-box .monthly-pynt {width: 150px;}
+	.form-left, .form-right {float:left;}
+	.float-block-fields .light-bold {clear: left;   display: block;	}
+	
+}
+
+@media (min-width:600px) and (max-width:767px) {
+	.wrapper{width:570px}
+	.grey-box {padding: 50px 15px 20px; width: 270px; margin-top: 45px;}
+	.grey-box h2 {font-size:24px;}
+	footer {margin-top: 90px;}
+	.logo {box-sizing: border-box; padding: 30px 0 0 3px; width: 300px;}
+	ul.step li {padding: 12px 17px 13px 7px; background:none;}
+	.form-box {padding: 30px 20px 10px; width:100%;}
+	.form-left {width:258px;}
+	.form-left h4, .form-right h4{font-size:24px;}
+	.form-right {width:258px;}
+	.foot-form {margin-top:50px;}
+	.step1, .step2, .step3, .step4, .step5 {background:none; padding:0 0 0 14px;}
+	.form-fullwidth-box {padding: 30px 20px 10px;}
+	.form-fullwidth-box .field {width:100%;}
+	.form-fullwidth-box .field input {width:100%;}
+	.form-fullwidth-box .field input[type="checkbox"] {width:auto;}
+	.form-fullwidth-box .form-left {width:100%;}
+	
+	
+}
+@media (min-width:480px) and (max-width:599px) {
+	.wrapper{width:455px}
+	.grey-box {padding: 50px 15px 20px; width: 100%; margin-top: 45px;}
+	.grey-box h2 {font-size:24px;}
+	footer {margin-top: 60px; padding: 30px 0 15px;}
+	.logo {box-sizing: border-box; padding: 20px 0 0 3px; width: 240px;}
+	.header-right {width:170px;}
+	.main-header h1 {font-size: 26px; line-height: 40px; padding: 35px 0 0;}
+	.prequalify-today {font-size:22px;}
+	.main-header h3 {font-size:24px;}
+	ul.step li {padding: 12px 10px 13px 5px; background:none;}
+	.form-box {padding: 30px 20px 10px; width:100%;}
+	.form-left {width:100%; float:none;}
+	.form-left h4, .form-right h4{font-size:24px;}
+	.form-right {width:100%; float:none;}
+	.foot-form {margin-top:50px;}
+	.step1, .step2, .step3, .step4, .step5 {background:none; padding:0 0 0 0;}
+	.form-fullwidth-box {padding: 30px 20px 10px;}
+	.form-fullwidth-box .field {width:100%;}
+	.form-fullwidth-box .field input {width:100%;}
+	.form-fullwidth-box .field input[type="checkbox"] {width:auto;}
+	.form-fullwidth-box .form-left {width:100%;}
+	.prescription {margin-top:30px;}
+	
+}
+
+@media (max-width:479px) {
+	.wrapper{width:95%}
+	.app-header {padding-bottom:10px;}
+	.grey-box {padding: 50px 15px 20px; width: 100%; margin-top: 45px;}
+	.grey-box h2 {font-size:24px;}
+	 footer {margin-top: 60px; padding: 30px 0 15px;}
+	.logo { width:100%; padding: 20px 0 10px 3px;}
+	.header-right {float: none; margin: 0 auto; width: 170px;}
+	.main-header h1 {font-size: 26px; line-height: 40px; padding: 35px 0 0;}
+	.prequalify-today {font-size:22px;}
+	.main-header h3 {font-size:24px;}
+	.foot img {width:160px;} 
+	ul.step {display:none;}
+	.form-box {padding: 30px 20px 10px; width:100%;}
+	.form-left {width:100%; float:none;}
+	.form-left h4, .form-right h4{font-size:24px;}
+	.form-right {width:100%; float:none;}
+	.foot-form {margin-top:50px;}
+	.foot-form img {width:160px;}
+	.form-block {margin:0;}
+	.form-box {padding: 30px 10px 10px;}
+	.state {margin-right: 20px; width: 129px !important;}
+	.hire-date {margin-right:40px;width: 150px !important;}
+	.field {width:100%;}
+	.state-inline {width: 110px !important;}
+	.inline-field .other-input {width:100%; margin-top:10px;}
+	.form-fullwidth-box {padding: 15px 10px 10px;}
+	.form-fullwidth-box .field {width:100%;}
+	.form-fullwidth-box .field input {width:100%;}
+	.form-fullwidth-box .field input[type="checkbox"] {width:auto;}
+	.form-fullwidth-box .form-left {width:100%;}
+	.prescription {margin-top:30px;}
+	.float-block-fields input {width:100% !important;}
+	.form-block h4 {font-size:22px;   text-align: center;}
+	h1 {font-size: 32px;   margin: 32px;  text-align: center;}
+	.required-txt {text-align: center;}
+	
+
+}

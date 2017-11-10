@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
+  <li class="active"><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
+  <li><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
+  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
+  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
+</ul>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><b>Tent</b></th>
+					<th><b>Bed</b></th>
+					<th><b>PAX Type</b></th>
+					<th><b>Status</b></th>
+					<th><b>Room Type</b></th>
+					<th><b>Contact</b></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d in data %}
+			<tr>
+				<td>{{d.description}}</td>
+				<td>{{d.bed}}</td>
+				<td>{{d.class}}</td>
+				<td>{{d.status}}</td>
+				<td>{{d.type}}</td>
+				<td>TBD</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

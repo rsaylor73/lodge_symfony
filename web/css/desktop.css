@@ -1,0 +1,16 @@
+body
+{
+}
+
+th, td {
+    padding: 5px;
+}
+
+#page_view {
+   position: absolute;
+   top: 185px;
+   left: 80px;
+   right: 80px;
+   height: 650px;
+   width: 80%;
+}

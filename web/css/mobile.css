@@ -1,0 +1,88 @@
+body
+{
+overflow: hidden;
+}
+
+th, td {
+    padding: 5px;
+}
+
+#header {
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   right: 0px;
+   height: 100px;
+   background: #E23939;
+   overflow: hidden;
+}
+
+#logo {
+   position: absolute;
+   top: 30px;
+   left: 20px;
+}
+
+#nav {
+   position: absolute;
+   top: 30px;
+   left: 600px;
+}
+
+#questionbox {
+   position: absolute;
+   top: 150px;
+   left: 10px;
+   height: 450px;
+   width: 90%;
+   background: #FFFFFF;
+   -moz-border-radius: 20px;
+   border-radius: 20px;
+   border:1px solid black;
+   overflow: hidden;
+}
+
+#questionbox_inner {
+   position: absolute;
+   top: 20px;
+   left: 20px;
+}
+
+.boldText {
+   font: 12px Verdana;
+   color: #2E5C9E;
+
+}
+
+.normalText {
+   font: 16px Verdana;
+   color: #000000;
+}
+
+.redText {
+	font: 17px Verdana;
+	color: #CB4E2D;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -ms-animation: spin .7s infinite linear;
+    -webkit-animation: spinw .7s infinite linear;
+    -moz-animation: spinm .7s infinite linear;
+}
+ 
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+  
+@-webkit-keyframes spinw {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+ 
+@-moz-keyframes spinm {
+    from { -moz-transform: rotate(0deg);}
+    to { -moz-transform: rotate(360deg);}
+}
+

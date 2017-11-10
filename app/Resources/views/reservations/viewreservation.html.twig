@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<ul class="nav nav-tabs">
+		  <li class="active"><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
+		  <li><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
+		  <li><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
+		  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
+		  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
+		</ul>
+	</div>
+</div>
+
+{% if status == "Cancelled" %}
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-danger">This reservation is currently <b>CANCELLED</b></div>
+	</div>
+</div>
+{% endif %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8"><h3>Details</h3></div>
+</div>
+
+
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>Invoice</b></div>
+	<div class="col-sm-3"><b>Booker</b></div>
+	<div class="col-sm-3"><b>Date Booked</b></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">
+		<a href="#"><i class="fa fa-print"></i></a>&nbsp;
+		<a href="#"><i class="fa fa-envelope-o"></i></a>&nbsp;
+		<a href="#"><i class="fa fa-eye"></i></a>
+	</div>
+	<div class="col-sm-3"><a href="mailto:{{email}}">{{first_name}} {{last_name}}</a></div>
+	<div class="col-sm-3">{{date_booked}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>Check-In</b></div>
+	<div class="col-sm-3"><b>Check-Out</b></div>
+	<div class="col-sm-3"><b>Nights</b></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">{{checkin_date}}</div>
+	<div class="col-sm-3">{{checkout_date}}</div>
+	<div class="col-sm-3">{{nights}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>PAX:</b></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">
+		Adults: {{pax}} Children: {{children}}
+	</div>
+	<div class="col-sm-3">
+		{% if child1_age != "" %}Child 1 Age: {{child1_age}}{% endif %}
+	</div>
+	<div class="col-sm-3">
+		{% if child2_age != "" %}Child 2 Age: {{child2_age}}{% endif %}
+	</div>
+</div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

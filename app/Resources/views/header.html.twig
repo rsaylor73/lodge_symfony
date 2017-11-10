@@ -1,0 +1,177 @@
+{% block page_header %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Aggressor Fleet :: Reservation System</title>
+    <meta name="author" content="Custom PHP Design : Robert Saylor : http://www.customphpdesign.com">
+    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('css/simple-sidebar.css')}}" rel="stylesheet">
+    <link href="{{asset('css/checkbox.css')}}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{{asset('css/jquery.datetimepicker.css')}}"/>
+    <style>
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+      background-color: #00d4ff;
+    }
+
+    .navbar-brand,
+    .navbar-nav li a {
+        line-height: 68px;
+        height: 68px;
+        padding-top: 0;
+    }
+
+    </style>
+
+
+<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js" integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk=" crossorigin="anonymous"></script>
+
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+
+
+<style>
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+</style>
+
+</head>
+<body>
+
+
+<nav class="navbar navbar-default no-margin">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header fixed-brand">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  id="menu-toggle">
+    <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
+    </div><!-- navbar-header-->
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+    <li class="active" ><button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"> 
+    <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+    </button></li>
+    </ul>
+  </div><!-- bs-example-navbar-collapse-1 -->
+</nav>
+
+
+<div id="wrapper">
+        <!-- Sidebar -->
+{% if app.user %}
+<div id="sidebar-wrapper" style="background-color:#F8F8F8">
+
+
+<ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+  <li><a href="{{path('index')}}">
+  <span class="fa-stack fa-lg pull-left"><i class="fa fa-desktop fa-stack-1x "></i></span>
+  Main Menu</a></li>
+  <!--{if ($access eq "admin" or $access eq "agent" or $access eq "accounting")}-->
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-lg pull-left"><i class="fa fa-hotel fa-stack-1x "></i></span>
+    Reservations
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="{{path('newreservation')}}">New Reservation</a></li>
+      <li><a href="{{path('locatereservation')}}">Locate Reservation</a></li>
+    </ul>
+  </li>
+  <!--  {/if} -->
+
+  <!--{if ($access eq "admin" or $access eq "agent" or $access eq "accounting")}-->
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-lg pull-left"><i class="fa fa-users fa-stack-1x "></i></span>
+    Customers
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="/resellers">Resellers</a></li>
+      <li><a href="/contacts">Contacts</a></li>
+    </ul>
+  </li>
+  <!--{/if}-->
+
+  <!--{if ($access eq "admin" or $access eq "accounting")}-->
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-lg pull-left"><i class="fa fa-money fa-stack-1x "></i></span>
+    Financial Reports
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="/transferreport">Transfer Report</a></li>
+      <li><a href="/balancereport">Balance Report</a></li>
+      <li><a href="/paymentreport">Payment Report</a></li>
+    </ul>
+  </li>
+  <!--{/if}-->
+
+
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-lg pull-left"><i class="fa fa-bar-chart fa-stack-1x "></i></span>
+    Guest Reports
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="/checkinreport">Check-In Report</a></li>
+      <li><a href="/checkoutreport">Check-Out Report</a></li>
+    </ul>
+  </li>
+
+
+  <!--{if $access eq "admin"}-->
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown">
+    <span class="fa-stack fa-lg pull-left"><i class="fa fa-cogs fa-stack-1x "></i></span>
+    Admin
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="/lodge">Manage Lodge</a></li>
+      <li><a href="/line_items">Line Items</a></li>
+      <li><a href="/discounts">Discounts</a></li>
+      <li><a href="/users">Users</a></li>
+      <li><a href="/permissions">Permissions</a></li>
+      <li><a href="/show_log">Activity Log</a></li>
+    </ul>
+  </li>
+  <!--{/if}-->
+
+  <li><a href="profile">
+  <span class="fa-stack fa-lg pull-left"><i class="fa fa-user fa-stack-1x "></i></span>
+  Profile</a></li>
+  <li><a href="logout">
+  <span class="fa-stack fa-lg pull-left"><i class="fa fa-sign-out fa-stack-1x "></i></span>
+  Logout</a></li>
+</ul>
+</div>
+{% endif %}
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid xyz">
+{% endblock %}

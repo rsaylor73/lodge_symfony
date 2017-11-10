@@ -1,0 +1,233 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>New Reservation</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+
+<!--<form method="post" action="searchinventory" name="myform">-->
+<form method="post" action="{{ path('selecttens')}}" name="myform">
+<div class="row top-buffer">
+	<div class="col-sm-2">Select Lodge:</div>
+	<div class="col-sm-3">
+		<select name="lodge" id="lodge" class="form-control" required onchange="get_min_pax(this.form);turnon();">
+		<option selected value="">Select</option>
+		{% for l in lodge %}
+			<option value="{{l.id}}">{{l.name}}</option>
+		{% endfor %}
+		<!--{$lodge}-->
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Adults:</div>
+	<div class="col-sm-3">
+		<input type="number" name="pax" id="pax" min="1" max="18" class="form-control" required>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Children:</div>
+	<div class="col-sm-3">
+		<select name="children" id="children" class="form-control" onchange="do_child()">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+		</select>
+	</div>
+</div>
+
+<div id="child1" style="display:none">
+<div class="row top-buffer">
+	<div class="col-sm-2">Child 1 Age?</div>
+	<div class="col-sm-3">
+		<select name="childage1" id="childage1" class="form-control">
+                <option value="">Child 1 Age?</option>
+                <option value="1">0 - 6</option>
+                <option value="2">7 - 15</option>
+                <option value="3">16+</option>
+                </select>
+	</div>
+</div>
+</div>
+
+<div id="child2" style="display:none">
+<div class="row top-buffer">
+        <div class="col-sm-2">Child 2 Age?</div>
+        <div class="col-sm-3">
+                <select name="childage2" id="childage1" class="form-control">
+                <option value="">Child 2 Age?</option>
+                <option value="1">0 - 6</option>
+                <option value="2">7 - 15</option>
+                <option value="3">16+</option>
+                </select>
+        </div>
+</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Number of Nights:</div>
+	<div class="col-sm-3">
+		<select name="nights" class="form-control">
+		<option>3</option>
+		<option>4</option>
+		<option>5</option>
+		<option>6</option>
+		<option>7</option>
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Type:</div>
+	<div class="col-sm-3">
+		<select name="type" class="form-control" id="type">
+		<option value="">Any</option>
+		{% for t in type %}
+			<option value="{{t.id}}">{{t.type}}</option>
+		{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-5">
+		<div class="pull-right">
+			<font color=blue>Children are welcome in the <b>Deluxe Family tent</b></font>
+		</div>
+	</div>
+</div>
+
+<style>
+.ui-datepicker { 
+  margin-left: 100px;
+  z-index: 1000;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Check-In Date:</div>
+	<div class="col-sm-3"><input type="text" name="start_date" id="start_date" required class="form-control"></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-5">
+		<input type="submit" value="Search Rooms" class="btn btn-success">&nbsp;&nbsp;<input type="button" value="Reset" class="btn btn-warning" onclick="document.location.href='{{ path('newreservation') }}'">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-5">
+		<div id="quick_look" style="display:inline"></div>
+	</div>
+</div>
+
+</form>
+
+<script>
+
+function do_child() {
+	var e = document.getElementById("children");
+	var strChild = e.options[e.selectedIndex].value;
+	if (strChild == "1") {
+		document.getElementById('child1').style.display='inline';
+		document.getElementById('childage1').required=true;
+		document.getElementById('child2').style.display='none';
+		document.getElementById('childage2').required=false;
+		document.getElementById('type_display').style.display='none';
+		document.getElementById('type').value='';
+	}
+	if (strChild == "2") {
+		document.getElementById('child1').style.display='inline';
+		document.getElementById('childage1').required=true;
+		document.getElementById('child2').style.display='inline';
+		document.getElementById('childage2').required=true;
+                document.getElementById('type_display').style.display='none';
+                document.getElementById('type').value='';
+	}
+	if (strChild == "0") {
+		document.getElementById('childage1').required=false;
+		document.getElementById('childage2').required=false;
+		document.getElementById('child1').style.display='none';
+		document.getElementById('child2').style.display='none';
+                document.getElementById('type_display').style.display='inline';
+                document.getElementById('type').value='';
+	}
+}
+
+function turnon() {
+	var e = document.getElementById("lodge");
+	var strUser = e.options[e.selectedIndex].value;
+	if (strUser != "") {
+		document.getElementById('pax').disabled=false;
+		document.getElementById('children').disabled=false;
+
+
+	} else {
+		document.getElementById('pax').disabled=true;
+		document.getElementById('children').disabled=true;
+		document.getElementById('pax').value='1';
+		document.getElementById('children').value='0';
+	}
+}
+
+function swap() {
+	var t = document.getElementById("tents2");
+	var strTent = t.options[t.selectedIndex].value;
+	document.getElementById('tents').value = strTent;
+	//strTent.value = document.getElementById('tents').value;
+}
+
+function show_children() {
+	var p = 2;
+	var k = document.getElementById('pax');
+	var strKids = k.options[k.selectedIndex].value;
+	if (strKids > p) {
+		document.getElementById('child0').style.display='none';
+		document.getElementById('children').value = 0;
+	} else {
+		document.getElementById('child0').style.display='table-row';
+	}
+}
+
+function quick_look(myform) {
+	$.get('ajax/quick_look.php',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#quick_look").html(php_msg);
+	});
+}
+
+function get_min_pax(myform) {
+	$.get('ajax/get_min_pax.php',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#min_pax").html(php_msg);
+	});
+}
+
+function get_min_tent(myform) {
+	$.get('ajax/set_min_tents.php',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#null").html(php_msg);
+	});
+}
+</script>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

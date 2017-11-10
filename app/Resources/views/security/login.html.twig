@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+    <div id="container">
+    	<div class="container">
+    		<h3 class="text-center">Login</h3><br>
+    		{% include('flash-messages.html.twig') %}
+    		{{ form(login_form) }}
+    	</div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}
