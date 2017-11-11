@@ -408,25 +408,27 @@ class ReservationController extends Controller
             `i`.`bed`,
             `i`.`type` AS 'class',
             `i`.`status`,
-            `t`.`type`
+            `t`.`type`,
+            `i`.`roomID`,
+            `c`.`contactID`
 
         FROM
             `inventory` i
 
         LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
         LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
-        #LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
 
         WHERE
             `i`.`reservationID` = '$reservationID'
 
-        GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`
+        GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`,`i`.`roomID`
 
         ORDER BY `r`.`description` ASC, `i`.`bed` ASC
         ";
 
-	$i = "0";
-	$data = "";
+        $i = "0";
+        $data = "";
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
         while ($row = $result->fetch()) {
@@ -439,7 +441,7 @@ class ReservationController extends Controller
 
         return $this->render('reservations/viewreservationguest.html.twig',[
             'reservationID' => $reservationID,
-	    'data' => $data,
+            'data' => $data,
         ]);
     }
 
