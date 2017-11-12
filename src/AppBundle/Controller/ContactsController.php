@@ -92,4 +92,82 @@ class ContactsController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/addpaxtores", name="addpaxtores") 
+     */
+    public function addpaxtoresAction(Request $request)
+    {
+		$em = $this->getDoctrine()->getManager();
+		$AF_DB = $this->container->getParameter('AF_DB');
+
+		// POST DATA (use query for GET and request for POST)
+		$reservationID = $request->request->get('reservationID');
+		$bunk = $request->request->get('bunk'); // bed - just like using the term bunk more like AF
+		$roomID = $request->request->get('roomID');
+		$contactID = $request->request->get('contactID');
+
+		$sql = "
+		SELECT
+			`i`.`inventoryID`
+			
+		FROM
+			`inventory` i
+
+		WHERE
+			`i`.`reservationID` = '$reservationID'
+			AND `i`.`roomID` = '$roomID'
+			AND `i`.`bed` = '$bunk'
+		";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+        	$sql2 = "UPDATE `inventory` SET `contactID` = '$contactID' WHERE `inventoryID` = '$row[inventoryID]'";
+        	$result2 = $em->getConnection()->prepare($sql2);
+        	$result2->execute();
+        }
+        $this->addFlash('info','The guest was updated.');
+        return $this->redirectToRoute('viewreservationguest',[
+        	'reservationID' => $reservationID,
+        ]);
+
+	}
+
+    /**
+     * @Route("/deletepaxtores", name="deletepaxtores") 
+     */
+    public function deletepaxtoresAction(Request $request)
+    {
+		$em = $this->getDoctrine()->getManager();
+		$AF_DB = $this->container->getParameter('AF_DB');
+
+		// POST DATA (use query for GET and request for POST)
+		$reservationID = $request->request->get('reservationID');
+		$bunk = $request->request->get('bunk'); // bed - just like using the term bunk more like AF
+		$roomID = $request->request->get('roomID');
+
+		$sql = "
+		SELECT
+			`i`.`inventoryID`
+			
+		FROM
+			`inventory` i
+
+		WHERE
+			`i`.`reservationID` = '$reservationID'
+			AND `i`.`roomID` = '$roomID'
+			AND `i`.`bed` = '$bunk'
+		";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+        	$sql2 = "UPDATE `inventory` SET `contactID` = '0' WHERE `inventoryID` = '$row[inventoryID]'";
+        	$result2 = $em->getConnection()->prepare($sql2);
+        	$result2->execute();
+        }
+        $this->addFlash('info','The guest was removed.');
+        return $this->redirectToRoute('viewreservationguest',[
+        	'reservationID' => $reservationID,
+        ]);		
+    }
+
 }   	

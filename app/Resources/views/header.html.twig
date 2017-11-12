@@ -71,7 +71,7 @@
     <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
     </button>
     {% endif %}
-    <a class="navbar-brand" href="/"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
+    <a class="navbar-brand" href="{{path('index')}}"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
     </div><!-- navbar-header-->
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -116,8 +116,8 @@
     Customers
     <span class="caret"></span></a>
     <ul class="dropdown-menu">
-      <li><a href="/resellers">Resellers</a></li>
-      <li><a href="/contacts">Contacts</a></li>
+      <li><a href="#">Resellers</a></li>
+      <li><a href="#">Contacts</a></li>
     </ul>
   </li>
   <!--{/if}-->
@@ -129,9 +129,9 @@
     Financial Reports
     <span class="caret"></span></a>
     <ul class="dropdown-menu">
-      <li><a href="/transferreport">Transfer Report</a></li>
-      <li><a href="/balancereport">Balance Report</a></li>
-      <li><a href="/paymentreport">Payment Report</a></li>
+      <li><a href="#">Transfer Report</a></li>
+      <li><a href="#">Balance Report</a></li>
+      <li><a href="#">Payment Report</a></li>
     </ul>
   </li>
   <!--{/if}-->
@@ -143,8 +143,8 @@
     Guest Reports
     <span class="caret"></span></a>
     <ul class="dropdown-menu">
-      <li><a href="/checkinreport">Check-In Report</a></li>
-      <li><a href="/checkoutreport">Check-Out Report</a></li>
+      <li><a href="#">Check-In Report</a></li>
+      <li><a href="#">Check-Out Report</a></li>
     </ul>
   </li>
 
@@ -156,20 +156,20 @@
     Admin
     <span class="caret"></span></a>
     <ul class="dropdown-menu">
-      <li><a href="/lodge">Manage Lodge</a></li>
-      <li><a href="/line_items">Line Items</a></li>
-      <li><a href="/discounts">Discounts</a></li>
-      <li><a href="/users">Users</a></li>
-      <li><a href="/permissions">Permissions</a></li>
-      <li><a href="/show_log">Activity Log</a></li>
+      <li><a href="#">Manage Lodge</a></li>
+      <li><a href="#">Line Items</a></li>
+      <li><a href="#">Discounts</a></li>
+      <li><a href="#">Users</a></li>
+      <li><a href="#">Permissions</a></li>
+      <li><a href="#">Activity Log</a></li>
     </ul>
   </li>
   <!--{/if}-->
 
-  <li><a href="profile">
+  <li><a href="{{path('profile')}}">
   <span class="fa-stack fa-lg pull-left"><i class="fa fa-user fa-stack-1x "></i></span>
   Profile</a></li>
-  <li><a href="logout">
+  <li><a href="#">
   <span class="fa-stack fa-lg pull-left"><i class="fa fa-sign-out fa-stack-1x "></i></span>
   Logout</a></li>
 </ul>

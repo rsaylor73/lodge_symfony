@@ -42,7 +42,7 @@
 					{% if d.contactID == "" %}
 						<font color=red>Guest Not Assigned</font>
 					{% else %}
-						{{d.contactID}}
+						{{d.first}} {{d.middle}} {{d.last}}
 					{% endif %}
 				</td>
 				<td>TBD</td>				
@@ -57,7 +57,15 @@
 						<input type="button" value="Assign Guest" class="btn btn-primary"
 						onclick="document.location.href='{{path('assigncontact')}}/{{reservationID}}/{{d.bed}}/{{d.roomID}}'">
 					{% else %}
-						<input type="button" value="Change Guest" class="btn btn-warning">
+						<input type="button" value="Change Guest" class="btn btn-warning"
+						onclick="document.location.href='{{path('assigncontact')}}/{{reservationID}}/{{d.bed}}/{{d.roomID}}'">&nbsp;
+						<form action="{{path('deletepaxtores')}}" method="post" style="display: inline">
+						<input type="hidden" name="reservationID" value="{{reservationID}}">
+						<input type="hidden" name="roomID" value="{{d.roomID}}">
+						<input type="hidden" name="bunk" value="{{d.bed}}">
+						<input type="submit" value="Delete Guest" class="btn btn-danger"
+						onclick="return confirm('You are about to remove {{d.first}} {{d.middle}} {{d.last}} from this reservation. Click OK to continue.')">
+						</form>
 					{% endif %}
 				</td>				
 			</tr>

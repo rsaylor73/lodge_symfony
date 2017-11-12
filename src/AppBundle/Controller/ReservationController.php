@@ -401,6 +401,9 @@ class ReservationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
+        if ($reservationID == "") {
+            $reservationID = $request->query->get('reservationID');
+        }
 
         $sql = "
         SELECT
@@ -410,7 +413,10 @@ class ReservationController extends Controller
             `i`.`status`,
             `t`.`type`,
             `i`.`roomID`,
-            `c`.`contactID`
+            `c`.`contactID`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`
 
         FROM
             `inventory` i

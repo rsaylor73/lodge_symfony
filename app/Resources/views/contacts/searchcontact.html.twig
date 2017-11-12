@@ -18,11 +18,12 @@
 					<td>{{d.zip}}</td>
 					<td>{{d.country}}</td>
 					<td>
-						<form name="myform_{{d.contactID}}" style="display:inline">
+						<form action="{{path('addpaxtores')}}" method="post" style="display:inline">
 						<input type="hidden" name="reservationID" value="{{reservationID}}">
 						<input type="hidden" name="bunk" value="{{bunk}}">
 						<input type="hidden" name="roomID" value="{{roomID}}">
-						<input type="button" value="Select Contact" class="btn btn-primary">
+						<input type="hidden" name="contactID" value="{{d.contactID}}">
+						<input type="submit" value="Select Contact" class="btn btn-primary">
 						</form>
 					</td>
 				</tr>

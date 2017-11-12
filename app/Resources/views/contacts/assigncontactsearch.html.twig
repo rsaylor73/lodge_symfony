@@ -33,25 +33,31 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-2">
-		<input type="text" name="first" placeholder="First Name" class="form-control">
+		<input type="text" name="first" placeholder="First Name" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 	<div class="col-sm-2">
-		<input type="text" name="middle" placeholder="Middle Name" class="form-control">
+		<input type="text" name="middle" placeholder="Middle Name" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 	<div class="col-sm-2">
-		<input type="text" name="last" placeholder="Last Name" class="form-control">
+		<input type="text" name="last" placeholder="Last Name" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 </div>
 
 <div class="row top-buffer">
 	<div class="col-sm-2">
-		<input type="text" name="dob" placeholder="DOB: (YYYY-MM-DD)" class="form-control">
+		<input type="text" name="dob" placeholder="DOB: (YYYY-MM-DD)" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 	<div class="col-sm-2">
-		<input type="text" name="zip" placeholder="Zip Code" class="form-control">
+		<input type="text" name="zip" placeholder="Zip Code" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 	<div class="col-sm-2">
-		<input type="text" name="email" placeholder="Email" class="form-control">
+		<input type="text" name="email" placeholder="Email" class="form-control"
+		onkeypress="if(event.keyCode==13) { search_pax(this.form); return false;}">
 	</div>
 </div>
 
@@ -64,7 +70,8 @@
 </div>
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<input type="button" value="Cancel" class="btn btn-warning">
+		<input type="button" value="Cancel" class="btn btn-warning"
+		onclick="document.location.href='{{path('viewreservationguest')}}/{{reservationID}}'">
 	</div>
 </div>
 </form>
