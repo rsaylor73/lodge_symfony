@@ -81,6 +81,69 @@
 	</div>
 </div>
 
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>Reseller:</b></div>
+	<div class="col-sm-3"><b>Status:</b></div>
+	<div class="col-sm-3"><b>Commission:</b></div>
+</div>
+
+<div class="row top-buffer">
+	{% if reseller_data != "" %}
+		{% for r in reseller_data %}
+			<div class="col-sm-3">
+			<form action="{{path('assignreseller')}}" method="get" style="display:inline">
+			<input type="hidden" name="reservationID" value="{{reservationID}}">
+			<input type="submit" value="Change" class="btn btn-primary">
+			</form>
+			&nbsp;&nbsp;{{r.company}}
+			</div>
+			<div class="col-sm-3">
+				{{r.status}}
+			</div>
+			<div class="col-sm-3">
+				{{r.commission}} %
+			</div>
+		{% endfor %}	
+	{% else %}
+	<div class="col-sm-9">
+		<form action="{{path('assignreseller')}}" method="get" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<input type="submit" value="Assign Reseller" class="btn btn-primary">
+		</form>
+	</div>
+	{% endif %}
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>Reseller Agent</b></div>
+	<div class="col-sm-3"><b>Email</b></div>
+	<div class="col-sm-3"><b>Status / Waiver</b></div>
+</div>
+
+<div class="row top-buffer">
+	{% if reselleragent_data != "" %}
+		{% for a in reselleragent_data %}
+			<div class="col-sm-3">
+				<input type="button" value="Change" class="btn btn-primary">&nbsp;&nbsp;{{a.name}}
+			</div>
+			<div class="col-sm-3">
+				<a href="mailto:{{email}}">{{a.email}}</a>
+			</div>
+			<div class="col-sm-3">
+				{{a.status}} / 
+				{% if a.waiver == "No" %}
+					<font color="red">{{a.waiver}}</font>
+				{% else %}
+					<font color="green">{{a.waiver}}</font>
+				{% endif %}
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="col-sm-9">
+			<input type="button" value="Assign Agent" class="btn btn-primary">
+		</div>
+	{% endif %}
+</div>
 
 
 {% endblock %}

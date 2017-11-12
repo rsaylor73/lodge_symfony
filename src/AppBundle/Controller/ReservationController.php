@@ -318,6 +318,7 @@ class ReservationController extends Controller
     public function viewreservationAction(Request $request,$reservationID='')
     {
         $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
 
         $sql = "
         SELECT
@@ -335,7 +336,9 @@ class ReservationController extends Controller
             `r`.`pax`,
             `r`.`children`,
             `r`.`child1_age`,
-            `r`.`child2_age`
+            `r`.`child2_age`,
+            `r`.`resellerID`,
+            `r`.`resellerAgentID`            
         
         FROM
             `reservations` r, `user` u
@@ -358,6 +361,8 @@ class ReservationController extends Controller
         $children = "";
         $child1_age = "";
         $child2_age = "";
+        $resellerID = "";
+        $resellerAgentID = "";
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
@@ -374,6 +379,63 @@ class ReservationController extends Controller
             $children = $row['children'];
             $child1_age = $row['child1_age'];
             $child2_age = $row['child2_age'];
+            $resellerID = $row['resellerID'];
+            $resellerAgentID = $row['resellerAgentID'];
+        }
+
+        // Reseller data
+        $reseller_data = "";
+        if ($resellerID != "") {
+            // lookup reseller
+            $sql = "
+            SELECT
+                `r`.`company`,
+                `r`.`status`,
+                `r`.`commission`
+
+            FROM
+                `$AF_DB`.`resellers` r
+
+            WHERE
+                `r`.`resellerID` = '$resellerID'
+            ";
+
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();
+            $i = "0";
+            while ($row = $result->fetch()) {
+                $reseller_data[$i]['company'] = $row['company'];
+                $reseller_data[$i]['status'] = $row['status'];
+                $reseller_data[$i]['commission'] = $row['commission'];
+            }
+        }
+
+        // Reseller agent
+        $reselleragent_data = "";
+        if ($resellerAgentID != "") {
+            // Lookup agent
+            $sql = "
+            SELECT
+                `a`.`first`,
+                `a`.`last`,
+                `a`.`status`,
+                `a`.`email`,
+                `a`.`waiver`
+            FROM
+                `$AF_DB`.`reseller_agents` a
+
+            WHERE
+                `a`.`reseller_agentID` = '$resellerAgentID'
+            ";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();
+            $i = "0";
+            while ($row = $result->fetch()) {
+                $reselleragent_data[$i]['name'] = $row['first'] . " " . $row['last'];
+                $reselleragent_data[$i]['status'] = $row['status'];
+                $reselleragent_data[$i]['email'] = $row['email'];
+                $reselleragent_data[$i]['waiver'] = $row['waiver'];
+            }            
         }
 
         return $this->render('reservations/viewreservation.html.twig',[
@@ -390,6 +452,8 @@ class ReservationController extends Controller
             'children' => $children,
             'child1_age' => $child1_age,
             'child2_age' => $child2_age,
+            'reseller_data' => $reseller_data,
+            'reselleragent_data' => $reselleragent_data,
         ]);
     }
 
