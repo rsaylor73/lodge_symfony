@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Assign Agent : Conf # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
+  <li><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
+  <li><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
+  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
+  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
+</ul>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    <h3>Select Agent</h3>
+  </div>
+</div>
+
+
+<div class="row top-buffer">
+  <div class="col-sm-8 table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><b>Name</b></th>
+          <th><b>Completed Waiver</b></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in data %}
+        <tr>
+          <td>{{a.first}} {{a.last}}</td>
+          <td>
+            {% if a.resellerID == "19" %}
+              N/A
+            {% else %}
+              {% if a.waiver == "No" %}
+                <font color="red">{{a.waiver}}</font>
+              {% else %}
+                <font color="green">{{a.waiver}}</font>
+              {% endif %}
+            {% endif %}
+            </td>
+          <td>
+            <form action="{{path('selectagent')}}" method="post" style="display:inline">
+              <input type="hidden" name="reservationID" value="{{reservationID}}">
+              <input type="hidden" name="reseller_agentID" value="{{a.reseller_agentID}}">
+              <input type="submit" value="Select Agent" class="btn btn-primary">
+            </form>
+          </td>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

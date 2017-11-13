@@ -82,11 +82,18 @@ class ResellerController extends Controller
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 
-        // TO DO
-        return $this->render('resellers/searchreseller.html.twig',[
+        $reservationID = $request->request->get('reservationID');
+        $resellerID = $request->request->get('resellerID');
+
+        $sql = "UPDATE `reservations` SET `resellerID` = '$resellerID', `resellerAgentID` = '' 
+        WHERE `reservationID` = '$reservationID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $this->addFlash('info','The reseller was updated.');
+        return $this->redirectToRoute('viewreservation',[
             'reservationID' => $reservationID,
-            'data' => $data,
-        ]);        
+        ]);       
     }
 
 }

@@ -320,6 +320,10 @@ class ReservationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 
+        if ($reservationID == "") {
+            $reservationID = $request->query->get('reservationID');
+        }
+
         $sql = "
         SELECT
             `r`.`nights`,
@@ -420,7 +424,8 @@ class ReservationController extends Controller
                 `a`.`last`,
                 `a`.`status`,
                 `a`.`email`,
-                `a`.`waiver`
+                `a`.`waiver`,
+                `a`.`resellerID`
             FROM
                 `$AF_DB`.`reseller_agents` a
 
@@ -435,6 +440,7 @@ class ReservationController extends Controller
                 $reselleragent_data[$i]['status'] = $row['status'];
                 $reselleragent_data[$i]['email'] = $row['email'];
                 $reselleragent_data[$i]['waiver'] = $row['waiver'];
+                $reselleragent_data[$i]['resellerID'] = $row['resellerID'];
             }            
         }
 
