@@ -22,4 +22,13 @@ parameters:
     site_url: 'https://sub.domain.com'
     site_name: 'Site Name'
     site_email: user@domain.com
-    AF_DB: 2nd database name
+
+    # Aggressor Database
+    AF_DB: databasename
+
+    # Authorize.net
+    AUTHNET_LOGIN: apilogin
+    AUTHNET_KEY: apikey
+    # true for development
+    # false for production
+    AUTHNET_TEST: true

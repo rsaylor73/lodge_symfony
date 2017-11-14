@@ -1,0 +1,206 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<ul class="nav nav-tabs">
+  <li><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
+  <li><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
+  <li class="active"><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
+  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
+  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
+</ul>
+
+<form action="{{path('processpayment')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>New Payment</h3></div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3">Payment Type:</div>
+  <div class="col-sm-3">
+    <select name="payment_type" id="payment_type" class="form-control" onchange="get_payment_type()" required>
+    <option selected value="">--Select--</option>
+    <option value="1">Credit Card</option>
+    <option value="2">Check</option>
+    <option value="3">Wire</option>
+    </select>
+  </div>
+</div>
+
+<!-- credit card -->
+<div id="credit_card" style="display:none">
+  
+  <div class="row top-buffer">
+    <div class="col-sm-3">Name on Card:</div>
+    <div class="col-sm-3">
+      <input type="text" name="cc_name" id="cc_name" class="form-control" placeholder="Name on Card">
+    </div>
+  </div>
+
+  <div class="row top-buffer">
+    <div class="col-sm-3">
+      <i class="fa fa-cc-visa fa-3x" aria-hidden="true"></i>
+      <i class="fa fa-cc-mastercard fa-3x" aria-hidden="true"></i>
+    </div>
+    <div class="col-sm-3">
+      <input type="text" name="cc_num" id="cc_num" class="form-control" placeholder="Credit card number" maxlength="16" pattern="[0-9]{13,16}">
+    </div>
+  </div>
+
+  <div class="row top-buffer">
+    <div class="col-sm-3">Expiration Date (MM/YYYY):</div>
+    <div class="col-sm-3">
+      <div class="row">
+        <div class="col-sm-6">
+          <input type="text" name="cc_month" id="cc_month" class="form-control" placeholder="Month" maxlength="2" pattern="[0-9]{2}">
+        </div>
+        <div class="col-sm-6">
+          <input type="text" name="cc_year" id="cc_year" class="form-control" placeholder="Year"  maxlength="4" pattern="[0-9]{4}">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row top-buffer">
+    <div class="col-sm-3">CVV Number:</div>
+    <div class="col-sm-3">
+      <input type="text" name="cvv" class="form-control" id="cvv" patern="[0-9]{3}">
+    </div>
+  </div>
+
+</div>
+<!-- end credit card -->
+
+<!-- check -->
+<div id="check" style="display:none">
+  <div class="row top-buffer">
+    <div class="col-sm-3">Check Number:</div>
+    <div class="col-sm-3">
+      <input type="text" name="check_number" id="check_number" class="form-control">
+    </div>
+  </div>
+
+  <div class="row top-buffer">
+    <div class="col-sm-3">Check Description:</div>
+    <div class="col-sm-3">
+      <textarea name="check_description" id="check_description" class="form-control"></textarea>
+    </div>
+  </div>
+
+</div>
+<!-- end check -->
+
+<!-- wire -->
+<div id="wire" style="display:none">
+  <div class="row top-buffer">
+    <div class="col-sm-3">Wire Description:</div>
+    <div class="col-sm-3">
+      <textarea name="wire_description" id="wire_description" class="form-control"></textarea>
+    </div>
+  </div>
+
+</div>
+<!-- end wire -->
+
+<div class="row top-buffer">
+  <div class="col-sm-3">Amount:</div>
+  <div class="col-sm-3">
+    <input type="text" name="payment_amount" class="form-control" placeholder="0.00" onkeypress="return isNumber(event)" required>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3">Payment Date:</div>
+  <div class="col-sm-3">
+    <input type="text" name="payment_date" id="payment_date" class="form-control" required>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-6">
+    <input type="submit" value="Process Payment" class="btn btn-success">&nbsp;
+    <input type="button" value="Cancel" class="btn btn-warning">
+  </div>
+</div>
+
+
+</form>
+
+<script>
+function get_payment_type() {
+  var e = document.getElementById("payment_type");
+  var strPayment = e.options[e.selectedIndex].value;
+  if (strPayment == "1") {
+    document.getElementById('credit_card').style.display='inline';
+    document.getElementById('cc_name').required=true;
+    document.getElementById('cc_num').required=true;
+    document.getElementById('cc_month').required=true;
+    document.getElementById('cc_year').required=true;
+    document.getElementById('cvv').required=true;
+    document.getElementById('check').style.display='none';
+    document.getElementById('check_number').required=false;
+    document.getElementById('wire').style.display='none';
+    document.getElementById('wire_description').required=false;
+    document.getElementById('check_description').required=false;
+  }
+
+  if (strPayment == "2") {
+    document.getElementById('check').style.display='inline';
+    document.getElementById('credit_card').style.display='none';
+    document.getElementById('check_number').required=true;
+    document.getElementById('check_description').required=true;
+    document.getElementById('cc_name').required=false;
+    document.getElementById('cc_num').required=false;
+    document.getElementById('cc_month').required=false;
+    document.getElementById('cc_year').required=false;
+    document.getElementById('cvv').required=false;
+    document.getElementById('wire').style.display='none';
+    document.getElementById('wire_description').required=false;
+  }
+
+  if (strPayment == "3") {
+    document.getElementById('wire').style.display='inline';
+    document.getElementById('check').style.display='none';
+    document.getElementById('credit_card').style.display='none';
+    document.getElementById('wire_description').required=true;
+    document.getElementById('check_number').required=false;
+    document.getElementById('cc_name').required=false;
+    document.getElementById('cc_num').required=false;
+    document.getElementById('cc_month').required=false;
+    document.getElementById('cc_year').required=false;
+    document.getElementById('cvv').required=false;
+    document.getElementById('check_description').required=false;
+  }
+}
+
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 46 || charCode > 57)) {
+        return false;
+    }
+    if (charCode == 47) {
+      return false;
+    }
+    return true;
+}
+
+</script>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

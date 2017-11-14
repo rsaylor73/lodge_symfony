@@ -342,7 +342,8 @@ class ReservationController extends Controller
             `r`.`child1_age`,
             `r`.`child2_age`,
             `r`.`resellerID`,
-            `r`.`resellerAgentID`            
+            `r`.`resellerAgentID`,
+            `r`.`contactID`            
         
         FROM
             `reservations` r, `user` u
@@ -367,6 +368,7 @@ class ReservationController extends Controller
         $child2_age = "";
         $resellerID = "";
         $resellerAgentID = "";
+        $contactID = "";
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
@@ -385,6 +387,7 @@ class ReservationController extends Controller
             $child2_age = $row['child2_age'];
             $resellerID = $row['resellerID'];
             $resellerAgentID = $row['resellerAgentID'];
+            $contactID = $row['contactID'];
         }
 
         // Reseller data
@@ -444,6 +447,35 @@ class ReservationController extends Controller
             }            
         }
 
+        // Reservation Contact
+        $contact_data = "";
+        if ($contactID > 0) {
+            $sql = "
+            SELECT 
+                `c`.`contactID`,
+                `c`.`first`,
+                `c`.`middle`,
+                `c`.`last`,
+                `c`.`email`
+            
+            FROM
+                `$AF_DB`.`contacts` c
+            
+            WHERE
+                `c`.`contactID` = '$contactID'
+            ";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();
+            $i = "0";
+            while ($row = $result->fetch()) {
+                $contact_data[$i]['first'] = $row['first'];
+                $contact_data[$i]['middle'] = $row['middle'];
+                $contact_data[$i]['last'] = $row['last'];
+                $contact_data[$i]['email'] = $row['email'];
+                $contact_data[$i]['contactID'] = $row['contactID'];
+            }             
+        }
+
         return $this->render('reservations/viewreservation.html.twig',[
             'reservationID' => $reservationID,
             'nights' => $nights,
@@ -460,6 +492,7 @@ class ReservationController extends Controller
             'child2_age' => $child2_age,
             'reseller_data' => $reseller_data,
             'reselleragent_data' => $reselleragent_data,
+            'contact_data' => $contact_data,
         ]);
     }
 
@@ -518,20 +551,6 @@ class ReservationController extends Controller
         return $this->render('reservations/viewreservationguest.html.twig',[
             'reservationID' => $reservationID,
             'data' => $data,
-        ]);
-    }
-
-    /**
-     * @Route("/viewreservationdollars", name="viewreservationdollars")
-     * @Route("/viewreservationdollars/{reservationID}")
-     */
-    public function viewreservationdollarsAction(Request $request,$reservationID='')
-    {
-        $em = $this->getDoctrine()->getManager();
-
-
-        return $this->render('reservations/viewreservationdollars.html.twig',[
-            'reservationID' => $reservationID,
         ]);
     }
 

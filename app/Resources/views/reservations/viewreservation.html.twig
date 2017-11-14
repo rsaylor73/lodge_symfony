@@ -86,7 +86,32 @@
 	<div class="col-sm-3"><b>Email:</b></div>
 </div>
 
+<div class="row top-buffer">
+	{% if contact_data == "" %}
+	<div class="col-sm-3">
 
+		<form action="{{path('assignreservationcontact')}}" method="get" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<input type="submit" value="Assign Contact" class="btn btn-primary">
+		</form>
+
+	</div>
+	{% else %}
+		{% for c in contact_data%}
+
+		<div class="col-sm-3">
+			<form action="{{path('assignreservationcontact')}}" method="get" style="display:inline">
+			<input type="hidden" name="reservationID" value="{{reservationID}}">
+			<input type="submit" value="Change" class="btn btn-primary">
+			</form>&nbsp;			
+			{{c.first}} {{c.middle}} {{c.last}}
+		</div>
+		<div class="col-sm-3">
+			<a href="mailto:{{c.email}}">{{c.email}}</a>
+		</div>
+		{% endfor %}
+	{% endif %}
+</div>
 
 <div class="row top-buffer">
 	<div class="col-sm-3"><b>Reseller:</b></div>

@@ -25,6 +25,19 @@ class ContactsController extends Controller
     }
 
     /**
+     * @Route("/assignreservationcontact", name="assignreservationcontact") 
+     */
+    public function assignreservationcontactAction(Request $request)
+    {
+    	$em = $this->getDoctrine()->getManager();
+    	$reservationID = $request->query->get('reservationID');
+
+        return $this->render('contacts/assignreservationcontact.html.twig',[
+        	'reservationID' => $reservationID,
+        ]); 
+    }
+
+    /**
      * @Route("/searchcontact", name="searchcontact") 
      */
     public function searchcontactAction(Request $request)
@@ -93,6 +106,71 @@ class ContactsController extends Controller
     }
 
     /**
+     * @Route("/searchrescontact", name="searchrescontact") 
+     */
+    public function searchrescontactAction(Request $request)
+    {
+		$em = $this->getDoctrine()->getManager();
+		$AF_DB = $this->container->getParameter('AF_DB');
+
+		$reservationID = $request->query->get('reservationID');
+
+		$first = $request->query->get('first');
+		$middle = $request->query->get('middle');
+		$last = $request->query->get('last');
+		$dob = $request->query->get('dob');
+		$zip = $request->query->get('zip');
+		$email = $request->query->get('email');
+
+		if ($dob != "") {
+			$dob = date("Ymd", strtotime($dob));
+		}
+
+		$sql = "
+		SELECT
+			`c`.`contactID`,
+			`c`.`first`,
+			`c`.`middle`,
+			`c`.`last`,
+			DATE_FORMAT(`c`.`date_of_birth`, '%m/%d/%Y') AS 'dob',
+			`c`.`city`,
+			`c`.`zip`,
+			`ct`.`country`
+
+		FROM
+			`$AF_DB`.`contacts` c
+
+		LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`countryID` = `ct`.`countryID`
+
+		WHERE
+			1
+			AND `c`.`first` LIKE '%$first%'
+			AND `c`.`middle` LIKE '%$middle%'
+			AND `c`.`last` LIKE '%$last%'
+			AND `c`.`date_of_birth` LIKE '%$dob%'
+			AND `c`.`zip` LIKE '%$zip%'
+			AND `c`.`email` LIKE '%$email%'
+
+		LIMIT 50
+		";
+        $i = "0";
+        $data = "";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+        	foreach ($row as $key=>$value) {
+				$data[$i][$key] = $value;
+			}
+			$i++;
+		}
+        return $this->render('contacts/searchrescontact.html.twig',[
+        	'data' => $data,
+        	'reservationID' => $reservationID,
+
+        ]);
+    }
+
+    /**
      * @Route("/addpaxtores", name="addpaxtores") 
      */
     public function addpaxtoresAction(Request $request)
@@ -132,6 +210,27 @@ class ContactsController extends Controller
 
 	}
 
+    /**
+     * @Route("/addrespaxtores", name="addrespaxtores") 
+     */
+    public function addrespaxtoresAction(Request $request)
+    {
+		$em = $this->getDoctrine()->getManager();
+		$AF_DB = $this->container->getParameter('AF_DB');
+
+		// POST DATA (use query for GET and request for POST)
+		$reservationID = $request->request->get('reservationID');
+		$contactID = $request->request->get('contactID');
+
+    	$sql = "UPDATE `reservations` SET `contactID` = '$contactID' WHERE `reservationID` = '$reservationID'";
+    	$result = $em->getConnection()->prepare($sql);
+    	$result->execute();
+        $this->addFlash('info','The reservation contact was updated.');
+        return $this->redirectToRoute('viewreservation',[
+        	'reservationID' => $reservationID,
+        ]);
+
+	}
     /**
      * @Route("/deletepaxtores", name="deletepaxtores") 
      */

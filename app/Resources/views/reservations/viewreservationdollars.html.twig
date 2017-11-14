@@ -20,6 +20,59 @@
   <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
 </ul>
 
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>Dollars</h3></div>
+</div>
+
+{% for d in dollars %}
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Nightly Rate:</b></div>
+  <div class="col-sm-3">$ {{d.nightly_rate}} per guest</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Nights:</b></div>
+  <div class="col-sm-3">{{d.nights}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Adults:</b></div>
+  <div class="col-sm-3">{{d.pax}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Children:</b></div>
+  <div class="col-sm-3">{{d.children}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Total Tent Rate:</b></div>
+  <div class="col-sm-3">$ {{d.total|number_format(2, '.', ',')}}</div>
+</div>
+{% endfor %}
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>Transfers</h3></div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Transfer Amount:</b></div>
+  <div class="col-sm-3">$ {{transfer_amount|number_format(2, '.', ',')}} per guest</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Total Transfer Amount:</b></div>
+  <div class="col-sm-3">$ {{transfer_total|number_format(2, '.', ',')}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>Payments 
+    <form action="{{path('reservationpayment')}}" method="post" style="display:inline">
+    <input type="hidden" name="reservationID" value="{{reservationID}}">
+    <input type="submit" value="Add Payment" class="btn btn-primary">
+    </form>
+  </h3></div>
+</div>
 
 {% endblock %}
 
