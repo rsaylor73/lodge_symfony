@@ -22,6 +22,7 @@ class DollarsController extends Controller
         $transfer_amount = "";
         $pax = "";
         $transfer_total = "";
+        $payment_history = "";
 
         if ($reservationID == "") {
             $reservationID = $request->query->get('reservationID');
@@ -59,12 +60,42 @@ class DollarsController extends Controller
             $transfer_total = $transfer_amount * $pax;
         }
 
+        // payment history
+        $payment_history = $this->payment_history($em,$reservationID);
+        $payment_total = "0";
+        if(is_array($payment_history)) {
+            foreach($payment_history as $key=>$value) {
+                foreach($value as $key2=>$value2) {
+                    if ($key2 == "amount") {
+                        $payment_total = $payment_total + $value2;
+                    }
+                }
+            }
+        }
+
+        // discount history
+        $discount_history = $this->discount_history($em,$reservationID);
+        $discount_total = "0";
+        if(is_array($discount_history)) {
+            foreach($discount_history as $key=>$value) {
+                foreach($value as $key2=>$value2) {
+                    if ($key2 == "amount") {
+                        $discount_total = $discount_total + $value2;
+                    }
+                }
+            }
+        }        
 
         return $this->render('reservations/viewreservationdollars.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '3',
             'dollars' => $dollars,
             'transfer_amount' => $transfer_amount,
             'transfer_total' => $transfer_total,
+            'payment_history' => $payment_history,
+            'payment_total' => $payment_total,
+            'discount_history' => $discount_history,
+            'discount_total' => $discount_total,
         ]);
     }
 
@@ -88,6 +119,73 @@ class DollarsController extends Controller
             break;
         }
         return($amount);
+    }
+
+    private function payment_history($em,$reservationID) {
+        $sql = "
+        SELECT
+            `p`.`paymentID`,
+            `p`.`type`,
+            `p`.`transactionID`,
+            `p`.`credit_description`,
+            `p`.`checkNumber`,
+            `p`.`check_description`,
+            `p`.`wire_description`,
+            `p`.`amount`,
+            DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date'
+
+        FROM
+            `payments` p
+
+        WHERE
+            `p`.`reservationID` = '$reservationID'
+
+        ORDER BY DATE_FORMAT(`p`.`payment_date`,'%Y%m%d') ASC
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $i = "0";
+        $payments = "";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $payments[$i][$key] = $value;
+            }
+            $i++; 
+        }
+        return($payments);
+    }
+
+    private function discount_history($em,$reservationID) {
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $sql = "
+        SELECT
+            `d`.`discountID`,
+            `r`.`general_discount_reason` AS 'details',
+            `d`.`amount`,
+            DATE_FORMAT(`d`.`date`, '%m/%d/%Y') AS 'date'
+
+        FROM
+            `discounts` d, `$AF_DB`.`general_discount_reasons` r
+
+        WHERE
+            `d`.`reservationID` = '$reservationID'
+            AND `d`.`reasonID` = `r`.`general_discount_reasonID`
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $i = "0";
+        $discounts = "";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $discounts[$i][$key] = $value;
+            }
+            $i++; 
+        }
+        return($discounts);        
     }
 
 }

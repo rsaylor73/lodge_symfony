@@ -14,13 +14,7 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<ul class="nav nav-tabs">
-		  <li class="active"><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
-		  <li><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
-		  <li><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
-		  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
-		  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
-		</ul>
+		{% include('reservation_tabs.html.twig') %}
 	</div>
 </div>
 

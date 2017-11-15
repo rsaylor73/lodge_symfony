@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3>Edit Payment</h3>
+	</div>
+</div>
+
+{% for p in payment %}
+<form action="{{path('updatereservationpayment')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<input type="hidden" name="paymentID" value="{{p.paymentID}}">
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Payment Type:</div>
+	<div class="col-sm-2">
+		<select name="type" class="form-control">
+			<option selected value="{{p.type}}">{{p.type}}</option>
+			<option>Credit</option>
+			<option>Wire</option>
+			<option>Check</option>
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Transaction ID: (Credit Only)</div>
+	<div class="col-sm-2">
+		<input type="text" name="transactionID" value="{{p.transactionID}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Check Number: (Check Only)</div>
+	<div class="col-sm-2">
+		<input type="text" name="checkNumber" value="{{p.checkNumber}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Credit Description: (Credit Only)</div>
+	<div class="col-sm-2">
+		<textarea name="credit_description" class="form-control">{{p.credit_description}}</textarea>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Check Description: (Check Only)</div>
+	<div class="col-sm-2">
+		<textarea name="check_description" class="form-control">{{p.check_description}}</textarea>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Wire Description: (Wire Only)</div>
+	<div class="col-sm-2">
+		<textarea name="wire_description" class="form-control">{{p.wire_description}}</textarea>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Payment Amount:</div>
+	<div class="col-sm-2">
+		<input type="text" name="amount" class="form-control" value="{{p.amount}}" onkeypress="return isNumber(event)">
+	</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-2">Payment Date:</div>
+  <div class="col-sm-2">
+    <input type="text" name="payment_date" id="payment_date" class="form-control" value="{{p.payment_date}}">
+  </div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<input type="submit" value="Update" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning"
+		onclick="document.location.href='{{path('viewreservationdollars')}}/{{reservationID}}'">
+	</div>
+</div>
+
+</form>
+
+<script>
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 46 || charCode > 57)) {
+        return false;
+    }
+    if (charCode == 47) {
+      return false;
+    }
+    return true;
+}
+</script>
+
+{%  endfor %}
+
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

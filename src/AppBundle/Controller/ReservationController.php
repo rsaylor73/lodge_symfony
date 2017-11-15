@@ -478,6 +478,7 @@ class ReservationController extends Controller
 
         return $this->render('reservations/viewreservation.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '1',
             'nights' => $nights,
             'checkin_date' => $checkin_date,
             'checkout_date' => $checkout_date,
@@ -550,6 +551,7 @@ class ReservationController extends Controller
 
         return $this->render('reservations/viewreservationguest.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '2',
             'data' => $data,
         ]);
     }
@@ -565,6 +567,7 @@ class ReservationController extends Controller
 
         return $this->render('reservations/viewreservationnotes.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '4',
         ]);
     }
 
@@ -579,6 +582,7 @@ class ReservationController extends Controller
 
         return $this->render('reservations/viewreservationcancel.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '5',
         ]);
     }
 

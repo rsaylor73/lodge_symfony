@@ -20,7 +20,101 @@ class PaymentController extends Controller
 
         return $this->render('payments/reservationpayment.html.twig',[
             'reservationID' => $reservationID,
+            'tab' => '3',
         ]);  
+    }
+
+    /**
+     * @Route("/editreservationpayment", name="editreservationpayment")
+     */
+    public function editreservationpaymentAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+        $paymentID = $request->request->get('paymentID');
+
+        $sql = "SELECT * FROM `payments` WHERE `paymentID` = '$paymentID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $payment = "";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $payment[$i][$key] = $value;
+            }
+            $i++;
+        }        
+
+        return $this->render('payments/editpayment.html.twig',[
+            'reservationID' => $reservationID,
+            'paymentID' => $paymentID,
+            'tab' => '3',
+            'payment' => $payment,
+        ]);  
+    }
+
+    /**
+     * @Route("/deletereservationpayment", name="deletereservationpayment")
+     */
+    public function deletereservationpaymentAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+        $paymentID = $request->request->get('paymentID');
+
+        $sql = "DELETE FROM `payments` WHERE `paymentID` = '$paymentID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $text = "The payment was deleted.";
+        $status = "success";          
+
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
+        ]);
+    }
+
+    /**
+     * @Route("/updatereservationpayment", name="updatereservationpayment")
+     */
+    public function updatereservationpaymentAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+        $paymentID = $request->request->get('paymentID');
+        $type = $request->request->get('type');
+        $transactionID = $request->request->get('transactionID');
+        $checkNumber = $request->request->get('checkNumber');
+        $credit_description = $request->request->get('credit_description');
+        $check_description = $request->request->get('check_description');
+        $wire_description = $request->request->get('wire_description');
+        $amount = $request->request->get('amount');
+        $payment_date = $request->request->get('payment_date');
+
+        $sql = "UPDATE `payments` SET
+        `type` = '$type',
+        `transactionID` = '$transactionID',
+        `checkNumber` = '$checkNumber',
+        `credit_description` = '$credit_description',
+        `check_description` = '$check_description',
+        `wire_description` = '$wire_description',
+        `amount` = '$amount',
+        `payment_date` = '$payment_date'
+        WHERE `paymentID` = '$paymentID'
+        ";        
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $text = "The payment was updated.";
+        $status = "success";          
+
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
+        ]);
+
     }
 
      /**
@@ -110,12 +204,18 @@ class PaymentController extends Controller
             break;
 
             case 2: // check
-
-            break;
-
             case 3: // wire
-
+                $payment_recorded = $this->recordmanualpayment($em,$request,$reservationID);
+                if ($payment_recorded == "false") {
+                    $this->addFlash('danger','The payment failed to record the payment details.');
+                    return $this->redirectToRoute('viewreservationdollars',[
+                        'reservationID' => $reservationID,
+                    ]);
+                }
+                $text = "The payment was recorded.";
+                $status = "success";                
             break;
+
         }
         
 
@@ -156,6 +256,63 @@ class PaymentController extends Controller
         ('$userID','$reservationID','Credit','$transactionID','$credit_description',
         '$payment_amount','$payment_date','$date')
         ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $paymentID = $em->getConnection()->lastInsertId();
+        if ($paymentID == "") {
+            return('false');
+        } else {
+            return('true');
+        }
+    }
+
+    private function recordmanualpayment($em,$request,$reservationID) {
+        $payment_amount = $request->request->get('payment_amount');
+        $payment_amount = number_format((float)$payment_amount, 2, '.', '');
+        $payment_date = $request->request->get('payment_date');
+        $payment_type = $request->request->get('payment_type');
+        $check_number = $request->request->get('check_number');
+        $check_description = $request->request->get('check_description');
+        $wire_description = $request->request->get('wire_description');        
+        $paymentID = "";
+
+        $usr = $this->get('security.token_storage')->getToken()->getUser();
+        $username = $usr->getUsername();
+        $userID = "";
+        $sql = "SELECT `id` FROM `user` WHERE `username` = '$username'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $userID = $row['id'];
+        } 
+
+        $date = date("Ymd");
+
+        $sql = "";
+        switch ($payment_type) {
+            case 2: // check
+            $sql = "
+            INSERT INTO `payments` 
+            (`userID`,`reservationID`,`type`,`checkNumber`,`check_description`,
+            `amount`,`payment_date`,`date`)
+            VALUES
+            ('$userID','$reservationID','Check','$check_number','$check_description',
+            '$payment_amount','$payment_date','$date')
+            ";
+            break;
+
+            case 3: // wire
+            $sql = "
+            INSERT INTO `payments` 
+            (`userID`,`reservationID`,`type`,`wire_description`,
+            `amount`,`payment_date`,`date`)
+            VALUES
+            ('$userID','$reservationID','Wire','$wire_description',
+            '$payment_amount','$payment_date','$date')
+            ";
+            break;
+        }
+
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
         $paymentID = $em->getConnection()->lastInsertId();

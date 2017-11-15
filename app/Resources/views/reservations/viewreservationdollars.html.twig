@@ -12,13 +12,11 @@
 	</div>
 </div>
 
-<ul class="nav nav-tabs">
-  <li><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
-  <li><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
-  <li class="active"><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
-  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
-  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
-</ul>
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
 
 <div class="row top-buffer">
   <div class="col-sm-8"><h3>Dollars</h3></div>
@@ -73,6 +71,132 @@
     </form>
   </h3></div>
 </div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8 table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><b>Date</b></th>
+          <th><b>Type</b></th>
+          <th><b>Check/Transaction #</b></th>
+          <th><b>Amount</b></th>
+          <th><b>Description</b></th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if payment_history == "" %}
+          <tr><td colspan="6"><font color="blue">There are no payments recorded.</font></td></tr>
+        {% endif %}
+        {% for p in payment_history %}
+        <tr>
+          <td>{{p.payment_date}}</td>
+          <td>{{p.type}}</td>
+          <td>
+            {% if p.type == "Wire" %}
+              N/A
+            {% elseif p.type == "Check" %}
+              {{p.checkNumber}}
+            {% elseif p.type == "Credit" %}
+              {{p.transactionID}}
+            {% endif %}
+          </td>
+          <td>
+            $ {{p.amount|number_format(2, '.', ',')}}
+          </td>
+          <td>
+            {% if p.type == "Wire" %}
+              {{p.wire_description}}
+            {% elseif p.type == "Check" %}
+              {{p.check_description}}
+            {% elseif p.type == "Credit" %}
+              {{p.credit_description}}
+            {% endif %}
+          </td>
+          <td>
+            <form action="{{path('editreservationpayment')}}" method="post" style="display:inline">
+            <input type="hidden" name="reservationID" value="{{reservationID}}">
+            <input type="hidden" name="paymentID" value="{{p.paymentID}}">
+            <input type="submit" value="Edit" class="btn btn-primary">
+            </form>
+            &nbsp;
+            <form action="{{path('deletereservationpayment')}}" method="post" style="display:inline" 
+            onsubmit="return confirm('WARNING: You are about to delete a payment. Click OK to continue.')">
+            <input type="hidden" name="reservationID" value="{{reservationID}}">
+            <input type="hidden" name="paymentID" value="{{p.paymentID}}">            
+            <input type="submit" value="Delete" class="btn btn-danger">
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Total Payments:</b></div>
+  <div class="col-sm-3">$ {{payment_total|number_format(2, '.', ',')}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    <h3>Discounts
+    <form action="{{path('reservationdiscount')}}" method="post" style="display:inline">
+    <input type="hidden" name="reservationID" value="{{reservationID}}">
+    <input type="submit" value="Add Discount" class="btn btn-primary">
+    </form>
+    </h3>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8 table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><b>Date</b></th>
+          <th><b>Description</b></th>
+          <th><b>Amount</b></th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if discount_history == "" %}
+          <tr><td colspan="4"><font color="blue">There are no discounts recorded.</font></td></tr>
+        {% endif %}
+        {% for d in discount_history %}
+        <tr>
+          <td>{{d.date}}</td>
+          <td>{{d.details}}</td>
+          <td>$ {{d.amount|number_format(2, '.', ',')}}</td>
+          <td>
+            <form action="{{path('editreservationdiscount')}}" method="post" style="display:inline">
+            <input type="hidden" name="reservationID" value="{{reservationID}}">
+            <input type="hidden" name="discounttID" value="{{d.discountID}}">
+            <input type="submit" value="Edit" class="btn btn-primary">
+            </form>
+            &nbsp;
+            <form action="#" method="post" style="display:inline" 
+            onsubmit="return confirm('WARNING: You are about to delete a discount. Click OK to continue.')">
+            <input type="hidden" name="reservationID" value="{{reservationID}}">
+            <input type="hidden" name="discountID" value="{{d.discountID}}">            
+            <input type="submit" value="Delete" class="btn btn-danger">
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Total Discounts:</b></div>
+  <div class="col-sm-3">$ {{discount_total|number_format(2, '.', ',')}}</div>
+</div>
+
 
 {% endblock %}
 
