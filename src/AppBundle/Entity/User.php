@@ -58,6 +58,13 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      *
+     * @ORM\Column(name="role", type="string", columnDefinition="enum('admin', 'agent', 'accounting', 'owner')")
+     */
+    private $role;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
@@ -167,6 +174,30 @@ class User implements UserInterface, \Serializable
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * Set role
+     *
+     * @param string $role
+     *
+     * @return User
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
     }
 
     /**

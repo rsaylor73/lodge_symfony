@@ -11,14 +11,19 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class ProfileController extends Controller
 {
+
     /**
      * @Route("/profile", name="profile")
      */
     public function profileAction(Request $request)
     {
 
+        /* user security needed in each controller function */
     	$usr = $this->get('security.token_storage')->getToken()->getUser();
     	$username = $usr->getUsername();
+        $role = $usr->getRole();
+        $this->get('customsecurity')->check_access($role,'profile');
+        /* end user security */
 
         $repository = $this->getDoctrine()->getRepository('AppBundle:user');
         $sql = $repository->createQueryBuilder('u')

@@ -42,6 +42,7 @@ security:
             #form_login: ~
 
     access_control:
-      - { path: ^/registration-form-submission$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-      - { path: ^/(login|register|forgotpassword)$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      #- { path: ^/registration-form-submission$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      #- { path: ^/(login|register|forgotpassword)$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/(login|forgotpassword)$, role: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/, role: ROLE_USER }
