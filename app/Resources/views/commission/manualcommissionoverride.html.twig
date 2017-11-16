@@ -18,35 +18,24 @@
   </div>
 </div>
 
-<form action="{{path('processreservationdiscount')}}" method="post">
+<form action="{{path('updateoverridecommission')}}" method="post">
 <input type="hidden" name="reservationID" value="{{reservationID}}">
 
 <div class="row top-buffer">
-  <div class="col-sm-8"><h3>New Discount</h3></div>
+  <div class="col-sm-8"><h3>Manual Commission Override</h3></div>
 </div>
 
 <div class="row top-buffer">
-	<div class="col-sm-3">Discount Reason:</div>
+	<div class="col-sm-3">Commission:</div>
 	<div class="col-sm-3">
-		<select name="discount_reason" class="form-control" required>
-		<option value="">Select</option>
-		{% for d in discount %}
-		<option value="{{d.id}}">{{d.details}}</option>
-		{% endfor %}
-		</select>
-	</div>
-</div>
-
-<div class="row top-buffer">
-	<div class="col-sm-3">Discount Amount:</div>
-	<div class="col-sm-3">
-		<input type="text" name="discount_amount" class="form-control" required placeholder="0.00" onkeypress="return isNumber(event)">
+    <input type="text" name="manual_commission_override" placeholder="Example: 15" 
+    onkeypress="return isNumber(event)" value="{{commission}}" class="form-control">
 	</div>
 </div>
 
 <div class="row top-buffer">
   <div class="col-sm-6">
-    <input type="submit" value="Save Discount" class="btn btn-success">&nbsp;
+    <input type="submit" value="Save Commission" class="btn btn-success">&nbsp;
     <input type="button" value="Cancel" class="btn btn-warning"
     onclick="document.location.href='{{path('viewreservationdollars')}}/{{reservationID}}'">  </div>
 </div>
@@ -57,11 +46,8 @@
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 46 || charCode > 57)) {
+    if (charCode > 31 && (charCode < 47 || charCode > 57)) {
         return false;
-    }
-    if (charCode == 47) {
-      return false;
     }
     return true;
 }

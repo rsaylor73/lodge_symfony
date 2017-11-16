@@ -16,6 +16,7 @@ class DollarsController extends Controller
      */
     public function viewreservationdollarsAction(Request $request,$reservationID='')
     {
+        $AF_DB = $this->container->getParameter('AF_DB');
         $em = $this->getDoctrine()->getManager();
 
         // init vars
@@ -23,6 +24,7 @@ class DollarsController extends Controller
         $pax = "";
         $transfer_total = "";
         $payment_history = "";
+        $manual_commission_override = "";
 
         if ($reservationID == "") {
             $reservationID = $request->query->get('reservationID');
@@ -34,7 +36,8 @@ class DollarsController extends Controller
         	MIN(`i`.`nightly_rate`) AS 'nightly_rate',
         	`r`.`pax`,
         	`r`.`children`,
-        	`r`.`nights`
+        	`r`.`nights`,
+            `r`.`manual_commission_override`
 
         FROM
         	`inventory` i
@@ -50,10 +53,13 @@ class DollarsController extends Controller
         $result->execute();
         $i = "0";
         $dollars = "";
+        $total = "";
         while ($row = $result->fetch()) {
         	foreach($row as $key=>$value) {
         		$dollars[$i][$key] = $value;
         	}
+            $total = $row['total'];
+            $manual_commission_override = $row['manual_commission_override'];
         	$i++;
             $transfer_amount = $this->transfer_amount($row['nights']);
             $pax = $row['pax'] + $row['children'];
@@ -86,6 +92,39 @@ class DollarsController extends Controller
             }
         }        
 
+        // commission
+        $sql = "
+        SELECT
+            `rs`.`commission`
+        FROM
+            `reservations` r
+
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $commission = "0";
+        while ($row = $result->fetch()) {
+            $commission = $row['commission'];
+        }
+
+        if ($manual_commission_override > 0) {
+            $commission = $manual_commission_override;
+        }
+
+        if ($commission == "") {
+            $commission = "0";
+        }
+
+        $total_commissionable = $total - $discount_total;
+        $comm_amount = floor($total_commissionable * ($commission / 100));
+
+        // balance
+        $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
+
         return $this->render('reservations/viewreservationdollars.html.twig',[
             'reservationID' => $reservationID,
             'tab' => '3',
@@ -96,6 +135,9 @@ class DollarsController extends Controller
             'payment_total' => $payment_total,
             'discount_history' => $discount_history,
             'discount_total' => $discount_total,
+            'commission' => $commission,
+            'comm_amount' => $comm_amount,
+            'balance' => $balance,
         ]);
     }
 

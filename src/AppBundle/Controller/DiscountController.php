@@ -148,4 +148,60 @@ class DiscountController extends Controller
         ]);  
     }
 
+   /**
+     * @Route("/updatereservationdiscount", name="updatereservationdiscount")
+     */
+    public function updatereservationdiscountAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $reservationID = $request->request->get('reservationID');  
+        $discountID = $request->request->get('discountID');  
+        $discount_reason = $request->request->get('discount_reason');
+        $discount_amount = $request->request->get('discount_amount');
+
+        $sql = "
+        UPDATE `discounts` SET 
+        `reasonID` = '$discount_reason',
+        `amount` = '$discount_amount'
+        WHERE `discountID` = '$discountID'
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $text = "The discount was updated.";
+        $status = "success";          
+
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
+        ]);
+
+    }
+
+   /**
+     * @Route("/deletereservationdiscount", name="deletereservationdiscount")
+     */
+    public function deletereservationdiscountAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $reservationID = $request->request->get('reservationID');  
+        $discountID = $request->request->get('discountID');  
+
+        $sql = "DELETE FROM `discounts` WHERE `discountID` = '$discountID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $text = "The discount was deleted.";
+        $status = "success";          
+
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
+        ]);
+    }
+
+
 }

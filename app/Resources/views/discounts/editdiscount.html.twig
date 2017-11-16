@@ -18,7 +18,7 @@
   </div>
 </div>
 
-<form action="#" method="post">
+<form action="{{path('updatereservationdiscount')}}" method="post">
 <input type="hidden" name="reservationID" value="{{reservationID}}">
 <input type="hidden" name="discountID" value="{{discountID}}">
 
@@ -26,13 +26,17 @@
   <div class="col-sm-8"><h3>Edit Discount</h3></div>
 </div>
 
+{% for e in data %}
 <div class="row top-buffer">
 	<div class="col-sm-3">Discount Reason:</div>
 	<div class="col-sm-3">
 		<select name="discount_reason" class="form-control" required>
-		<option value="">Select</option>
 		{% for d in discount %}
-		<option value="{{d.id}}">{{d.details}}</option>
+      {% if d.id == e.reasonID %}
+        <option selected value="{{d.id}}">{{d.details}}</option>
+      {% else %}
+  		  <option value="{{d.id}}">{{d.details}}</option>
+      {% endif %}
 		{% endfor %}
 		</select>
 	</div>
@@ -41,17 +45,18 @@
 <div class="row top-buffer">
 	<div class="col-sm-3">Discount Amount:</div>
 	<div class="col-sm-3">
-		<input type="text" name="discount_amount" class="form-control" required placeholder="0.00" onkeypress="return isNumber(event)">
+		<input type="text" name="discount_amount" value="{{ e.amount }}" class="form-control" required placeholder="0.00" onkeypress="return isNumber(event)">
 	</div>
 </div>
 
 <div class="row top-buffer">
   <div class="col-sm-6">
-    <input type="submit" value="Save Discount" class="btn btn-success">&nbsp;
-    <input type="button" value="Cancel" class="btn btn-warning">
+    <input type="submit" value="Update Discount" class="btn btn-success">&nbsp;
+    <input type="button" value="Cancel" class="btn btn-warning"
+    onclick="document.location.href='{{path('viewreservationdollars')}}/{{reservationID}}'">
   </div>
 </div>
-
+{% endfor %}
 </form>
 
 <script>
