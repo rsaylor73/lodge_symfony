@@ -7,7 +7,7 @@
     <div id="container">
 	<h2>Aggressor Safari Lodge</h2>
  
-        {% if (role == "admin" or role == "agent" or role == "accounting") %}
+        {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
         <div class="row text-center pad-top">
             
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
@@ -38,7 +38,7 @@
         </div>
         {% endif %}
 
-        {% if (role == "admin" or role == "agent" or role == "accounting") %}
+        {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
         <div class="row text-center pad-top">
 
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
@@ -62,7 +62,7 @@
         </div>
         {% endif %}
 
-        {% if (role == "admin" or role == "accounting") %}
+        {% if (app.user.role == "admin" or app.user.role == "accounting") %}
         <div class="row text-center pad-top">
 
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
@@ -95,7 +95,7 @@
         </div>
         {% endif %}
 
-        {% if (role == "admin" or role == "accounting" or role == "agent" or role == "owner" or role == "crew") %}        
+        {% if (app.user.role == "admin" or app.user.role == "accounting" or app.user.role == "agent" or app.user.role == "owner" or app.user.role == "crew") %}        
         <div class="row text-center pad-top">
 
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
