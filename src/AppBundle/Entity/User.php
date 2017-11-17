@@ -65,6 +65,12 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      *
+     * @ORM\Column(name="status", type="string", columnDefinition="enum('Active', 'Inactive')")
+     */
+    private $status;
+    /**
+     * @var string
+     *
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
@@ -200,6 +206,30 @@ class User implements UserInterface, \Serializable
         return $this->role;
     }
 
+   /**
+     * Set status
+     *
+     * @param string $status
+     *
+     * @return User
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
     /**
      * Set password
      *
@@ -258,7 +288,9 @@ class User implements UserInterface, \Serializable
             $this->email,
             $this->firstName,
             $this->lastName,
-            $this->invitation
+            $this->invitation,
+            $this->role,
+            $this->status
         ]);
     }
 
@@ -271,7 +303,9 @@ class User implements UserInterface, \Serializable
             $this->email,
             $this->firstName,
             $this->lastName,
-            $this->invitation
+            $this->invitation,
+            $this->role,
+            $this->status
             ) = unserialize($serialized);
     }
 

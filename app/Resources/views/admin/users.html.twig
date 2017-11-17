@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Manage Users
+		<input type="button" value="Add User" class="btn btn-success">
+		</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8 table-responsive">
+		<table class="table talbe-striped table-hover">
+			<thead>
+				<tr>
+					<th><b>Name</b></th>
+					<th><b>Email</b></th>
+					<th><b>Username</b></th>
+					<th><b>Role</b></th>
+					<th><b>Status</b></th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for u in users %}
+				<tr>
+					<td>{{u.first_name}} {{u.last_name}}</td>
+					<td><a href="mailto:{{u.email}}">{{u.email}}</a></td>
+					<td>{{u.username}}</td>
+					<td>{{u.role}}</td>
+					<td>{{u.status}}</td>
+					<td>
+						<input type="button" value="Edit" class="btn btn-primary"
+						onclick="document.location.href='{{path('edituser')}}/{{u.id}}'">
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}
+
+
+
