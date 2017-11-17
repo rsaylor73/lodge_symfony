@@ -15,6 +15,13 @@ class ResellerAgentController extends Controller
      */
     public function assignagentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
     	$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -58,6 +65,13 @@ class ResellerAgentController extends Controller
      */
     public function selectagentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 

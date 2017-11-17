@@ -16,6 +16,13 @@ class DiscountController extends Controller
      */
     public function reservationdiscountAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('discounts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
     	$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -58,6 +65,13 @@ class DiscountController extends Controller
      */
     public function processreservationdiscountAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('discounts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
 
         $reservationID = $request->request->get('reservationID');    
@@ -96,6 +110,13 @@ class DiscountController extends Controller
      */
     public function editreservationdiscountAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('discounts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
         $reservationID = $request->request->get('reservationID');
@@ -153,6 +174,13 @@ class DiscountController extends Controller
      */
     public function updatereservationdiscountAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('discounts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
 
         $reservationID = $request->request->get('reservationID');  
@@ -185,6 +213,13 @@ class DiscountController extends Controller
      */
     public function deletereservationdiscountAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('discounts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
 
         $reservationID = $request->request->get('reservationID');  

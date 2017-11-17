@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,11 @@ class HomeController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('default/index.html.twig');
+        $usr = $this->get('security.token_storage')->getToken()->getUser();
+        $role = $usr->getRole();
+        return $this->render('default/index.html.twig',[
+            'role' => $role,
+        ]);
 
     }
 

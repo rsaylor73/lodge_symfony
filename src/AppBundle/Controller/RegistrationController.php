@@ -23,6 +23,7 @@ class RegistrationController extends Controller
      * @throws \LogicException
      */
     public function forgotpasswordAction(Request $request) {
+
         $form = $this->createForm(ForgotPasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -92,7 +93,13 @@ class RegistrationController extends Controller
      */
     public function registerAction(Request $request)
     {
-
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('admineyesonly');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
         $user = new User();
 
         $form = $this->createForm(UserType::class,$user,[

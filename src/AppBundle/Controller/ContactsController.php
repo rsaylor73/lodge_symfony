@@ -15,6 +15,13 @@ class ContactsController extends Controller
      */
     public function assigncontactAction(Request $request, $reservationID='',$bunk='',$roomID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
 
         return $this->render('contacts/assigncontactsearch.html.twig',[
@@ -29,6 +36,13 @@ class ContactsController extends Controller
      */
     public function assignreservationcontactAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
     	$reservationID = $request->query->get('reservationID');
 
@@ -42,6 +56,13 @@ class ContactsController extends Controller
      */
     public function searchcontactAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -110,6 +131,13 @@ class ContactsController extends Controller
      */
     public function searchrescontactAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -175,6 +203,13 @@ class ContactsController extends Controller
      */
     public function addpaxtoresAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -215,6 +250,13 @@ class ContactsController extends Controller
      */
     public function addrespaxtoresAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -236,6 +278,13 @@ class ContactsController extends Controller
      */
     public function deletepaxtoresAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');
 

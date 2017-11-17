@@ -15,6 +15,13 @@ class ResellerController extends Controller
      */
     public function assignresellerAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
     	$AF_DB = $this->container->getParameter('AF_DB');
 
@@ -30,6 +37,13 @@ class ResellerController extends Controller
      */
     public function searchresellerAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
 		$em = $this->getDoctrine()->getManager();
 		$AF_DB = $this->container->getParameter('AF_DB');    
 
@@ -79,6 +93,13 @@ class ResellerController extends Controller
      */
     public function addresellertoresAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 

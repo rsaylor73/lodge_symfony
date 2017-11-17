@@ -89,6 +89,7 @@
 <div id="wrapper" class="">
         <!-- Sidebar -->
 {% if app.user %}
+
 <div id="sidebar-wrapper" style="background-color:#F8F8F8">
 
 
@@ -96,7 +97,7 @@
   <li><a href="{{path('index')}}">
   <span class="fa-stack fa-lg pull-left"><i class="fa fa-desktop fa-stack-1x "></i></span>
   Main Menu</a></li>
-  <!--{if ($access eq "admin" or $access eq "agent" or $access eq "accounting")}-->
+  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown">
     <span class="fa-stack fa-lg pull-left"><i class="fa fa-hotel fa-stack-1x "></i></span>
@@ -107,9 +108,9 @@
       <li><a href="{{path('locatereservation')}}">Locate Reservation</a></li>
     </ul>
   </li>
-  <!--  {/if} -->
+  {% endif %}
 
-  <!--{if ($access eq "admin" or $access eq "agent" or $access eq "accounting")}-->
+  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown">
     <span class="fa-stack fa-lg pull-left"><i class="fa fa-users fa-stack-1x "></i></span>
@@ -120,9 +121,9 @@
       <li><a href="#">Contacts</a></li>
     </ul>
   </li>
-  <!--{/if}-->
+  {% endif %}
 
-  <!--{if ($access eq "admin" or $access eq "accounting")}-->
+  {% if (app.user.role == "admin" or app.user.role == "accounting") %}
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown">
     <span class="fa-stack fa-lg pull-left"><i class="fa fa-money fa-stack-1x "></i></span>
@@ -134,9 +135,9 @@
       <li><a href="#">Payment Report</a></li>
     </ul>
   </li>
-  <!--{/if}-->
+  {% endif %}
 
-
+  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting" or app.user.role == "owner" or app.user.role == "crew") %}
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown">
     <span class="fa-stack fa-lg pull-left"><i class="fa fa-bar-chart fa-stack-1x "></i></span>
@@ -147,9 +148,10 @@
       <li><a href="#">Check-Out Report</a></li>
     </ul>
   </li>
+  {% endif %}
 
 
-  <!--{if $access eq "admin"}-->
+  {% if app.user.role == "admin" %}
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown">
     <span class="fa-stack fa-lg pull-left"><i class="fa fa-cogs fa-stack-1x "></i></span>
@@ -164,7 +166,7 @@
       <li><a href="#">Activity Log</a></li>
     </ul>
   </li>
-  <!--{/if}-->
+  {% endif %}
 
   <li><a href="{{path('profile')}}">
   <span class="fa-stack fa-lg pull-left"><i class="fa fa-user fa-stack-1x "></i></span>

@@ -16,6 +16,13 @@ class DollarsController extends Controller
      */
     public function viewreservationdollarsAction(Request $request,$reservationID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $AF_DB = $this->container->getParameter('AF_DB');
         $em = $this->getDoctrine()->getManager();
 

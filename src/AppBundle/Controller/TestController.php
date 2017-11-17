@@ -13,7 +13,16 @@ class TestController extends Controller
      */
     public function testAction()
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('admineyesonly');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	// This creates the inventory
+    	// This needs to be converted to a Symfony Command
+
     	$results = "true";
 
     	$em = $this->getDoctrine()->getManager();

@@ -16,6 +16,13 @@ class PaymentController extends Controller
      */
     public function reservationpaymentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $reservationID = $request->request->get('reservationID');
 
         return $this->render('payments/reservationpayment.html.twig',[
@@ -29,6 +36,13 @@ class PaymentController extends Controller
      */
     public function editreservationpaymentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $reservationID = $request->request->get('reservationID');
         $paymentID = $request->request->get('paymentID');
@@ -58,6 +72,13 @@ class PaymentController extends Controller
      */
     public function deletereservationpaymentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $reservationID = $request->request->get('reservationID');
         $paymentID = $request->request->get('paymentID');
@@ -80,6 +101,13 @@ class PaymentController extends Controller
      */
     public function updatereservationpaymentAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $reservationID = $request->request->get('reservationID');
         $paymentID = $request->request->get('paymentID');
@@ -122,6 +150,13 @@ class PaymentController extends Controller
      */
     public function processpaymentAction(Request $request, authorizenet $authorizenet)
     {   
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AUTHNET_LOGIN = $this->container->getParameter('AUTHNET_LOGIN');
         $AUTHNET_KEY = $this->container->getParameter('AUTHNET_KEY');
@@ -228,6 +263,13 @@ class PaymentController extends Controller
 
 
     private function recordccpayment($em,$request,$reservationID,$transactionID) {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $cc_name = $request->request->get('cc_name');
         $payment_amount = $request->request->get('payment_amount');
         $payment_amount = number_format((float)$payment_amount, 2, '.', '');
@@ -267,6 +309,13 @@ class PaymentController extends Controller
     }
 
     private function recordmanualpayment($em,$request,$reservationID) {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('payments');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
         $payment_amount = $request->request->get('payment_amount');
         $payment_amount = number_format((float)$payment_amount, 2, '.', '');
         $payment_date = $request->request->get('payment_date');

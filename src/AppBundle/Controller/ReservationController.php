@@ -14,6 +14,13 @@ class ReservationController extends Controller
      */
     public function newreservationAction()
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
 
     	// get lodge list
@@ -55,6 +62,13 @@ class ReservationController extends Controller
      */
     public function selecttensAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
 
 		$lodge = $request->request->get('lodge');
@@ -173,6 +187,13 @@ class ReservationController extends Controller
      */
     public function createreservationAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
 
         $usr = $this->get('security.token_storage')->getToken()->getUser();
@@ -307,6 +328,13 @@ class ReservationController extends Controller
      */
     public function locatereservationAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         return $this->render('reservations/locatereservation.html.twig');
     }
 
@@ -317,6 +345,13 @@ class ReservationController extends Controller
      */
     public function viewreservationAction(Request $request,$reservationID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 
@@ -503,6 +538,13 @@ class ReservationController extends Controller
      */
     public function viewreservationguestAction(Request $request,$reservationID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
         if ($reservationID == "") {
@@ -562,6 +604,13 @@ class ReservationController extends Controller
      */
     public function viewreservationnotesAction(Request $request,$reservationID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
 
 
@@ -577,6 +626,13 @@ class ReservationController extends Controller
      */
     public function viewreservationcancelAction(Request $request,$reservationID='')
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
 
 
@@ -591,6 +647,13 @@ class ReservationController extends Controller
      */
     public function lookupreservationAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
         $em = $this->getDoctrine()->getManager();
         $reservationID = $request->query->get('reservationID');
         $sql = "SELECT `reservationID` FROM `reservations` WHERE `reservationID` = '$reservationID'";
