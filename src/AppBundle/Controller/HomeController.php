@@ -17,4 +17,15 @@ class HomeController extends Controller
 
     }
 
+    /**
+     * @Route("/accessdenied", name="accessdenied")
+     */
+    public function accessdeniedAction(Request $request)
+    {
+    	$section=$request->query->get('section');
+        return $this->render('default/accessdenied.html.twig',[
+        	'section' => '$section',
+        ]);
+    }
+
 }
