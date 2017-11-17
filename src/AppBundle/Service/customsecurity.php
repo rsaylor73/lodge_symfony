@@ -4,22 +4,33 @@ namespace AppBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use AppBundle\Entity\User;
 
-class customsecurity
+class customsecurity extends Controller
 {
-
+    
     protected $em;
+    protected $container;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->container = $container;
 
     }
+    
 
-
-	public function check_access($role,$section) {
-
+	public function check_access($section) {
 		$em = $this->em;
+        $container = $this->container;
+
+        $usr = $this->get('security.token_storage')->getToken()->getUser();
+        $username = $usr->getUsername();
+        $role = $usr->getRole();
+
+
 		$description = "";
 
 		$sql = "
@@ -48,7 +59,6 @@ class customsecurity
         		}
         	}
         }
-
         switch ($found) {
         	case 0: // access denied
 		        return $this->redirectToRoute('accessdenied',[
@@ -58,7 +68,7 @@ class customsecurity
         	break;
 
         	case 1: // access granted
-        	// return nothing
+        	   return "ok";
         	break;
         }
 

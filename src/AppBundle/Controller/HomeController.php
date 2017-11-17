@@ -24,7 +24,7 @@ class HomeController extends Controller
     {
     	$section=$request->query->get('section');
         return $this->render('default/accessdenied.html.twig',[
-        	'section' => '$section',
+        	'section' => $section,
         ]);
     }
 

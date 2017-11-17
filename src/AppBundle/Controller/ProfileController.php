@@ -19,11 +19,15 @@ class ProfileController extends Controller
     {
 
         /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('profile');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$usr = $this->get('security.token_storage')->getToken()->getUser();
     	$username = $usr->getUsername();
-        $role = $usr->getRole();
-        $this->get('customsecurity')->check_access($role,'profile');
-        /* end user security */
+
 
         $repository = $this->getDoctrine()->getRepository('AppBundle:user');
         $sql = $repository->createQueryBuilder('u')

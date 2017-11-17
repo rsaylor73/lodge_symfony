@@ -16,6 +16,13 @@ class CommissionController extends Controller
      */
     public function overridecommissionAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('overridecommission');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
     	$em = $this->getDoctrine()->getManager();
     	$reservationID = $request->request->get('reservationID');
 
@@ -39,6 +46,13 @@ class CommissionController extends Controller
      */
     public function updateoverridecommissionAction(Request $request)
     {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('overridecommission');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
     	$em = $this->getDoctrine()->getManager();
 
         $reservationID = $request->request->get('reservationID');  
