@@ -8,7 +8,8 @@
 <div class="row top-buffer">
 	<div class="col-sm-12">
 		<h2>Manage Users
-		<input type="button" value="Add User" class="btn btn-success">
+		<input type="button" value="Add User" class="btn btn-success"
+		onclick="document.location.href='{{path('adduser')}}'">
 		</h2>
 		{% include('flash-messages.html.twig') %}
 	</div>

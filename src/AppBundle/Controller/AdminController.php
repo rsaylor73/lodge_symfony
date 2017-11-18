@@ -115,7 +115,62 @@ class AdminController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        $first_name = $request->request->get('first_name');
+        $last_name = $request->request->get('last_name');
+        $email = $request->request->get('email');
+        $role = $request->request->get('role');
+        $status = $request->request->get('status');
+        $id = $request->request->get('id');
+
+        $sql =  "UPDATE `user` SET 
+        `first_name` = '$first_name',
+        `last_name` = '$last_name',
+        `email` = '$email',
+        `role` = '$role',
+        `status` = '$status'
+        WHERE `id` = '$id'
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
         $text = "The user was updated.";
+        $status = "success";          
+
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('users');
+    }
+
+    /**
+     * @Route("/adduser", name="adduser")
+     */
+    public function adduserAction()
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('users');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        return $this->render('admin/newuser.html.twig');
+    }    
+
+    /**
+     * @Route("/saveuser", name="saveuser")
+     */
+    public function saveuserAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('users');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+
+        $text = "The user was added.";
         $status = "success";          
 
         $this->addFlash($status,$text);
