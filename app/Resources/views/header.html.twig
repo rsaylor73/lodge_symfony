@@ -89,7 +89,7 @@
 <div id="wrapper" class="">
         <!-- Sidebar -->
 {% if app.user %}
-
+{% if app.user.status == "Active" %}
 <div id="sidebar-wrapper" style="background-color:#F8F8F8">
 
 
@@ -176,6 +176,7 @@
   Logout</a></li>
 </ul>
 </div>
+{% endif %}
 {% endif %}
         <!-- Page Content -->
         <div id="page-content-wrapper">

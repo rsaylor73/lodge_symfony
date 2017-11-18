@@ -30,7 +30,17 @@ class customsecurity extends Controller
         $username = $usr->getUsername();
         $role = $usr->getRole();
 
-
+        // check if active
+        $sql = "SELECT `status` FROM `user` WHERE `username` = '$username'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();        
+        while ($row = $result->fetch()) {
+            if ($row['status'] == "Inactive") {
+                return $this->redirectToRoute('inactive');
+                die; // this might not be needed
+            }
+        }
+        // check access
 		$description = "";
 
 		$sql = "

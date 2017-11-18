@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Access Denied</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-danger">
+			Sorry, but your account is <b>Inactive</b>.<br><br>
+			<input type="button" value="Logout" class="btn btn-danger"
+			onclick="document.location.href='{{ logout_path('main') }}'">
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

@@ -1,19 +1,18 @@
 {# app/Resources/views/Emails/registration.html.twig #}
-<h3>Welcome to LiveAboard</h3>
+<h3>Welcome to {{site_name}}</h3>
 
-Hi {{ name }}! You're successfully registered to use LiveAboard<br><br>
-What is LiveAboard?<br><br>
-It is the next generation of usefull online tools including Diver Logs and more to come.<br><br>
+Hi {{name}}! You're successfully registered to use {{site_name}}<br><br>
 
 {# example, assuming you have a route named "login" #}
-To login open the LiveAboard app then click on Diver Log. If you are not logged in you will be prompted for your username and password.<br><br>
-Username: {{ username }}<br>
-Password: {{ password }}<br>
+To login please click on the link below:<br><br>
+URL: {{site_url}}<br>
+Username: {{username}}<br>
+Password: {{password}}<br>
 <br>
 Please store the password in a safe location as the system does not know your plain text password.
 <br><br>
 Thanks you!<br>
-LiveAboard
+Aggressor Fleet
 
 {# Makes an absolute URL to the /images/logo.png file #}
 {#<img src="{{ absolute_url(asset('images/logo.png')) }}">#}

@@ -17,28 +17,28 @@
 <div class="row top-buffer">
 	<div class="col-sm-3">First Name:</div>
 	<div class="col-sm-3">
-		<input type="text" name="first_name" required class="form-control">
+		<input type="text" name="first_name" value="{{first_name}}" required class="form-control">
 	</div>
 </div>
 
 <div class="row top-buffer">
 	<div class="col-sm-3">Last Name:</div>
 	<div class="col-sm-3">
-		<input type="text" name="last_name" required class="form-control">
+		<input type="text" name="last_name" value="{{last_name}}" required class="form-control">
 	</div>
 </div>
 
 <div class="row top-buffer">
 	<div class="col-sm-3">Email:</div>
 	<div class="col-sm-3">
-		<input type="text" name="email" class="form-control">
+		<input type="text" name="email" value="{{email}}" class="form-control">
 	</div>
 </div>
 
 <div class="row top-buffer">
 	<div class="col-sm-3">Username:</div>
 	<div class="col-sm-3">
-		<input type="text" name="username" class="form-control" required>
+		<input type="text" name="username" value="{{username}}" class="form-control" required>
 	</div>
 </div>
 
@@ -46,7 +46,11 @@
 	<div class="col-sm-3">Role:</div>
 	<div class="col-sm-3">
 		<select name="role" required class="form-control">
-			<option value="">Select</option>
+			{% if role == "" %}
+				<option value="">Select</option>
+			{% else %}
+				<option selected value="{{role}}">{{role}} (Default)</option>
+			{% endif %}
 			<optgroup label="Staff Access">
 				<option>agent</option>
 				<option>accounting</option>
@@ -64,7 +68,10 @@
 	<div class="col-sm-3">Status:</div>
 	<div class="col-sm-3">
 		<select name="status" required class="form-control">
-			<option selected>Active</option>
+			{% if status != "" %}
+				<option value="{{status}}">{{status}} (Default)</option>
+			{% endif %}
+			<option>Active</option>
 			<option>Inactive</option>
 		</select>
 	</div>

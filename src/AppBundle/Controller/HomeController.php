@@ -14,12 +14,15 @@ class HomeController extends Controller
      */
     public function indexAction()
     {
-        $usr = $this->get('security.token_storage')->getToken()->getUser();
-        $role = $usr->getRole();
-        return $this->render('default/index.html.twig',[
-            'role' => $role,
-        ]);
 
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('dashboard');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        return $this->render('default/index.html.twig');
     }
 
     /**
@@ -32,5 +35,14 @@ class HomeController extends Controller
         	'section' => $section,
         ]);
     }
+
+    /**
+     * @Route("/inactive", name="inactive")
+     */
+    public function inactiveAction(Request $request)
+    {
+        $section=$request->query->get('section');
+        return $this->render('default/inactive.html.twig');
+    }    
 
 }
