@@ -18,6 +18,10 @@
   </div>
 </div>
 
+{% if details.status == "Cancelled" %}
+{% include('templates/cancel.html.twig') %}
+{% endif %}
+
 <div class="row top-buffer">
 	<div class="col-sm-8">
 		<h3>Notes 
@@ -28,6 +32,22 @@
 		</h3>
 	</div>
 </div>
+
+{% for n in notes %}
+<div class="row top-buffer">
+	<div class="col-sm-1">{{n.date}}</div>
+	<div class="col-sm-3">{{n.note}}</div>
+	<div class="col-sm-1">
+		<form action="{{path('editreservationnote')}}" method="post" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<input type="hidden" name="noteID" value="{{n.noteID}}">
+		<input type="submit" value="Edit" class="btn btn-primary">
+		</form>
+	</div>
+</div>
+<div class="row"><div class="col-sm-5"><hr></div></div>
+
+{% endfor %}
 
 {% endblock %}
 

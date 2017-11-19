@@ -18,12 +18,8 @@
 	</div>
 </div>
 
-{% if status == "Cancelled" %}
-<div class="row top-buffer">
-	<div class="col-sm-8">
-		<div class="alert alert-danger">This reservation is currently <b>CANCELLED</b></div>
-	</div>
-</div>
+{% if details.status == "Cancelled" %}
+{% include('templates/cancel.html.twig') %}
 {% endif %}
 
 <div class="row top-buffer">

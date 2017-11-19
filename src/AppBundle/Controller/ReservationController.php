@@ -359,6 +359,8 @@ class ReservationController extends Controller
             $reservationID = $request->query->get('reservationID');
         }
 
+        $details = $this->get('reservationdetails')->getresdetails($reservationID);
+
         $sql = "
         SELECT
             `r`.`nights`,
@@ -529,6 +531,7 @@ class ReservationController extends Controller
             'reseller_data' => $reseller_data,
             'reselleragent_data' => $reselleragent_data,
             'contact_data' => $contact_data,
+            'details' => $details,
         ]);
     }
 
@@ -550,6 +553,8 @@ class ReservationController extends Controller
         if ($reservationID == "") {
             $reservationID = $request->query->get('reservationID');
         }
+
+        $details = $this->get('reservationdetails')->getresdetails($reservationID);
 
         $sql = "
         SELECT
@@ -595,28 +600,7 @@ class ReservationController extends Controller
             'reservationID' => $reservationID,
             'tab' => '2',
             'data' => $data,
-        ]);
-    }
-
-    /**
-     * @Route("/viewreservationcancel", name="viewreservationcancel")
-     * @Route("/viewreservationcancel/{reservationID}")
-     */
-    public function viewreservationcancelAction(Request $request,$reservationID='')
-    {
-        /* user security needed in each controller function */
-        $check = $this->get('customsecurity')->check_access('reservations');
-        if ($check != "ok") {
-            return($check);
-        }
-        /* end user security */
-
-        $em = $this->getDoctrine()->getManager();
-
-
-        return $this->render('reservations/viewreservationcancel.html.twig',[
-            'reservationID' => $reservationID,
-            'tab' => '5',
+            'details' => $details,
         ]);
     }
 

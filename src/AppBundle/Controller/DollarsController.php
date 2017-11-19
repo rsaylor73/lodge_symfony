@@ -37,6 +37,8 @@ class DollarsController extends Controller
             $reservationID = $request->query->get('reservationID');
         }
 
+        $details = $this->get('reservationdetails')->getresdetails($reservationID);
+
         $sql = "
         SELECT
         	SUM(`i`.`nightly_rate`) AS 'total',
@@ -145,6 +147,7 @@ class DollarsController extends Controller
             'commission' => $commission,
             'comm_amount' => $comm_amount,
             'balance' => $balance,
+            'details' => $details,
         ]);
     }
 

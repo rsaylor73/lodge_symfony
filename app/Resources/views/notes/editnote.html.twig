@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
+
+<form action="{{path('updatereservationnote')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<input type="hidden" name="noteID" value="{{noteID}}">
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>Edit Note</h3></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<textarea name="note" class="form-control">{{note}}</textarea>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<input type="submit" value="Update Note" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning" 
+		onclick="document.location.href='{{path('viewreservationnotes')}}/{{reservationID}}'">
+	</div>
+</div>
+
+</form>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

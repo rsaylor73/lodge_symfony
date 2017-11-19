@@ -18,6 +18,23 @@
   </div>
 </div>
 
+{% if details.status == "Cancelled" %}
+{% include('templates/cancel.html.twig') %}
+{% endif %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3>Cancel</h3>
+		{% if details.status == "Cancelled" %}
+			This reservation is already cancelled.
+		{% else %}
+			<form action="{{path('cancelreservation')}}" method="post" style="display:inline">
+			<input type="hidden" name="reservationID" value="{{reservationID}}">
+			<input type="submit" value="Cancel Reservation" class="btn btn-danger">
+			</form>
+		{% endif %}
+	</div>
+</div>
 
 {% endblock %}
 
