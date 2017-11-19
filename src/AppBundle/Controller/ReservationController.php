@@ -599,28 +599,6 @@ class ReservationController extends Controller
     }
 
     /**
-     * @Route("/viewreservationnotes", name="viewreservationnotes")
-     * @Route("/viewreservationnotes/{reservationID}")
-     */
-    public function viewreservationnotesAction(Request $request,$reservationID='')
-    {
-        /* user security needed in each controller function */
-        $check = $this->get('customsecurity')->check_access('reservations');
-        if ($check != "ok") {
-            return($check);
-        }
-        /* end user security */
-
-        $em = $this->getDoctrine()->getManager();
-
-
-        return $this->render('reservations/viewreservationnotes.html.twig',[
-            'reservationID' => $reservationID,
-            'tab' => '4',
-        ]);
-    }
-
-    /**
      * @Route("/viewreservationcancel", name="viewreservationcancel")
      * @Route("/viewreservationcancel/{reservationID}")
      */

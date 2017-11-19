@@ -57,18 +57,22 @@ class RegistrationController extends Controller
                 $name = $row['first_name'] . " " . $row['last_name'];
                 $username = $row['username'];
 
+                $title = "Forgot password for " . $site_name;
+
                 // send welcome email
-                $message = (new \Swift_Message('Welcome to LiveAboard'))
+                $message = (new \Swift_Message($title))
                     ->setFrom($site_email)
                     ->setTo($email)
-                    ->setSubject('Forgot password for LiveAboard')
+                    ->setSubject($title)
                     ->setBody(
                         $this->renderView(
                             'Emails/forgotpassword.html.twig',
                             array(
                                 'name' => $name,
                                 'username' => $username,
-                                'password' => $new_password
+                                'password' => $new_password,
+                                'site_url' => $site_url,
+                                'site_name' => $site_name
                             )
                         ),
                         'text/html'
