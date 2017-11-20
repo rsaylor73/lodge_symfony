@@ -25,16 +25,52 @@
 <div class="row top-buffer">
 	<div class="col-sm-8">
 		<h3>Cancel</h3>
-		{% if details.status == "Cancelled" %}
-			This reservation is already cancelled.
-		{% else %}
-			<form action="{{path('cancelreservation')}}" method="post" style="display:inline">
-			<input type="hidden" name="reservationID" value="{{reservationID}}">
-			<input type="submit" value="Cancel Reservation" class="btn btn-danger">
-			</form>
-		{% endif %}
 	</div>
 </div>
+
+{% if details.status == "Cancelled" %}
+<div class="row top-buffer">
+	<div class="col-sm-6 table-responsive">
+	{% if cxl_inventory != "" %}
+		<table class="table table-hover table-striped">
+			<thead>
+				<tr>
+					<th><b>Guest</b></th>
+					<th><b>Tent</b></th>
+					<th><b>Bed</b></th>
+					<th><b>Date Cxl</b></th>
+					<th><b>Cxl Reason</b></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for i in cxl_inventory %}
+			<tr>
+				<td><a href="mailto:{{i.email}}">{{i.first}} {{i.middle}} {{i.last}}</a></td>
+				<td>{{i.description}}</td>
+				<td>{{i.bed}}</td>
+				<td>{{i.date_cancelled}}</td>
+				<td>{{i.cxl_reason}}</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<font color="blue">No cancelled inventory could be found.</font>
+	{% endif %}
+	</div>
+</div>
+{% else %}
+<div class="row top-buffer">
+	<div class="col-sm-6">
+		<form action="{{path('cancelreservation')}}" method="post" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<textarea name="cxl_reason" class="form-control" placeholder="Reason for cancellation..."></textarea><br>
+		<input type="submit" value="Cancel Reservation" class="btn btn-danger">
+		</form>
+	</div>
+</div>
+{% endif %}
+
 
 {% endblock %}
 
