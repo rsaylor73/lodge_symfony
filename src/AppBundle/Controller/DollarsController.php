@@ -70,7 +70,11 @@ class DollarsController extends Controller
             $total = $row['total'];
             $manual_commission_override = $row['manual_commission_override'];
         	$i++;
-            $transfer_amount = $this->transfer_amount($row['nights']);
+            
+            $transfer_amount = $this
+            ->get('reservationdetails')
+            ->transfer_amount($details['nights']);            
+
             $pax = $row['pax'] + $row['children'];
             $transfer_total = $transfer_amount * $pax;
         }
@@ -149,28 +153,6 @@ class DollarsController extends Controller
             'balance' => $balance,
             'details' => $details,
         ]);
-    }
-
-    private function transfer_amount($nights) {
-        $amount = "";
-        switch ($nights) {
-            case "3":
-            $amount = "150";
-            break;
-            case "4":
-            $amount = "150";
-            break;
-            case "5":
-            $amount = "180";
-            break;
-            case "6":
-            $amount = "210";
-            break;
-            default:
-            $amount = "150";
-            break;
-        }
-        return($amount);
     }
 
     private function payment_history($em,$reservationID) {

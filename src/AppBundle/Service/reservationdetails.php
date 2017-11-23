@@ -25,7 +25,11 @@ class reservationdetails extends Controller
     	$em = $this->em;
     	$sql = "
     	SELECT
-			`r`.`status`
+			`r`.`status`,
+            `r`.`pax`,
+            `r`.`children`,
+            `r`.`nights`,
+            `r`.`manual_commission_override`
     	FROM
     		`reservations` r
 
@@ -41,6 +45,28 @@ class reservationdetails extends Controller
         	}
         } 
         return($details);   	
+    }
+
+    public function transfer_amount($nights) {
+        $amount = "";
+        switch ($nights) {
+            case "3":
+            $amount = "150";
+            break;
+            case "4":
+            $amount = "150";
+            break;
+            case "5":
+            $amount = "180";
+            break;
+            case "6":
+            $amount = "210";
+            break;
+            default:
+            $amount = "150";
+            break;
+        }
+        return($amount);
     }
 
 }

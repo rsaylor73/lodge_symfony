@@ -26,6 +26,17 @@ class InvoiceController extends Controller
         $reservationID = $request->query->get('reservationID');
         $mode = $request->query->get('mode');
 
+        // tent total
+        $total = $this->tenttotal($em,$reservationID);
+
+        $details = $this
+            ->get('reservationdetails')
+            ->getresdetails($reservationID);
+
+        $transfer_amount = $this
+            ->get('reservationdetails')
+            ->transfer_amount($details['nights']);
+
         switch ($mode) {
             case "view":
 
@@ -53,7 +64,34 @@ class InvoiceController extends Controller
 
 
 
+    private function tenttotal($em,$reservationID) {
+        $sql = "
+        SELECT
+            SUM(`i`.`nightly_rate`) AS 'total',
+            MIN(`i`.`nightly_rate`) AS 'nightly_rate',
+            `r`.`pax`,
+            `r`.`children`,
+            `r`.`nights`,
+            `r`.`manual_commission_override`
 
+        FROM
+            `inventory` i
+
+        LEFT JOIN `reservations` r ON `i`.`reservationID` = `r`.`reservationID`
+
+        WHERE
+            `i`.`reservationID` = '$reservationID'
+
+        GROUP BY `r`.`pax`, `r`.`children`, `r`.`nights`
+        ";
+        $total = "0";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $total = $row['total'];
+        }
+        return($total);
+    }
 
 
 
