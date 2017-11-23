@@ -33,9 +33,75 @@ class InvoiceController extends Controller
             ->get('reservationdetails')
             ->getresdetails($reservationID);
 
+        // transfers
         $transfer_amount = $this
             ->get('reservationdetails')
             ->transfer_amount($details['nights']);
+
+        // payment history
+        $payment_history = $this
+        ->get('reservationdetails')
+        ->payment_history($reservationID);
+
+        $payment_total = "0";
+        if(is_array($payment_history)) {
+            foreach($payment_history as $key=>$value) {
+                foreach($value as $key2=>$value2) {
+                    if ($key2 == "amount") {
+                        $payment_total = $payment_total + $value2;
+                    }
+                }
+            }
+        }
+
+        // discount history
+        $discount_history = $this
+        ->get('reservationdetails')
+        ->discount_history($reservationID);
+
+        $discount_total = "0";
+        if(is_array($discount_history)) {
+            foreach($discount_history as $key=>$value) {
+                foreach($value as $key2=>$value2) {
+                    if ($key2 == "amount") {
+                        $discount_total = $discount_total + $value2;
+                    }
+                }
+            }
+        }
+
+        // commission
+        $sql = "
+        SELECT
+            `rs`.`commission`
+        FROM
+            `reservations` r
+
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $commission = "0";
+        while ($row = $result->fetch()) {
+            $commission = $row['commission'];
+        }
+
+        if ($manual_commission_override > 0) {
+            $commission = $manual_commission_override;
+        }
+
+        if ($commission == "") {
+            $commission = "0";
+        }
+
+        $total_commissionable = $total - $discount_total;
+        $comm_amount = floor($total_commissionable * ($commission / 100));
+
+        // balance
+        $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
 
         switch ($mode) {
             case "view":

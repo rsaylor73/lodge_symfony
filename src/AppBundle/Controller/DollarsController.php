@@ -80,7 +80,10 @@ class DollarsController extends Controller
         }
 
         // payment history
-        $payment_history = $this->payment_history($em,$reservationID);
+        $payment_history = $this
+        ->get('reservationdetails')
+        ->payment_history($reservationID);
+
         $payment_total = "0";
         if(is_array($payment_history)) {
             foreach($payment_history as $key=>$value) {
@@ -93,7 +96,10 @@ class DollarsController extends Controller
         }
 
         // discount history
-        $discount_history = $this->discount_history($em,$reservationID);
+        $discount_history = $this
+        ->get('reservationdetails')
+        ->discount_history($reservationID);
+
         $discount_total = "0";
         if(is_array($discount_history)) {
             foreach($discount_history as $key=>$value) {
@@ -155,71 +161,6 @@ class DollarsController extends Controller
         ]);
     }
 
-    private function payment_history($em,$reservationID) {
-        $sql = "
-        SELECT
-            `p`.`paymentID`,
-            `p`.`type`,
-            `p`.`transactionID`,
-            `p`.`credit_description`,
-            `p`.`checkNumber`,
-            `p`.`check_description`,
-            `p`.`wire_description`,
-            `p`.`amount`,
-            DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date'
 
-        FROM
-            `payments` p
-
-        WHERE
-            `p`.`reservationID` = '$reservationID'
-
-        ORDER BY DATE_FORMAT(`p`.`payment_date`,'%Y%m%d') ASC
-        ";
-
-        $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-
-        $i = "0";
-        $payments = "";
-        while ($row = $result->fetch()) {
-            foreach($row as $key=>$value) {
-                $payments[$i][$key] = $value;
-            }
-            $i++; 
-        }
-        return($payments);
-    }
-
-    private function discount_history($em,$reservationID) {
-        $AF_DB = $this->container->getParameter('AF_DB');
-
-        $sql = "
-        SELECT
-            `d`.`discountID`,
-            `r`.`general_discount_reason` AS 'details',
-            `d`.`amount`,
-            DATE_FORMAT(`d`.`date`, '%m/%d/%Y') AS 'date'
-
-        FROM
-            `discounts` d, `$AF_DB`.`general_discount_reasons` r
-
-        WHERE
-            `d`.`reservationID` = '$reservationID'
-            AND `d`.`reasonID` = `r`.`general_discount_reasonID`
-        ";
-        $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-
-        $i = "0";
-        $discounts = "";
-        while ($row = $result->fetch()) {
-            foreach($row as $key=>$value) {
-                $discounts[$i][$key] = $value;
-            }
-            $i++; 
-        }
-        return($discounts);        
-    }
 
 }
