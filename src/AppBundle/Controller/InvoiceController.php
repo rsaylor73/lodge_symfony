@@ -23,6 +23,7 @@ class InvoiceController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
         $reservationID = $request->query->get('reservationID');
         $mode = $request->query->get('mode');
 
@@ -37,6 +38,7 @@ class InvoiceController extends Controller
         $transfer_amount = $this
             ->get('reservationdetails')
             ->transfer_amount($details['nights']);
+        $transfer_total = $transfer_amount * $details['nights'];
 
         // payment history
         $payment_history = $this
@@ -89,6 +91,7 @@ class InvoiceController extends Controller
             $commission = $row['commission'];
         }
 
+        $manual_commission_override = $details['manual_commission_override'];
         if ($manual_commission_override > 0) {
             $commission = $manual_commission_override;
         }
@@ -103,9 +106,54 @@ class InvoiceController extends Controller
         // balance
         $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
 
+        $date = date("m/d/Y");
+
+        // contact details
+        $first = "";
+        $last = "";
+        $address1 = "";
+        $address2 = "";
+        $city = "";
+        $state = "";
+        $province = "";
+        $zip = "";
+        $country = "";
+        $begin_date = "";
+        $end_date = "";
+        $print = "";
+        $company = "";
+
+
         switch ($mode) {
             case "view":
+            return $this->render('invoice/invoice.html.twig',[
+                'reservationID' => $reservationID,
+                'tab' => '3',
+                'total' => $total,
+                'transfer_total' => $transfer_total,
+                'commission' => $commission,
+                'total_commissionable' => $total_commissionable,
+                'discount_total' => $discount_total,
+                'comm_amount' => $comm_amount,
+                'balance' => $balance,
+                'payment_total' => $payment_total,
+                'first' => $first,
+                'last' => $last,
+                'address1' => $address1,
+                'address2' => $address2,
+                'city' => $city,
+                'state' => $state,
+                'province' => $province,
+                'country' => $country,
+                'zip' => $zip,
+                'begin_date' => $begin_date,
+                'end_date' => $end_date,
+                'print' => $print,
+                'date' => $date,
+                'company' => $company,
+                'nights' => $details['nights'],
 
+            ]);
             break;
 
             case "print":
@@ -125,6 +173,15 @@ class InvoiceController extends Controller
         $this->addFlash('success','Test');
         return $this->redirectToRoute('viewreservation',[
             'reservationID' => $reservationID,
+            'tab' => '3',
+            'total' => $total,
+            'transfer_total' => $transfer_total,
+            'commission' => $commission,
+            'total_commissionable' => $total_commissionable,
+            'discount_total' => $discount_total,
+            'comm_amount' => $comm_amount,
+            'balance' => $balance,
+            'payment_total' => $payment_total,   
         ]);
     }
 

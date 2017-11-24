@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=320, initial-scale=1" />
-  <title>{$reservationID}</title>
+  <title>{{reservationID}}</title>
   <style type="text/css">
 
     /* ----- Client Fixes ----- */
@@ -169,11 +169,11 @@
 </head>
 <body style="padding:0; margin:0; display:block; background:#ffffff; -webkit-text-size-adjust:none">
 
-{if $print eq "Yes"}
+{% if print == "Yes" %}
 <script>
 window.print();
 </script>
-{/if}
+{% endif %}
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -192,7 +192,7 @@ window.print();
                 <tr>
                   <td class="header center" width="100%">
                     <a href="#">
-                      <img src="https://www.liveaboardfleet.net/lodge/assets/img/logo.png">
+                      <img src="{{asset('assets/img/logo.png')}}">
                     </a>
                   </td>
                 </tr>
@@ -216,23 +216,23 @@ window.print();
                 <table cellspacing="0" cellpadding="0" width="100%">
                   <tr>
                   <td class="left" style="padding-bottom:20px; text-align:left; vertical-align: text-top;">
-                    <b>Invoice Date:</b> {$date}<br><br>
+                    <b>Invoice Date:</b> {{ date }}<br><br>
 
-		    {if $company ne ""}
-			{$company}<br>
-		    {/if}
+		                {% if company != "" %}
+			               {{company}}<br>
+		                {% endif %}
 
-                    {$first} {$last}<br>
-                    {$address1}<br>
-                    {if $address2 ne ""}
-                    {$address2}<br>
-                    {/if}
-                    {$city}, {$state}{$province} {$zip}<br>
-                    {$country}<br>
+                    {{first}} {{last}}<br>
+                    {{address1}}<br>
+                    {% if address2 != "" %}
+                    {{address2}}<br>
+                    {% endif %}
+                    {{city}}, {{state}}{{province}} {{zip}}<br>
+                    {{country}}<br>
 
                   </td>
                   <td class="right" style="padding-bottom:20px; text-align:right; vertical-align: text-top;">
-                    <h2>Confirmation # {$reservationID}</h2>
+                    <h2>Confirmation # {{reservationID}}</h2>
                     <b>Mail Payments to:</b><br>
                     WayneWorks Marine, LLC<br>
                     209 Hudson Trace<br>
@@ -249,20 +249,19 @@ window.print();
                 <table cellspacing="0" cellpadding="0" width="100%">
                 <tr><td class="border-bottom" height="5" colspan="2"><h2>Reservation Details</h2></td></tr>
 
-                <tr><td><b>Tents</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{$tents}</td></tr>
-                <tr><td><b>Nights</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{$nights}</td></tr>
-                <tr><td><b>Check-In</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{$begin_date}</td></tr>
-                <tr><td><b>Check-Out</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{$end_date}</td></tr>
+                <tr><td><b>Nights</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{nights}}</td></tr>
+                <tr><td><b>Check-In</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{begin_date}}</td></tr>
+                <tr><td><b>Check-Out</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{end_date}}</td></tr>
 
 
                 <tr><td colspan="2"><br></td></tr>
 
                 <tr><td class="border-bottom" height="5" colspan="2"><h2>Balance Summary</h2></td></tr>
-                <tr><td><b>Lodge Rate:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${$rate}</td></tr>
-                <tr><td><b>Line Items/Transfers:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${$line}</td></tr>
-                <tr><td><b>Payments:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${$payments}</td></tr>
-                <tr><td><b>Discounts:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${$discounts}</td></tr>
-                <tr><td><b>Amount Due:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${$amount_due}</td></tr>
+                <tr><td><b>Lodge Rate:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{total}}</td></tr>
+                <tr><td><b>Transfers:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{transfer_total}}</td></tr>
+                <tr><td><b>Payments:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{payment_total}}</td></tr>
+                <tr><td><b>Discounts:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{discount_total}}</td></tr>
+                <tr><td><b>Amount Due:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{balance}}</td></tr>
 
 
                 </table>

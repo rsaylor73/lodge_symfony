@@ -75,7 +75,7 @@ class DollarsController extends Controller
             ->get('reservationdetails')
             ->transfer_amount($details['nights']);            
 
-            $pax = $row['pax'] + $row['children'];
+            $pax = $details['pax'] + $details['children'];
             $transfer_total = $transfer_amount * $pax;
         }
 
@@ -157,7 +157,7 @@ class DollarsController extends Controller
             'commission' => $commission,
             'comm_amount' => $comm_amount,
             'balance' => $balance,
-            'details' => $details,
+            'details' => $details,         
         ]);
     }
 
