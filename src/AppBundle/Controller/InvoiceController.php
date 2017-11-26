@@ -39,10 +39,11 @@ class InvoiceController extends Controller
             ->getresdetails($reservationID);
 
         // transfers
+        $nights = $details['nights'] - 1;
         $transfer_amount = $this
             ->get('reservationdetails')
-            ->transfer_amount($details['nights']);
-        $transfer_total = $transfer_amount * $details['nights'];
+            ->transfer_amount($nights);
+        $transfer_total = $transfer_amount * $nights;
 
         // payment history
         $payment_history = $this

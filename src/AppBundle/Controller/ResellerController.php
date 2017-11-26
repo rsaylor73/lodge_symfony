@@ -117,4 +117,88 @@ class ResellerController extends Controller
         ]);       
     }
 
+
+    /**
+     * @Route("/listresellers", name="listresellers") 
+     */
+    public function listresellersAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $company = $request->request->get('company');
+        $status = $request->request->get('status');
+        $city = $request->request->get('city');
+
+        $company_sql = "";
+        $status_sql = "";
+        $city_sql = "";
+
+        if ($company != "") {
+            $company_sql = "AND `r`.`company` LIKE '%$company%'";
+        }
+
+        if ($city != "") {
+            $city_sql = "AND `r`.`city` LIKE '%$city%'";
+        }
+
+        if ($status != "") {
+            $status_sql = "AND `r`.`status` = '$status'";
+        } else {
+            $status_sql = "AND `r`.`status` = 'Active'";
+        }
+
+        $sql = "
+        SELECT
+            `r`.`resellerID`,
+            `rt`.`type`,
+            `r`.`status`,
+            `r`.`commission`,
+            `r`.`company`,
+            `r`.`city`,
+            `cn`.`country`,
+            DATE_FORMAT(`r`.`created`,'%m/%d/%Y') AS 'created_date'
+
+        FROM
+            `$AF_DB`.`resellers` r
+
+        LEFT JOIN `$AF_DB`.`reseller_types` rt ON 
+            `r`.`reseller_typeID` = `rt`.`reseller_typeID`
+        LEFT JOIN `$AF_DB`.`countries` cn ON
+            `r`.`countryID` = `cn`.`countryID`
+
+        WHERE
+            1
+            $status_sql
+            $company_sql
+            $city_sql
+
+        ORDER BY `r`.`created` DESC, `r`.`company` ASC
+
+        LIMIT 50
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "";
+        $data = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data[$i][$key] = $value;
+            }
+            $i++;
+        }
+
+        return $this->render('resellers/listresellers.html.twig',[
+            'data' => $data,
+        ]);
+    }
+
 }

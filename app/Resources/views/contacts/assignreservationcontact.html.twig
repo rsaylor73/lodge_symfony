@@ -12,13 +12,13 @@
 	</div>
 </div>
 
-<ul class="nav nav-tabs">
-  <li><a href="{{path('viewreservation')}}/{{reservationID}}">Details</a></li>
-  <li class="active"><a href="{{path('viewreservationguest')}}/{{reservationID}}">Guests</a></li>
-  <li><a href="{{path('viewreservationdollars')}}/{{reservationID}}">Dollars</a></li>
-  <li><a href="{{path('viewreservationnotes')}}/{{reservationID}}">Notes</a></li>
-  <li><a href="{{path('viewreservationcancel')}}/{{reservationID}}">Cancel</a></li>
-</ul>
+{% set tab =  "1" %}
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
