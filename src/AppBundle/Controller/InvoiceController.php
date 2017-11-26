@@ -27,6 +27,10 @@ class InvoiceController extends Controller
         $reservationID = $request->query->get('reservationID');
         $mode = $request->query->get('mode');
 
+        $site_url = $this->container->getParameter('site_url');
+        $site_name = $this->container->getParameter('site_name');
+        $site_email = $this->container->getParameter('site_email');
+
         // tent total
         $total = $this->tenttotal($em,$reservationID);
 
@@ -109,17 +113,17 @@ class InvoiceController extends Controller
         $date = date("m/d/Y");
 
         // contact details
-        $first = "";
-        $last = "";
-        $address1 = "";
-        $address2 = "";
-        $city = "";
-        $state = "";
-        $province = "";
-        $zip = "";
-        $country = "";
-        $begin_date = "";
-        $end_date = "";
+        $first = $details['first'];
+        $last = $details['last'];
+        $address1 = $details['address1'];
+        $address2 = $details['address2'];
+        $city = $details['city'];
+        $state = $details['state'];
+        $province = $details['province'];
+        $zip = $details['zip'];
+        $country = $details['country'];
+        $begin_date = $details['checkin_date'];
+        $end_date = $details['checkout_date'];
         $print = "";
         $company = "";
 
@@ -157,10 +161,86 @@ class InvoiceController extends Controller
             break;
 
             case "print":
-
+            $print = "Yes";
+            return $this->render('invoice/invoice.html.twig',[
+                'reservationID' => $reservationID,
+                'tab' => '3',
+                'total' => $total,
+                'transfer_total' => $transfer_total,
+                'commission' => $commission,
+                'total_commissionable' => $total_commissionable,
+                'discount_total' => $discount_total,
+                'comm_amount' => $comm_amount,
+                'balance' => $balance,
+                'payment_total' => $payment_total,
+                'first' => $first,
+                'last' => $last,
+                'address1' => $address1,
+                'address2' => $address2,
+                'city' => $city,
+                'state' => $state,
+                'province' => $province,
+                'country' => $country,
+                'zip' => $zip,
+                'begin_date' => $begin_date,
+                'end_date' => $end_date,
+                'print' => $print,
+                'date' => $date,
+                'company' => $company,
+                'nights' => $details['nights'],
+            ]);
             break;
 
             case "email":
+                $name = $details['first'] . " " . $details['last'];
+                $email = $details['email'];
+
+                $title = "Aggressor Safari Lodge Conf # $reservationID Invoice";
+
+                // send welcome email
+                $message = (new \Swift_Message($title))
+                    ->setFrom($site_email)
+                    ->setTo($email)
+                    ->setSubject($title)
+                    ->setBody(
+                        $this->renderView(
+                            'invoice/invoice.html.twig',
+                            array(
+                            'reservationID' => $reservationID,
+                            'tab' => '3',
+                            'total' => $total,
+                            'transfer_total' => $transfer_total,
+                            'commission' => $commission,
+                            'total_commissionable' => $total_commissionable,
+                            'discount_total' => $discount_total,
+                            'comm_amount' => $comm_amount,
+                            'balance' => $balance,
+                            'payment_total' => $payment_total,
+                            'first' => $first,
+                            'last' => $last,
+                            'address1' => $address1,
+                            'address2' => $address2,
+                            'city' => $city,
+                            'state' => $state,
+                            'province' => $province,
+                            'country' => $country,
+                            'zip' => $zip,
+                            'begin_date' => $begin_date,
+                            'end_date' => $end_date,
+                            'print' => $print,
+                            'date' => $date,
+                            'company' => $company,
+                            'nights' => $details['nights']
+                            )
+                        ),
+                        'text/html'
+                    )
+                ;
+                $this->get('mailer')->send($message);
+                $this->addFlash('success',"The invoice was emailed to $email.");
+                return $this->redirectToRoute('viewreservation',[
+                    'reservationID' => $reservationID,
+                ]);
 
             break;
 

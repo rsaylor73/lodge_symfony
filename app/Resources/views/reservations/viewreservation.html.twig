@@ -35,8 +35,8 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-3">
-		<a href="#"><i class="fa fa-print"></i></a>&nbsp;
-		<a href="#"><i class="fa fa-envelope-o"></i></a>&nbsp;
+		<a href="{{path('invoice')}}?reservationID={{reservationID}}&mode=print" target="_blank"><i class="fa fa-print"></i></a>&nbsp;
+		<a href="{{path('invoice')}}?reservationID={{reservationID}}&mode=email"><i class="fa fa-envelope-o"></i></a>&nbsp;
 		<a href="{{path('invoice')}}?reservationID={{reservationID}}&mode=view" target="_blank"><i class="fa fa-eye"></i></a>
 	</div>
 	<div class="col-sm-3"><a href="mailto:{{email}}">{{first_name}} {{last_name}}</a></div>

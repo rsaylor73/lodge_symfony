@@ -23,15 +23,39 @@ class reservationdetails extends Controller
 
     public function getresdetails($reservationID) {
     	$em = $this->em;
+        $container = $this->container;
+
+        $AF_DB = $container->getParameter('AF_DB');
+
     	$sql = "
     	SELECT
-			`r`.`status`,
-            `r`.`pax`,
-            `r`.`children`,
-            `r`.`nights`,
-            `r`.`manual_commission_override`
+		`r`.`status`,
+		`r`.`pax`,
+		`r`.`children`,
+		`r`.`nights`,
+		`r`.`manual_commission_override`,
+        DATE_FORMAT(`r`.`checkin_date`, '%m/%d/%Y') AS 'checkin_date',
+        DATE_FORMAT(
+            DATE_ADD(`r`.`checkin_date`, INTERVAL `r`.`nights` DAY),
+            '%m/%d/%Y'
+        ) AS 'checkout_date',
+		`c`.`first`,
+		`c`.`middle`,
+		`c`.`last`,
+        `c`.`email`,
+		`c`.`address1`,
+		`c`.`address2`,
+		`c`.`city`,
+		`c`.`state`,
+		`c`.`province`,
+		`c`.`zip`,
+		`ct`.`country`
+
     	FROM
     		`reservations` r
+
+        LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`countryID` = `ct`.`countryID`
 
     	WHERE
     		`r`.`reservationID` = '$reservationID'
