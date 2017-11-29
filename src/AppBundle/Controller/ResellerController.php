@@ -201,4 +201,249 @@ class ResellerController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/addreseller", name="addreseller") 
+     */
+    public function addresellerAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $states = $this->get('commonservices')->get_states();
+        $countries = $this->get('commonservices')->get_country();
+        $resellertypes = $this->get('commonservices')->get_resellertype();
+
+        return $this->render('resellers/addreseller.html.twig',[
+            'states' => $states,
+            'countries' => $countries,
+            'resellertypes' => $resellertypes,
+        ]);
+    }                
+
+    /**
+     * @Route("/editreseller", name="editreseller") 
+     */
+    public function editresellerAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $resellerID = $request->request->get('resellerID');
+        $states = $this->get('commonservices')->get_states();
+        $countries = $this->get('commonservices')->get_country();
+        $resellertypes = $this->get('commonservices')->get_resellertype();
+
+        $sql = "
+        SELECT
+            `r`.`resellerID`,
+            `r`.`reseller_typeID`,
+            `r`.`status`,
+            `r`.`commission`,
+            `r`.`company`,
+            `r`.`first`,
+            `r`.`middle`,
+            `r`.`last`,
+            `r`.`address`,
+            `r`.`city`,
+            `r`.`state`,
+            `r`.`zip`,
+            `r`.`countryID`,
+            `r`.`email`,
+            `r`.`url`,
+            `r`.`phone`,
+            `r`.`phone2`,
+            `r`.`province`
+
+        FROM
+            `$AF_DB`.`resellers` r
+
+        WHERE
+            `r`.`resellerID` = '$resellerID'
+        ";
+
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $company = ""; $reseller_typeID = "";
+        $first = ""; $middle = ""; $last = "";
+        $address = ""; $state = ""; $province = "";
+        $countryID = ""; $city = ""; $email = "";
+        $url = ""; $phone = ""; $phone2 = "";
+        $status = ""; $commission = ""; $zip = "";
+
+        while ($row = $result->fetch()) {
+            $company = $row['company'];
+            $reseller_typeID = $row['reseller_typeID'];
+            $first = $row['first'];
+            $middle = $row['middle'];
+            $last = $row['last'];
+            $address = $row['address'];
+            $city = $row['city'];
+            $state = $row['state'];
+            $province = $row['province'];
+            $countryID = $row['countryID'];
+            $email = $row['email'];
+            $url = $row['url'];
+            $phone = $row['phone'];
+            $phone2 = $row['phone2'];
+            $status = $row['status'];
+            $commission = $row['commission'];
+            $zip = $row['zip'];
+
+        }
+        return $this->render('resellers/editreseller.html.twig',[
+            'company' => $company,
+            'resellerID' => $resellerID,
+            'reseller_typeID' => $reseller_typeID,
+            'first' => $first,
+            'middle' => $middle,
+            'last' => $last,
+            'address' => $address,
+            'city' => $city,
+            'state' => $state,
+            'province' => $province,
+            'countryID' => $countryID,
+            'states' => $states,
+            'countries' => $countries,
+            'email' => $email,
+            'url' => $url,
+            'phone' => $phone,
+            'phone2' => $phone2,
+            'resellertypes' => $resellertypes,
+            'status' => $status,
+            'zip' => $zip,
+            'commission' => $commission,
+        ]);
+    }
+
+    /**
+     * @Route("/updatereseller", name="updatereseller") 
+     */
+    public function updateresellerAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $resellerID = $request->request->get('resellerID');
+        $reseller_typeID = $request->request->get('reseller_typeID');
+        $company = $request->request->get('company');
+        $first = $request->request->get('first');
+        $middle = $request->request->get('middle');
+        $last = $request->request->get('last');
+        $email = $request->request->get('email');
+        $address = $request->request->get('address');
+        $city = $request->request->get('city');
+        $state = $request->request->get('state');
+        $province = $request->request->get('province');
+        $countryID = $request->request->get('countryID');
+        $url = $request->request->get('url');
+        $phone = $request->request->get('phone');
+        $phone2 = $request->request->get('phone2');
+        $status = $request->request->get('status');
+        $commission = $request->request->get('commission');
+        $zip = $request->request->get('zip');
+
+        $sql = "UPDATE `$AF_DB`.`resellers` SET
+        `reseller_typeID` = '$reseller_typeID',
+        `company` = ?,
+        `first` = '$first',
+        `middle` = '$middle',
+        `last` = '$last',
+        `email` = '$email',
+        `address` = '$address',
+        `city` = '$city',
+        `state` = '$state',
+        `province` = '$province',
+        `countryID` = '$countryID',
+        `url` = '$url',
+        `phone` = '$phone',
+        `phone2` = '$phone2',
+        `status` = '$status',
+        `zip` = '$zip',
+        `commission` = '$commission'
+        WHERE `resellerID` = '$resellerID'
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->bindValue(1, $company);
+        $result->execute(); 
+
+        $this->addFlash('success','The reseller was updated');
+        return $this->redirectToRoute('listresellers'); 
+    }
+
+    /**
+     * @Route("/savereseller", name="savereseller") 
+     */
+    public function saveresellerAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('resellers');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $reseller_typeID = $request->request->get('reseller_typeID');
+        $company = $request->request->get('company');
+        $first = $request->request->get('first');
+        $middle = $request->request->get('middle');
+        $last = $request->request->get('last');
+        $email = $request->request->get('email');
+        $address = $request->request->get('address');
+        $city = $request->request->get('city');
+        $state = $request->request->get('state');
+        $province = $request->request->get('province');
+        $countryID = $request->request->get('countryID');
+        $url = $request->request->get('url');
+        $phone = $request->request->get('phone');
+        $phone2 = $request->request->get('phone2');
+        $status = $request->request->get('status');
+        $commission = $request->request->get('commission');
+        $zip = $request->request->get('zip');
+
+        $date = date("Ymd");
+
+        $sql = "INSERT INTO `$AF_DB`.`resellers`
+        (`reseller_typeID`,`company`,`first`,`middle`,`last`,`email`,`address`,`zip`,`created`,
+        `city`,`state`,`province`,`countryID`,`url`,`phone`,`phone2`,`status`,`commission`)
+        VALUES
+        ('$reseller_typeID',?,'$first','$middle','$last','$email','$address','$zip','$date',
+        '$city','$state','$province','$countryID','$url','$phone','$phone2','$status','$commission')        
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->bindValue(1, $company);
+        $result->execute(); 
+        $resellerID = $em->getConnection()->lastInsertId();
+        if ($resellerID == "") {
+            $text = "The reseller failed to add.";
+            $status = "danger";         
+        } else {
+            $text = "The reseller was added.";
+            $status = "success";
+        } 
+        $this->addFlash($status,$text);
+        return $this->redirectToRoute('listresellers');  
+    }              
 }

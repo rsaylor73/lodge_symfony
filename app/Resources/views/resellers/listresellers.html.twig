@@ -8,7 +8,8 @@
 <div class="row top-buffer">
 	<div class="col-sm-8">
 		<h2>Resellers
-		<input type="button" value="Add Reseller" class="btn btn-success">
+		<input type="button" value="Add Reseller" class="btn btn-success"
+		onclick="document.location.href='{{path('addreseller')}}'">
 		</h2>
 		{% include('flash-messages.html.twig') %}
 	</div>
@@ -47,6 +48,7 @@
 					<th><b>Registered</b></th>
 					<th><b>Status</b></th>
 					<th>&nbsp;</th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -60,8 +62,17 @@
 				<td>{{d.created_date}}</td>
 				<td>{{d.status}}</td>
 				<td>
-					<input type="button" value="Edit" class="btn btn-primary">
+					<form action="{{path('editreseller')}}" method="post">
+					<input type="hidden" name="resellerID" value="{{d.resellerID}}">
+					<input type="submit" value="Edit" class="btn btn-primary">
+					</form>
 				</td>
+				<td>
+					<form action="{{path('listagents')}}" method="post">
+					<input type="hidden" name="resellerID" value="{{d.resellerID}}">
+					<input type="submit" value="Agents" class="btn btn-info">
+					</form>
+				</td>				
 			</tr>
 			{% endfor %}
 			</tbody>
