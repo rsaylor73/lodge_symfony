@@ -1,0 +1,227 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h2>Edit Agent</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<form action="{{path('updateagent')}}" method="post">
+<input type="hidden" name="resellerID" value="{{data['resellerID']}}">
+<input type="hidden" name="reseller_agentID" value="{{data['reseller_agentID']}}">
+
+<div class="row top-buffer">
+	<div class="col-sm-3">First Name:</div>
+	<div class="col-sm-3">
+		<input type="text" name="first" value="{{data['first']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Middle Name:</div>
+	<div class="col-sm-3">
+		<input type="text" name="middle" value="{{data['middle']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Last Name:</div>
+	<div class="col-sm-3">
+		<input type="text" name="last" value="{{data['last']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Address:</div>
+	<div class="col-sm-3">
+		<input type="text" name="address1" value="{{data['address1']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Appt/Unit:</div>
+	<div class="col-sm-3">
+		<input type="text" name="address2" value="{{data['address2']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">City:</div>
+	<div class="col-sm-3">
+		<input type="text" name="city" value="{{data['city']}}" class="form-control">
+	</div>
+</div>
+
+
+{% if data['countryID'] == "2" %}
+<div class="row top-buffer">
+	<div class="col-sm-3">State:</div>
+	<div class="col-sm-3">
+		<select name="state" class="form-control">
+
+		{% for s in states %}
+			{% if data['state'] == s.state_abbr %}
+				<option selected value="{{s.state_abbr}}">{{s.state}} (Default)</option>
+			{% else %}
+				<option value="{{s.state_abbr}}">{{s.state}}</option>
+			{% endif %}		
+		{% endfor %}
+
+		</select>
+	</div>
+</div>
+{% else %}
+<div class="row top-buffer">
+	<div class="col-sm-3">Province:</div>
+	<div class="col-sm-3">
+		<input type="text" name="province" value="{{data['province']}}" class="form-control">
+	</div>
+</div>
+{% endif %}
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Zip Code:</div>
+	<div class="col-sm-3">
+		<input type="text" name="zip" value="{{data['zip']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Country:</div>
+	<div class="col-sm-3">
+		<select name="countryID" class="form-control">
+		{% for c in countries %}
+			{% if data['countryID'] == c.countryID %}
+				<option selected value="{{c.countryID}}">{{c.country}} (Default)</option>
+			{% else %}
+				<option value="{{c.countryID}}">{{c.country}}</option>
+			{% endif %}		
+		{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Email:</div>
+	<div class="col-sm-3">
+		<input type="text" name="email" value="{{data['email']}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Phone:</div>
+	<div class="col-sm-3">
+		<div class="row">
+			<div class="col-sm-6">
+			<select name="phone1_type" class="form-control">
+			{% if data['phone1_type'] != "" %}
+				<option selected value="{{data['phone1_type']}}">{{data['phone1_type']}} (Default)</option>
+			{% else %}
+				<option selected value="">Select</option>
+			{% endif %}
+			<option>Home</option>
+			<option>Work</option>
+			<option>Mobile</option>
+			<option>Fax</option>
+			</select>
+			</div>
+			<div class="col-sm-6">
+			<input type="text" name="phone1" value="{{data['phone1']}}" placeholder="Phone Number" class="form-control">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Phone:</div>
+	<div class="col-sm-3">
+		<div class="row">
+			<div class="col-sm-6">
+			<select name="phone2_type" class="form-control">
+			{% if data['phone2_type'] != "" %}
+				<option selected value="{{data['phone2_type']}}">{{data['phone2_type']}} (Default)</option>
+			{% else %}
+				<option selected value="">Select</option>
+			{% endif %}
+			<option>Home</option>
+			<option>Work</option>
+			<option>Mobile</option>
+			<option>Fax</option>
+			</select>
+			</div>
+			<div class="col-sm-6">
+			<input type="text" name="phone2" value="{{data['phone2']}}" placeholder="Phone Number" class="form-control">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Phone:</div>
+	<div class="col-sm-3">
+		<div class="row">
+			<div class="col-sm-6">
+			<select name="phone3_type" class="form-control">
+			{% if data['phone3_type'] != "" %}
+				<option selected value="{{data['phone3_type']}}">{{data['phone3_type']}} (Default)</option>
+			{% else %}
+				<option selected value="">Select</option>
+			{% endif %}
+			<option>Home</option>
+			<option>Work</option>
+			<option>Mobile</option>
+			<option>Fax</option>
+			</select>
+			</div>
+			<div class="col-sm-6">
+			<input type="text" name="phone3" value="{{data['phone3']}}" placeholder="Phone Number" class="form-control">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-3">Phone:</div>
+	<div class="col-sm-3">
+		<div class="row">
+			<div class="col-sm-6">
+			<select name="phone4_type" class="form-control">
+			{% if data['phone4_type'] != "" %}
+				<option selected value="{{data['phone4_type']}}">{{data['phone4_type']}} (Default)</option>
+			{% else %}
+				<option selected value="">Select</option>
+			{% endif %}
+			<option>Home</option>
+			<option>Work</option>
+			<option>Mobile</option>
+			<option>Fax</option>
+			</select>
+			</div>
+			<div class="col-sm-6">
+			<input type="text" name="phone4" value="{{data['phone4']}}" placeholder="Phone Number" class="form-control">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-6">
+		<input type="submit" value="Update" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning"
+		onclick="document.location.href='{{path('listresellers')}}'">
+	</div>
+</div>
+
+</form>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}
