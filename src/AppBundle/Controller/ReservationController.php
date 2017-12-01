@@ -318,9 +318,10 @@ class ReservationController extends Controller
             return $this->redirectToRoute('newreservation');
         }
 
-        return $this->render('reservations/createreservation.html.twig',[
+        $this->addFlash('success','The reservation was booked. Please assign a reseller agent, reservation contact and reservation guests.');
+        return $this->redirectToRoute('viewreservation',[
             'reservationID' => $reservationID,
-        ]);
+        ]);        
     }
 
     /**

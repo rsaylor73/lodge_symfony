@@ -18,7 +18,7 @@
 <div class="row top-buffer">
 	<div class="col-sm-2">Select Lodge:</div>
 	<div class="col-sm-3">
-		<select name="lodge" id="lodge" class="form-control" required onchange="get_min_pax(this.form);turnon();">
+		<select name="lodge" id="lodge" class="form-control" required>
 		<option selected value="">Select</option>
 		{% for l in lodge %}
 			<option value="{{l.id}}">{{l.name}}</option>
