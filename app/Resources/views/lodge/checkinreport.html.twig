@@ -1,21 +1,114 @@
 {% extends 'base.html.twig' %}
-{% block header %}
-    {% include('header.html.twig') %}
-{% endblock %}
+
+	{% block header %}
+		{% if format == "web" %}
+	    	{% include('header.html.twig') %}
+	    {% else %}
+	    	{% include('header_email.html.twig') %}
+	    	<div class="container">
+	    {% endif %}
+	{% endblock %}
 
 {% block body %}
 
 <div class="row top-buffer">
 	<div class="col-sm-12">
 		<h2>Check-In Report : {{date}}</h2>
-		{% include('flash-messages.html.twig') %}
 	</div>
 </div>
+
+<style>
+.red { background-color: #fc0202; }
+</style>
+
+{% if data == "" %}
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-warning">There are no guests checking in today.</div>
+	</div>
+</div>
+{% endif %}
+
+{% for d in data %}
+<div class="row">
+	<div class="col-sm-12 well">
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>{{d.description}}-{{d.bed}}</b></div>
+			<div class="col-sm-2">
+				{% if d.first == "" and d.last == "" %}
+					<font color="red">Guest not assigned</font>
+				{% else %}				
+					{{d.first}} {{d.middle}} {{d.last}}
+				{% endif %}
+			</div>
+			<div class="col-sm-2"><b>conf #: {{d.reservationID}}</b></div>
+			<div class="col-sm-2"><b>nights: {{d.nights}}</b></div>
+		</div>		
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>PASSPORT|NATIONALITY</b></div>
+			<div class="col-sm-2">
+				{% if d.passport_number == "" %}
+					<font color="red">Passport is missing!</font>
+				{% else %}
+					{{d.passport_number}}
+				{% endif %}
+				</div>
+			<div class="col-sm-2">
+				{% if d.passport_nationality == "" %}
+					<font color="red">Country is missing!</font>
+				{% else %}
+					{{d.passport_nationality}}
+				{% endif %}
+			</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>GENDER|AGE|DOB</b></div>
+			<div class="col-sm-2">{{d.sex}}</div>
+			<div class="col-sm-2">{{d.age}}</div>
+			<div class="col-sm-2">{{d.dob}}</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>GIS</b></div>
+			<div class="col-sm-6">TBD</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>EMERGENCY (name)</b></div>
+			<div class="col-sm-6">{{d.emergency_name}}</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>phone(s)</b></div>
+			<div class="col-sm-6">{{d.emergency_phone}}</div>
+		</div>
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>address</b></div>
+			<div class="col-sm-6">{{d.emergency_address_city_state_zip}}</div>
+		</div>
+		{% if d.special_passenger_details != "" %}
+		<div class="row top-buffer">
+			<div class="col-sm-4 red"><b>RESTRICTION</b></div>
+			<div class="col-sm-6 red">{{d.special_passenger_details}}</div>
+		</div>
+		{% else %}
+		<div class="row top-buffer">
+			<div class="col-sm-4"><b>RESTRICTION</b></div>
+			<div class="col-sm-6">None</div>
+		</div>
+		{% endif %}
+
+	</div>
+</div>
+
+{% endfor %}
+
 
 
 
 {% endblock %}
-
 {% block footer %}
-    {% include('footer.html.twig') %}
+	{% if format == "web" %}
+    	{% include('footer.html.twig') %}
+    {% else %}
+    	{% include('footer_email.html.twig') %}
+    	</div>
+    {% endif %}
 {% endblock %}

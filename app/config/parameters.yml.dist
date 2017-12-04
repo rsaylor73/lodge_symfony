@@ -32,3 +32,8 @@ parameters:
     # true for development
     # false for production
     AUTHNET_TEST: true
+
+    # Check-In Report (Must be in this format to use array)
+    checkinreport:
+        - email1@yourname.com
+        - email2@yourname.com  

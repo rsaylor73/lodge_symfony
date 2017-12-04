@@ -119,6 +119,97 @@ class commonservices extends Controller
         return($type);              
     }
 
+    public function checkin_report_query() {
+        $container = $this->container;
+        $AF_DB = $container->getParameter('AF_DB');
+        
+        $today = date("Y-m-d");
+        $date_code = date("Ymd");
 
+        $sql = "
+        SELECT
+            `r`.`reservationID`,
+            `r`.`nights`,
+            `c`.`contactID`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            `c`.`email`,
+            `c`.`sex`,
+            `c`.`passport_number`,
+            DATE_FORMAT(`c`.`date_of_birth`, '%m/%d/%Y') AS 'dob',
+            TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+            `c`.`emergency_name`,
+            `c`.`emergency_phone`,
+            `c`.`emergency_address_city_state_zip`,
+            `c`.`special_passenger_details`,
+            `ct`.`country` AS 'passport_nationality',
+            `rm`.`description`,
+            `i`.`bed`            
+
+        FROM
+            `reservations` r
+
+        LEFT JOIN `inventory` i ON `r`.`reservationID` = `i`.`reservationID` AND `i`.`date_code` = '$date_code'
+
+        LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`nationality_countryID` = `ct`.`countryID`
+
+        LEFT JOIN `rooms` rm ON `i`.`roomID` = `rm`.`id`
+
+        WHERE
+            `r`.`checkin_date` = '$today'
+            AND `r`.`status` = 'Active'
+
+        ";
+        return($sql);        
+    }
+
+    public function checkout_report_query() {
+
+        $container = $this->container;
+        $AF_DB = $container->getParameter('AF_DB');
+        
+        $today = date("Y-m-d");
+        $date_code = date("Ymd");
+        $prior_date = date("Ymd", strtotime($date_code . "-1 DAY"));
+
+        $sql = "
+        SELECT
+            `r`.`reservationID`,
+            `r`.`nights`,
+            `c`.`contactID`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            `c`.`email`,
+            `c`.`sex`,
+            `c`.`passport_number`,
+            DATE_FORMAT(`c`.`date_of_birth`, '%m/%d/%Y') AS 'dob',
+            TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+            `c`.`emergency_name`,
+            `c`.`emergency_phone`,
+            `c`.`emergency_address_city_state_zip`,
+            `c`.`special_passenger_details`,
+            `ct`.`country` AS 'passport_nationality',
+            `rm`.`description`,
+            `i`.`bed`            
+
+        FROM
+            `reservations` r
+
+        LEFT JOIN `inventory` i ON `r`.`reservationID` = `i`.`reservationID` AND `i`.`date_code` = '$prior_date'
+
+        LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`nationality_countryID` = `ct`.`countryID`
+
+        LEFT JOIN `rooms` rm ON `i`.`roomID` = `rm`.`id`
+
+        WHERE
+            DATE_FORMAT(DATE_ADD(`r`.`checkin_date`, INTERVAL `r`.`nights` DAY),'%Y%m%d') = '$date_code'
+
+        ";
+        return($sql);
+    }
 
 }
