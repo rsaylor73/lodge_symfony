@@ -126,6 +126,11 @@ class commonservices extends Controller
         $today = date("Y-m-d");
         $date_code = date("Ymd");
 
+        /*
+        Note: This is MySQL 5.x so when production is updated replace the DATEDIFF age with
+        TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+        */
+
         $sql = "
         SELECT
             `r`.`reservationID`,
@@ -138,7 +143,7 @@ class commonservices extends Controller
             `c`.`sex`,
             `c`.`passport_number`,
             DATE_FORMAT(`c`.`date_of_birth`, '%m/%d/%Y') AS 'dob',
-            TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+            DATEDIFF(CURRENT_DATE, STR_TO_DATE(`c`.`date_of_birth`, '%d-%m-%Y'))/365 AS 'age',
             `c`.`emergency_name`,
             `c`.`emergency_phone`,
             `c`.`emergency_address_city_state_zip`,
@@ -174,6 +179,11 @@ class commonservices extends Controller
         $date_code = date("Ymd");
         $prior_date = date("Ymd", strtotime($date_code . "-1 DAY"));
 
+        /*
+        Note: This is MySQL 5.x so when production is updated replace the DATEDIFF age with
+        TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+        */
+
         $sql = "
         SELECT
             `r`.`reservationID`,
@@ -186,7 +196,7 @@ class commonservices extends Controller
             `c`.`sex`,
             `c`.`passport_number`,
             DATE_FORMAT(`c`.`date_of_birth`, '%m/%d/%Y') AS 'dob',
-            TIMESTAMPDIFF(YEAR,`c`.`date_of_birth`,NOW()) AS 'age',
+            DATEDIFF(CURRENT_DATE, STR_TO_DATE(`c`.`date_of_birth`, '%d-%m-%Y'))/365 AS 'age',
             `c`.`emergency_name`,
             `c`.`emergency_phone`,
             `c`.`emergency_address_city_state_zip`,
