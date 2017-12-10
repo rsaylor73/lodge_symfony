@@ -47,7 +47,30 @@
 						{{d.first}} {{d.middle}} {{d.last}}
 					{% endif %}
 				</td>
-				<td>TBD</td>				
+				<td>
+					<table width="100%">
+						<tr>
+							<td width="50%">
+								<form action="{{path('newgis')}}" method="post">
+								<input type="hidden" name="reservationID" value="{{reservationID}}">
+								<input type="hidden" name="inventoryID" value="{{d.inventoryID}}">
+								<input type="hidden" name="guest_contactID" value="{{d.contactID}}">
+								<button type="submit" class="btn btn-success">
+									<i class="glyphicon glyphicon-share"></i>
+								</button>
+								</form>
+							</td>
+							<td width="50%">
+								<button type="button" class="btn btn-primary"
+								onclick="window.open('{{gisurl}}/{{reservationID}}/{{d.contactID}}/{{d.inventoryID}}/{{d.gisPW}}')"
+								{% if d.gisPW == "" %}disabled{% endif %}
+								>
+									<i class="glyphicon glyphicon-eye-open"></i>
+								</button>
+							</td>
+						</tr>
+					</table>
+				</td>				
 				<td>{{d.description}}</td>
 				<td>{{d.bed}}</td>
 				<td>{{d.class}}</td>

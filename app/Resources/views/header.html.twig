@@ -86,7 +86,7 @@
 </nav>
 
 
-<div id="wrapper" class="toggled-2"> <!-- change class to null to set collapsed -->
+<div id="wrapper" {% if app.user %}class="toggle-2"{% else %}class=""{% endif %}> <!-- change class to null to set collapsed -->
         <!-- Sidebar -->
 {% if app.user %}
 {% if app.user.status == "Active" %}

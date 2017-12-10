@@ -33,33 +33,10 @@
          changeMonth: true,
          changeYear: true,
          minDate: 0, 
-         maxDate: "36M",
-            onSelect: function (date) {
-               var date1 = $('#start_date').datepicker('getDate');
-               date1.setDate(date1.getDate() + 10);
-               var date2 = $('#start_date').datepicker('getDate');
-               date2.setDate(date2.getDate() + 60);
-               $('#end_date').datepicker('setDate', date2);
-               //sets minDate to dt1 date + 1
-               $('#end_date').datepicker('option', 'minDate', date1);
-            } 
+         maxDate: "36M"
+
       });
-      $( "#end_date" ).datepicker({ 
-         dateFormat: "yy-mm-dd",
-         changeMonth: true,
-         changeYear: true,
-         minDate: "1M", 
-         maxDate: "36M",
-         onClose: function () {
-            var dt1 = $('#start_date').datepicker('getDate');
-            var dt2 = $('#end_date').datepicker('getDate');
-            //check to prevent a user from entering a date below date of dt1
-            if (dt2 <= dt1) {
-                var minDate = $('#end_date').datepicker('option', 'minDate');
-                $('#end_date').datepicker('setDate', minDate);
-            }
-        } 
-      });
+
 
       $( "#dob" ).datepicker({ 
          dateFormat: "yymmdd",
@@ -79,6 +56,7 @@
       });
 
    });
+
 
     </script>
 

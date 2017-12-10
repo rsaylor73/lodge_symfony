@@ -19,7 +19,6 @@
 	<div class="col-sm-2">Select Lodge:</div>
 	<div class="col-sm-3">
 		<select name="lodge" id="lodge" class="form-control" required>
-		<option selected value="">Select</option>
 		{% for l in lodge %}
 			<option value="{{l.id}}">{{l.name}}</option>
 		{% endfor %}
@@ -29,14 +28,18 @@
 </div>
 
 <div class="row top-buffer">
-	<div class="col-sm-2">Adults:</div>
+	<div class="col-sm-2">Number of Adults:</div>
 	<div class="col-sm-3">
-		<input type="number" name="pax" id="pax" min="1" max="18" class="form-control" required>
+		<select name="pax" id="pax" class="form-control">
+			{% for i in range(1,18) %}
+			<option>{{i}}</option>
+			{% endfor %}
+		</select>
 	</div>
 </div>
 
 <div class="row top-buffer">
-	<div class="col-sm-2">Children:</div>
+	<div class="col-sm-2">Number of Children:</div>
 	<div class="col-sm-3">
 		<select name="children" id="children" class="form-control" onchange="do_child()">
 			<option>0</option>
@@ -101,7 +104,7 @@
 <div class="row top-buffer">
 	<div class="col-sm-5">
 		<div class="pull-right">
-			<font color=blue>Children are welcome in the <b>Deluxe Family tent</b></font>
+			<font color=blue>Children are welcome in the Deluxe Family tent</font>
 		</div>
 	</div>
 </div>
@@ -115,7 +118,20 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-2">Check-In Date:</div>
-	<div class="col-sm-3"><input type="text" name="start_date" id="start_date" required class="form-control"></div>
+	<div class="col-sm-3"><input type="text" name="start_date" id="start_date" 
+		 
+		required class="form-control"></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Check-Out Date:</div>
+	<div class="col-sm-3">
+		<div id="showcheckoutdate">
+			<input type="text" name="checkout" id="checkout" readonly 
+			onclick="showcheckout()" value="Click to refresh date"
+			class="form-control">
+		</div>
+	</div>
 </div>
 
 <div class="row top-buffer">
@@ -150,18 +166,29 @@ function do_child() {
 		document.getElementById('childage1').required=true;
 		document.getElementById('child2').style.display='inline';
 		document.getElementById('childage2').required=true;
-                document.getElementById('type_display').style.display='none';
-                document.getElementById('type').value='';
+		document.getElementById('type_display').style.display='none';
+		document.getElementById('type').value='';
 	}
 	if (strChild == "0") {
 		document.getElementById('childage1').required=false;
 		document.getElementById('childage2').required=false;
 		document.getElementById('child1').style.display='none';
 		document.getElementById('child2').style.display='none';
-                document.getElementById('type_display').style.display='inline';
-                document.getElementById('type').value='';
+		document.getElementById('type_display').style.display='inline';
+		document.getElementById('type').value='';
 	}
 }
+
+
+
+function showcheckout() {
+	$.get('{{path('showcheckoutdate')}}',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#showcheckoutdate").html(php_msg);
+	});
+}
+
 
 function turnon() {
 	var e = document.getElementById("lodge");

@@ -175,6 +175,10 @@ class CancelController extends Controller
         $result = $em->getConnection()->prepare($sql);
         $result->execute();         
 
+        $sql = "DELETE FROM `gis` WHERE `reservationID` = '$reservationID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();         
+
         $text = "The reservation was cancelled.";
         $status = "success";          
 

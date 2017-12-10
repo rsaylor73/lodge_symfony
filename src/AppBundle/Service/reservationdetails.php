@@ -49,6 +49,7 @@ class reservationdetails extends Controller
 		`c`.`state`,
 		`c`.`province`,
 		`c`.`zip`,
+        `c`.`contactID`,
 		`ct`.`country`
 
     	FROM

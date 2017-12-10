@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
+
+<form action="{{path('sendgis')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<input type="hidden" name="inventoryID" value="{{inventoryID}}">
+<input type="hidden" name="contactID" value="{{guest_contactID}}">
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>New GIS Link</h3></div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h4>Primary Contact</h4>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-1"><input type="radio" name="email" value="{{email}}"></div>
+	<div class="col-sm-7">{{first}} {{middle}} {{last}} ({{email}})</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h4>Guest Contact</h4>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-1"><input type="radio" name="email" checked value="{{guest_email}}"></div>
+	<div class="col-sm-7">{{guest_first}} {{guest_middle}} {{guest_last}} ({{guest_email}})</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8 alert alert-info">
+		Note: Email will be addressed to the Guest Contact but will be delivered to the email selected above.
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<input type="submit" value="Send GIS Link" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning">
+	</div>
+</div>
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

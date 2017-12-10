@@ -556,6 +556,7 @@ class ReservationController extends Controller
         }
 
         $details = $this->get('reservationdetails')->getresdetails($reservationID);
+        $gisurl = $this->container->getParameter('gisurl');
 
         $sql = "
         SELECT
@@ -568,7 +569,9 @@ class ReservationController extends Controller
             `c`.`contactID`,
             `c`.`first`,
             `c`.`middle`,
-            `c`.`last`
+            `c`.`last`,
+            MIN(`i`.`inventoryID`) AS 'inventoryID',
+            `g`.`gisPW`
 
         FROM
             `inventory` i
@@ -576,6 +579,11 @@ class ReservationController extends Controller
         LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
         LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
         LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
+        LEFT JOIN `gis` g 
+            ON 
+                `i`.`inventoryID` = `g`.`inventoryID`
+                AND `g`.`reservationID` = '$reservationID'
+                AND `g`.`contactID` = `c`.`contactID`
 
         WHERE
             `i`.`reservationID` = '$reservationID'
@@ -591,17 +599,17 @@ class ReservationController extends Controller
         $result->execute();
         while ($row = $result->fetch()) {
         	foreach ($row as $key=>$value) {
-			$data[$i][$key] = $value;
-		}
-		$i++;
-
-	}
+                $data[$i][$key] = $value;
+            }
+            $i++;
+        }
 
         return $this->render('reservations/viewreservationguest.html.twig',[
             'reservationID' => $reservationID,
             'tab' => '2',
             'data' => $data,
             'details' => $details,
+            'gisurl' => $gisurl,
         ]);
     }
 

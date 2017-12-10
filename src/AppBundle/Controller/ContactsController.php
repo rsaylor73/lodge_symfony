@@ -237,7 +237,13 @@ class ContactsController extends Controller
         	$sql2 = "UPDATE `inventory` SET `contactID` = '$contactID' WHERE `inventoryID` = '$row[inventoryID]'";
         	$result2 = $em->getConnection()->prepare($sql2);
         	$result2->execute();
+
+            // clear GIS
+            $sql2 = "DELETE FROM `gis` WHERE `reservationID` = '$reservationID' AND `inventoryID` = '$row[inventoryID]'";
+            $result2 = $em->getConnection()->prepare($sql2);
+            $result2->execute();            
         }
+
         $this->addFlash('info','The guest was updated.');
         return $this->redirectToRoute('viewreservationguest',[
         	'reservationID' => $reservationID,
@@ -311,6 +317,12 @@ class ContactsController extends Controller
         	$sql2 = "UPDATE `inventory` SET `contactID` = '0' WHERE `inventoryID` = '$row[inventoryID]'";
         	$result2 = $em->getConnection()->prepare($sql2);
         	$result2->execute();
+
+            // clear GIS
+            $sql2 = "DELETE FROM `gis` WHERE `reservationID` = '$reservationID' AND `inventoryID` = '$row[inventoryID]'";
+            $result2 = $em->getConnection()->prepare($sql2);
+            $result2->execute();  
+
         }
         $this->addFlash('info','The guest was removed.');
         return $this->redirectToRoute('viewreservationguest',[
