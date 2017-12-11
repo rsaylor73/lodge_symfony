@@ -63,121 +63,87 @@
 <body>
 
 
-<nav class="navbar navbar-default no-margin">
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header fixed-brand">
-    {% if app.user %}
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  id="menu-toggle">
-    <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
-    </button>
-    {% endif %}
-    <a class="navbar-brand" href="{{path('index')}}"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
-    </div><!-- navbar-header-->
 
+
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{path('index')}}"><img src="{{asset('assets/img/af-df_hdr_logo.png')}}" height="64" /></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav">
       {% if app.user %}
-    <li class="active" ><button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"> 
-    <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
-    </button></li>
-    {% endif %}
-    </ul>
-  </div><!-- bs-example-navbar-collapse-1 -->
+      <ul class="nav navbar-nav">
+
+      {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting" or app.user.role == "owner" or app.user.role == "crew") %}
+      <li class="active"><a href="{{path('index')}}">Main Menu <span class="sr-only">(current)</span></a></li>
+      {% endif %}
+
+      {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Customers <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{path('listresellers')}}">Resellers</a></li>
+            <li><a href="#">Contacts (Not Done)</a></li>
+          </ul>
+        </li>
+      {% endif %}
+
+      {% if (app.user.role == "admin" or app.user.role == "accounting") %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Financial Reports <span class="caret"></span></a>        
+        <ul class="dropdown-menu">
+          <li><a href="#">Transfer Report</a></li>
+          <li><a href="#">Balance Report</a></li>
+          <li><a href="#">Payment Report</a></li>
+        </ul>
+      </li>
+      {% endif %}
+
+      {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting" or app.user.role == "owner" or app.user.role == "crew") %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Guest Reports <span class="caret"></span></a>        
+        <ul class="dropdown-menu">
+          <li><a href="{{path('checkinreport')}}">Check-In Report</a></li>
+        </ul>
+      </li>
+      {% endif %}
+
+      {% if app.user.role == "admin" %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>        
+        <ul class="dropdown-menu">
+          <li><a href="#">Manage Lodge (Under Construction)</a></li>
+          <li><a href="#">Discounts (Under Construction)</a></li>
+          <li><a href="{{path('users')}}">Users</a></li>
+          <li><a href="#">Permissions (Under Construction)</a></li>
+          <li><a href="#">Activity Log (Under Construction)</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      </ul>
+
+      {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting" or app.user.role == "owner" or app.user.role == "crew") %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{path('profile')}}">Profile</a></li>
+        <li><a href="{{logout_path('main')}}">Logout</a></li>
+      </ul>
+      {% endif %}
+      {% endif %}
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
 </nav>
 
 
-<div id="wrapper" {% if app.user %}class="toggle-2"{% else %}class=""{% endif %}> <!-- change class to null to set collapsed -->
-        <!-- Sidebar -->
-{% if app.user %}
-{% if app.user.status == "Active" %}
-<div id="sidebar-wrapper" style="background-color:#F8F8F8">
-
-
-<ul class="sidebar-nav nav-pills nav-stacked" id="menu">
-  <li><a href="{{path('index')}}">
-  <span class="fa-stack fa-lg pull-left"><i class="fa fa-desktop fa-stack-1x "></i></span>
-  Main Menu</a></li>
-  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown">
-    <span class="fa-stack fa-lg pull-left"><i class="fa fa-hotel fa-stack-1x "></i></span>
-    Reservations
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="{{path('newreservation')}}">New Reservation</a></li>
-      <li><a href="{{path('locatereservation')}}">Locate Reservation</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting") %}
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown">
-    <span class="fa-stack fa-lg pull-left"><i class="fa fa-users fa-stack-1x "></i></span>
-    Customers
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="{{path('listresellers')}}">Resellers</a></li>
-      <li><a href="#">Contacts</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-  {% if (app.user.role == "admin" or app.user.role == "accounting") %}
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown">
-    <span class="fa-stack fa-lg pull-left"><i class="fa fa-money fa-stack-1x "></i></span>
-    Financial Reports
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="#">Transfer Report</a></li>
-      <li><a href="#">Balance Report</a></li>
-      <li><a href="#">Payment Report</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-  {% if (app.user.role == "admin" or app.user.role == "agent" or app.user.role == "accounting" or app.user.role == "owner" or app.user.role == "crew") %}
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown">
-    <span class="fa-stack fa-lg pull-left"><i class="fa fa-bar-chart fa-stack-1x "></i></span>
-    Guest Reports
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="{{path('checkinreport')}}">Check-In Report</a></li>
-      <li><a href="{{path('checkoutreport')}}">Check-Out Report</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-
-  {% if app.user.role == "admin" %}
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown">
-    <span class="fa-stack fa-lg pull-left"><i class="fa fa-cogs fa-stack-1x "></i></span>
-    Admin
-    <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="#">Manage Lodge</a></li>
-      <li><a href="#">Line Items</a></li>
-      <li><a href="#">Discounts</a></li>
-      <li><a href="{{path('users')}}">Users</a></li>
-      <li><a href="#">Permissions</a></li>
-      <li><a href="#">Activity Log</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-  <li><a href="{{path('profile')}}">
-  <span class="fa-stack fa-lg pull-left"><i class="fa fa-user fa-stack-1x "></i></span>
-  Profile</a></li>
-  <li><a href="{{ logout_path('main') }}">
-  <span class="fa-stack fa-lg pull-left"><i class="fa fa-sign-out fa-stack-1x "></i></span>
-  Logout</a></li>
-</ul>
-</div>
-{% endif %}
-{% endif %}
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <div class="container-fluid xyz">
