@@ -145,6 +145,8 @@ class ReservationController extends Controller
             GROUP BY `i`.`type`, `i`.`roomID`, `i`.`nightly_rate`, `i`.`bed`, `r`.`description`,
             `r`.`writeup`,  `t`.`type` 
 
+            HAVING COUNT(`i`.`roomID`) >= $nights
+
             ORDER BY `r`.`description` ASC    
             ";	
             $inventory = "";
