@@ -65,6 +65,7 @@
         {% if (app.user.role == "admin" or app.user.role == "accounting") %}
         <div class="row text-center pad-top">
 
+            <!--
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
                 <div class="div-square">
                     <a href="#">
@@ -73,10 +74,11 @@
                     </a>
                 </div>            
             </div>
+            -->
 
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
                 <div class="div-square">
-                    <a href="#">
+                    <a href="{{path('balancereport')}}">
                     <i class="fa fa-money fa-5x"></i>
                     <h4>Balance Report</h4>
                     </a>
@@ -85,7 +87,7 @@
 
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
                 <div class="div-square">
-                    <a href="#">
+                    <a href="{{path('paymentsreport')}}">
                     <i class="fa fa-money fa-5x"></i>
                     <h4>Payment Report</h4>
                     </a>

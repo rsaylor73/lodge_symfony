@@ -304,6 +304,9 @@ class PaymentController extends Controller
         if ($paymentID == "") {
             return('false');
         } else {
+            $sql = "UPDATE `inventory` SET `status` = 'booked' WHERE `reservationID` = '$reservationID'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();            
             return('true');
         }
     }
@@ -368,6 +371,9 @@ class PaymentController extends Controller
         if ($paymentID == "") {
             return('false');
         } else {
+            $sql = "UPDATE `inventory` SET `status` = 'booked' WHERE `reservationID` = '$reservationID'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();             
             return('true');
         }
     }

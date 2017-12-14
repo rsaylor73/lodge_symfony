@@ -1,6 +1,8 @@
+<form name="myform">
+<div id="lookup">
 {% if found == 0 %}
 <input type="text" name="reservationID" placeholder="Invalid Conf #" class="form-control"
-		    		onkeypress="if(event.keyCode==13) { find_reservation(this.form); return false;}"
+		    		onkeypress="if(event.keyCode==13) { find_reservation(this.form); return false;}">
 {% else %}
 <font color="green">Found! Loading...</font>
 <script>
@@ -10,3 +12,15 @@ setTimeout(function() {
 ,1000);
 </script>
 {% endif %}
+</div>
+</form>
+
+<script>
+function find_reservation(myform) {
+	$.get('{{path('lookupreservation')}}',
+	$(myform).serialize(),
+	function(php_msg) {
+		$("#lookup").html(php_msg);
+	});
+}
+</script>

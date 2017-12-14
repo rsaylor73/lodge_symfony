@@ -119,12 +119,16 @@ class commonservices extends Controller
         return($type);              
     }
 
-    public function checkin_report_query() {
+    public function checkin_report_query($date='') {
         $container = $this->container;
         $AF_DB = $container->getParameter('AF_DB');
         
-        $today = date("Y-m-d");
-        $date_code = date("Ymd");
+        if ($date == "") {
+            $date = date("Y-m-d");
+            $date_code = date("Ymd");
+        } else {
+            $date_code = date("Ymd", strtotime($date));
+        }
 
         /*
         Note: This is MySQL 5.x so when production is updated replace the DATEDIFF age with
@@ -150,7 +154,8 @@ class commonservices extends Controller
             `c`.`special_passenger_details`,
             `ct`.`country` AS 'passport_nationality',
             `rm`.`description`,
-            `i`.`bed`            
+            `i`.`bed`,
+            `g`.`gis_confirmation`            
 
         FROM
             `reservations` r
@@ -159,11 +164,13 @@ class commonservices extends Controller
 
         LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
         LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`nationality_countryID` = `ct`.`countryID`
-
         LEFT JOIN `rooms` rm ON `i`.`roomID` = `rm`.`id`
+        LEFT JOIN `gis_action` g ON 
+            `c`.`contactID` = `g`.`contactID`
+            AND `r`.`reservationID` = `g`.`reservationID`
 
         WHERE
-            `r`.`checkin_date` = '$today'
+            `r`.`checkin_date` = '$date'
             AND `r`.`status` = 'Active'
 
         ";

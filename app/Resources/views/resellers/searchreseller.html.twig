@@ -5,6 +5,7 @@
 				<tr>
 					<th><b>Reseller ID</b></th>
 					<th><b>Company</b></th>
+					<th><b>Type</b></th>
 
 					<th>&nbsp;</th>
 				</tr>
@@ -14,6 +15,7 @@
 				<tr>
 					<td>{{r.resellerID}}</td>
 					<td>{{r.company}}</td>
+					<td>{{r.type}}</td>
 					<td>
 						<form action="{{path('addresellertores')}}" method="post" style="display:inline">
 						<input type="hidden" name="reservationID" value="{{reservationID}}">

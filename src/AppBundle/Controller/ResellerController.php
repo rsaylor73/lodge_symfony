@@ -63,12 +63,14 @@ class ResellerController extends Controller
         $sql = "
         SELECT
             `r`.`resellerID`,
-            `r`.`company`
+            `r`.`company`,
+            `t`.`type`
         FROM
-            `$AF_DB`.`resellers` r
+            `$AF_DB`.`resellers` r, `$AF_DB`.`reseller_types` t
 
         WHERE
             1
+            AND `r`.`reseller_typeID` = `t`.`reseller_typeID`
             $sql_pre
         ";
         $i = "0";

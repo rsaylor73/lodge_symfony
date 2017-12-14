@@ -25,13 +25,24 @@ class LodgeController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$AF_DB = $this->container->getParameter('AF_DB');
 
-    	$nice_date = date("d M Y");
-        $today = date("Y-m-d");
-        $date_code = date("Ymd");
+        $date = $request->request->get('date');
+        $date2 = $request->query->get('date2');
+        $format = $request->query->get('format');
+        if ($date2 != "") {
+            $date = $date2;
+        }
+        if ($date != "") {
+            $nice_date = date("d M Y", strtotime($date));
+            $today = date("Y-m-d", strtotime($date));
+        } else {
+            $date = date("Y-m-d");
+    	    $nice_date = date("d M Y");
+            $today = date("Y-m-d");
+        }
 
         // edit the service to change the query as this is
         // used in more then one location.
-        $sql = $this->get('commonservices')->checkin_report_query();
+        $sql = $this->get('commonservices')->checkin_report_query($date);
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
@@ -44,9 +55,15 @@ class LodgeController extends Controller
             $i++;
         } 
 
-        return $this->render('lodge/checkinreport.html.twig',[
+        $render = 'lodge/checkinreport.html.twig';
+        if ($format == 'print') {
+            $render = 'lodge/checkinreport_email_base64.html.twig';
+        }
+
+        return $this->render($render,[
         	'date' => $nice_date,
             'data' => $data,
+            'date2' => $date,
             'format' => 'web',
         ]); 
     }

@@ -71,11 +71,11 @@
 						</tr>
 					</table>
 				</td>				
-				<td>{{d.description}}</td>
-				<td>{{d.bed}}</td>
-				<td>{{d.class}}</td>
-				<td>{{d.status}}</td>
-				<td>{{d.type}}</td>
+				<td>{{d.description|capitalize}}</td>
+				<td>{{d.bed|capitalize}}</td>
+				<td>{{d.class|capitalize}}</td>
+				<td>{{d.status|capitalize}}</td>
+				<td>{{d.type|capitalize}}</td>
 
 				<td>
 					{% if d.contactID == "" %}

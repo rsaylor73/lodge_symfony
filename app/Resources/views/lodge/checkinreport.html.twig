@@ -21,6 +21,19 @@
 .red { background-color: #fc0202; }
 </style>
 
+<form action="{{path('checkinreport')}}" method="post">
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<input type="text" name="date" class="form-control" id="start_date" placeholder="Select Date">
+	</div>
+	<div class="col-sm-2">
+		<input type="submit" value="View Report" class="btn btn-success">&nbsp;
+		<input type="button" value="Print" onclick="window.open('{{path('checkinreport', {'date2': date2,'format':'print' })}}')" class="btn btn-primary">
+	</div>
+</div>
+</form>
+
+<br>
 {% if data == "" %}
 <div class="row top-buffer">
 	<div class="col-sm-8">
@@ -69,20 +82,15 @@
 		</div>
 		<div class="row top-buffer">
 			<div class="col-sm-4"><b>GIS</b></div>
-			<div class="col-sm-6">TBD</div>
+			<div class="col-sm-6">
+				{% if d.gis_confirmation == "complete" or d.gis_confirmation == "verified" %}
+					<font color="green">Yes</font>
+				{% else %}
+					<font color="red">No</font>
+				{% endif %}
+			</div>
 		</div>
-		<div class="row top-buffer">
-			<div class="col-sm-4"><b>EMERGENCY (name)</b></div>
-			<div class="col-sm-6">{{d.emergency_name}}</div>
-		</div>
-		<div class="row top-buffer">
-			<div class="col-sm-4"><b>phone(s)</b></div>
-			<div class="col-sm-6">{{d.emergency_phone}}</div>
-		</div>
-		<div class="row top-buffer">
-			<div class="col-sm-4"><b>address</b></div>
-			<div class="col-sm-6">{{d.emergency_address_city_state_zip}}</div>
-		</div>
+
 		{% if d.special_passenger_details != "" %}
 		<div class="row top-buffer">
 			<div class="col-sm-4 red"><b>RESTRICTION</b></div>
