@@ -12,10 +12,49 @@
 	</div>
 </div>
 
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-info">
+			Payments from the last 90 days.
+		</div>
+	</div>
+</div>
 
-
-
-
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-striped">
+			<tr>
+				<th><b>Reservation #</b></th>
+				<th><b>Date</b></th>
+				<th><b>Type</b></th>
+				<th><b>Description</b></th>
+				<th><b>Payment Amount</b></th>
+			</tr>
+			{% for d in data %}
+			<tr>
+				<td>
+					<a href="{{path('viewreservation')}}/{{d.reservationID}}">{{d.reservationID}}</a>
+					{% if d.status == "Cancelled"%}
+					&nbsp;&nbsp;<b><font color="#ea5b5b">CANCELLED</font></b>
+					{% endif %}
+				</td>
+				<td>{{d.payment_date}}</td>
+				<td>{{d.type}}</td>
+				<td>
+					{% if d.type == "Credit" %}
+						{{d.credit_description}}
+					{% elseif d.type == "Wire" %}
+						{{d.wire_description}}
+					{% elseif d.type == "Check" %}
+						{{d.check_description}}
+					{% endif %}
+				</td>
+				<td>$ {{d.amount|number_format(2, '.', ',')}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
 
 
 

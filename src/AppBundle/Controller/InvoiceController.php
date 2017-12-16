@@ -32,7 +32,9 @@ class InvoiceController extends Controller
         $site_email = $this->container->getParameter('site_email');
 
         // tent total
-        $total = $this->tenttotal($em,$reservationID);
+        $total = $this
+            ->get('reservationdetails')
+            ->tenttotal($reservationID);
 
         $details = $this
             ->get('reservationdetails')
@@ -267,38 +269,5 @@ class InvoiceController extends Controller
             'payment_total' => $payment_total,   
         ]);
     }
-
-
-
-    private function tenttotal($em,$reservationID) {
-        $sql = "
-        SELECT
-            SUM(`i`.`nightly_rate`) AS 'total',
-            MIN(`i`.`nightly_rate`) AS 'nightly_rate',
-            `r`.`pax`,
-            `r`.`children`,
-            `r`.`nights`,
-            `r`.`manual_commission_override`
-
-        FROM
-            `inventory` i
-
-        LEFT JOIN `reservations` r ON `i`.`reservationID` = `r`.`reservationID`
-
-        WHERE
-            `i`.`reservationID` = '$reservationID'
-
-        GROUP BY `r`.`pax`, `r`.`children`, `r`.`nights`
-        ";
-        $total = "0";
-        $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-        while ($row = $result->fetch()) {
-            $total = $row['total'];
-        }
-        return($total);
-    }
-
-
 
 }        

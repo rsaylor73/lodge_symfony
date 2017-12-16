@@ -8,11 +8,48 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-12">
-		<h2>Balance Report</h2>
+		<h2>Balance Report {{date}}</h2>
 	</div>
 </div>
 
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-info">
+			The following reservations has a balance due within the past +/- 90 days from the Check-In date.
+		</div>
+	</div>
+</div>
 
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-striped table-hover">
+			<tr>
+				<th><b>Reservation #</b></th>
+				<th><b>Check-In Date</b></th>
+				<th><b>Nights</b></th>
+				<th><b>Primary Contact</b></th>
+				<th><b>Payments</b></th>
+				<th><b>Balance Due</b></th>
+			</tr>
+			{% for b in balance_details %}
+			<tr>
+				<td><a href="{{path('viewreservation')}}/{{b.reservationID}}">{{b.reservationID}}</a></td>
+				<td>{{b.checkin_date}}</td>
+				<td>{{b.nights}}</td>
+				<td>
+				{% if b.first == "" and b.last == "" %}
+					<font color="red">Not Assigned</font>
+				{% else %}
+					{{b.first}} {{b.last}}
+				{% endif %}
+				</td>
+				<td>$ {{b.payment_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{b.balance|number_format(2, '.', ',')}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
 
 
 
