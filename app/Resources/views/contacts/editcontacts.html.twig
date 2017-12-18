@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h2>Edit Contact</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<form action="{{path('updatecontact')}}" method="post">
+<input type="hidden" name="contactID" value="{{data.contactID}}">
+
+<div class="row top-buffer">
+	<div class="col-sm-2">First Name:</div>
+	<div class="col-sm-2">
+		<input type="text" name="first" value="{{data.first}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Middle Name:</div>
+	<div class="col-sm-2">
+		<input type="text" name="middle" value="{{data.middle}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Last Name:</div>
+	<div class="col-sm-2">
+		<input type="text" name="last" value="{{data.last}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Address:</div>
+	<div class="col-sm-2">
+		<input type="text" name="address1" value="{{data.address1}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Unit/Appt:</div>
+	<div class="col-sm-2">
+		<input type="text" name="address2" value="{{data.address2}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">City:</div>
+	<div class="col-sm-2">
+		<input type="text" name="city" value="{{data.city}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">State: (US Only)</div>
+	<div class="col-sm-2">
+		<select name="state" class="form-control">
+			{% if data.state == "" %}
+			<option selected value="">Select</option>
+			{% endif %}
+			{% for s in state %}
+				{% if data.state == s %}
+					<option selected value={{s}}>{{s}}</option>
+				{% else %}
+					<option>{{s}}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Province: (Non US)</div>
+	<div class="col-sm-2">
+		<input type="text" name="province" value="{{data.province}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Country:</div>
+	<div class="col-sm-2">
+		<select name="countryID" class="form-control">
+			{% for c in country %}
+				{% if data.countryID == c.countryID %}
+					<option selected value="{{c.countryID}}">{{c.country}}</option>
+				{% else %}
+					<option value="{{c.countryID}}">{{c.country}}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Email:</div>
+	<div class="col-sm-2">
+		<input type="text" name="email" value="{{data.email}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">Birth Date:</div>
+	<div class="col-sm-2">
+		<input type="text" name="date_of_birth" value="{{data.date_of_birth}}" class="form-control" id="dob">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-4">
+		<div class="alert alert-info">Phone Types</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<select name="phone1_type" class="form-control">
+			{% if data.phone1_type != "" %}
+				<option selected>{{data.phone1_type}}</option>
+			{% endif %}
+			<option value="Home">Home Phone</option>
+			<option value="Work">Work Phone</option>
+			<option value="Mobile">Mobile Phone</option>
+			<option value="Fax">Fax Phone</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="phone1" value="{{data.phone1}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<select name="phone2_type" class="form-control">
+			{% if data.phone2_type != "" %}
+				<option selected>{{data.phone2_type}}</option>
+			{% endif %}
+			<option value="Home">Home Phone</option>
+			<option value="Work">Work Phone</option>
+			<option value="Mobile">Mobile Phone</option>
+			<option value="Fax">Fax Phone</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="phone2" value="{{data.phone2}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<select name="phone3_type" class="form-control">
+			{% if data.phone3_type != "" %}
+				<option selected>{{data.phone3_type}}</option>
+			{% endif %}
+			<option value="Home">Home Phone</option>
+			<option value="Work">Work Phone</option>
+			<option value="Mobile">Mobile Phone</option>
+			<option value="Fax">Fax Phone</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="phone3" value="{{data.phone3}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<select name="phone4_type" class="form-control">
+			{% if data.phone4_type != "" %}
+				<option selected>{{data.phone4_type}}</option>
+			{% endif %}
+			<option value="Home">Home Phone</option>
+			<option value="Work">Work Phone</option>
+			<option value="Mobile">Mobile Phone</option>
+			<option value="Fax">Fax Phone</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="phone4" value="{{data.phone4}}" class="form-control">
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-4">
+		<input type="submit" value="Update" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning">
+	</div>
+</div>
+
+</form>
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

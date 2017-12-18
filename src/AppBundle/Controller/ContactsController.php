@@ -22,6 +22,10 @@ class ContactsController extends Controller
         }
         /* end user security */
 
+        if ($reservationID == "") {
+            $reservationID = $request->query->get('reservationID');
+        }
+
     	$em = $this->getDoctrine()->getManager();
 
         return $this->render('contacts/assigncontactsearch.html.twig',[
@@ -328,6 +332,342 @@ class ContactsController extends Controller
         return $this->redirectToRoute('viewreservationguest',[
         	'reservationID' => $reservationID,
         ]);		
+    }
+
+    /**
+     * @Route("/listcontacts", name="listcontacts") 
+     */
+    public function listcontactsAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $sql = "
+        SELECT
+            `c`.`contactID`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            `c`.`city`,
+            `c`.`state`,
+            `c`.`province`,
+            DATE_FORMAT(`c`.`date_created`, '%m/%d/%Y') AS 'created_date',
+            `cn`.`country`
+
+        FROM
+            `$AF_DB`.`contacts` c
+
+        LEFT JOIN `$AF_DB`.`countries` cn ON `c`.`countryID` = `cn`.`countryID`
+
+        WHERE
+            1
+
+        ORDER BY `c`.`date_created` DESC
+
+        LIMIT 50
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $data = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data[$i][$key] = $value;
+            }
+            $i++;
+        }
+
+        return $this->render('contacts/listcontacts.html.twig',[
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * @Route("/newcontact", name="newcontact") 
+     */
+    public function newcontactAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $route = $request->query->get('route');
+        $reservationID = $request->query->get('reservationID');
+
+        // get states
+        $sql2 = "SELECT `state_abbr` FROM `$AF_DB`.`state` ORDER BY `state_abbr` ASC";
+        $result2 = $em->getConnection()->prepare($sql2);
+        $result2->execute();
+        while ($row2 = $result2->fetch()) {
+            $state[] = $row2['state_abbr'];
+        }
+        // get countries
+        $i2 = "0";
+        $sql2 = "SELECT `countryID`,`country` FROM `$AF_DB`.`countries` ORDER BY `country` ASC";
+        $result2 = $em->getConnection()->prepare($sql2);
+        $result2->execute();
+        while ($row2 = $result2->fetch()) {
+            foreach($row2 as $key2=>$value2) {
+                $country[$i2][$key2] = $value2;
+            }
+            $i2++;
+        }
+
+        return $this->render('contacts/newcontact.html.twig',[
+            'state' => $state,
+            'country' => $country,
+            'route' => $route,
+            'reservationID' => $reservationID,
+        ]);
+    }        
+
+    /**
+     * @Route("/editcontacts", name="editcontacts") 
+     */
+    public function editcontactsAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $contactID = $request->request->get('contactID');
+
+        $sql = "
+        SELECT
+            `c`.`contactID`,
+            `c`.`title`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            `c`.`address1`,
+            `c`.`address2`,
+            `c`.`city`,
+            `c`.`state`,
+            `c`.`province`,
+            `c`.`zip`,
+            `c`.`email`,
+            `c`.`phone1`,
+            `c`.`phone1_type`,
+            `c`.`phone2`,
+            `c`.`phone2_type`,
+            `c`.`phone3`,
+            `c`.`phone3_type`,
+            `c`.`phone4`,
+            `c`.`phone4_type`,
+            DATE_FORMAT(`c`.`date_of_birth`,'%Y-%m-%d') AS 'date_of_birth',
+            `c`.`countryID`
+
+        FROM
+            `$AF_DB`.`contacts` c
+
+
+        WHERE
+            `c`.`contactID` = '$contactID'
+
+        LIMIT 1
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $data = "";
+        $state = "";
+        $country = "";
+        $i2 = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data[$key] = $value;
+            }
+            // get states
+            $sql2 = "SELECT `state_abbr` FROM `$AF_DB`.`state` ORDER BY `state_abbr` ASC";
+            $result2 = $em->getConnection()->prepare($sql2);
+            $result2->execute();
+            while ($row2 = $result2->fetch()) {
+                $state[] = $row2['state_abbr'];
+            }
+            // get countries
+            $sql2 = "SELECT `countryID`,`country` FROM `$AF_DB`.`countries` ORDER BY `country` ASC";
+            $result2 = $em->getConnection()->prepare($sql2);
+            $result2->execute();
+            while ($row2 = $result2->fetch()) {
+                foreach($row2 as $key2=>$value2) {
+                    $country[$i2][$key2] = $value2;
+                }
+                $i2++;
+            }
+
+        }
+
+        return $this->render('contacts/editcontacts.html.twig',[
+            'data' => $data,
+            'state' => $state,
+            'country' => $country,
+        ]);
+    }
+
+    /**
+     * @Route("/updatecontact", name="updatecontact") 
+     */
+    public function updatecontactAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');   
+
+        $first = $request->request->get('first');
+        $middle = $request->request->get('middle');
+        $last = $request->request->get('last');
+        $address1 = $request->request->get('address1');
+        $address2 = $request->request->get('address2');
+        $city = $request->request->get('city');
+        $state = $request->request->get('state');
+        $province = $request->request->get('province');
+        $countryID = $request->request->get('countryID');
+        $email = $request->request->get('email');
+        $date_of_birth = date("Ymd", strtotime($request->request->get('date_of_birth')));
+        $phone1_type = $request->request->get('phone1_type');
+        $phone2_type = $request->request->get('phone2_type');
+        $phone3_type = $request->request->get('phone3_type');
+        $phone4_type = $request->request->get('phone4_type');
+        $phone1 = $request->request->get('phone1');
+        $phone2 = $request->request->get('phone2');
+        $phone3 = $request->request->get('phone3');
+        $phone4 = $request->request->get('phone4');
+        $contactID = $request->request->get('contactID');
+
+        $sql = "
+        UPDATE `$AF_DB`.`contacts` SET 
+        `first` = ?,
+        `middle` = ?,
+        `last` = ?,
+        `address1` = ?,
+        `address2` = ?,
+        `city` = '$city',
+        `state` = '$state',
+        `province` = ?,
+        `countryID` = '$countryID',
+        `date_of_birth` = '$date_of_birth',
+        `email` = '$email',
+        `phone1_type` = '$phone1_type',
+        `phone2_type` = '$phone2_type',
+        `phone3_type` = '$phone3_type',
+        `phone4_type` = '$phone4_type',
+        `phone1` = '$phone1',
+        `phone2` = '$phone2',
+        `phone3` = '$phone3',
+        `phone4` = '$phone4'
+        WHERE `contactID` = '$contactID'
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->bindValue(1, $first);
+        $result->bindValue(2, $middle);
+        $result->bindValue(3, $last);
+        $result->bindValue(4, $address1);
+        $result->bindValue(5, $address2);
+        $result->bindValue(6, $province);
+        $result->execute();
+        
+        $this->addFlash('success','The contact was updated');
+        return $this->redirectToRoute('listcontacts'); 
+    }
+
+    /**
+     * @Route("/savecontact", name="savecontact") 
+     */
+    public function savecontactAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+        
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');   
+        $route = $request->request->get('route');
+        $reservationID = $request->request->get('reservationID');
+
+        $first = $request->request->get('first');
+        $middle = $request->request->get('middle');
+        $last = $request->request->get('last');
+        $address1 = $request->request->get('address1');
+        $address2 = $request->request->get('address2');
+        $city = $request->request->get('city');
+        $state = $request->request->get('state');
+        $province = $request->request->get('province');
+        $countryID = $request->request->get('countryID');
+        $zip = $request->request->get('zip');
+        $email = $request->request->get('email');
+        $date_of_birth = date("Ymd", strtotime($request->request->get('date_of_birth')));
+        $phone1_type = $request->request->get('phone1_type');
+        $phone2_type = $request->request->get('phone2_type');
+        $phone3_type = $request->request->get('phone3_type');
+        $phone4_type = $request->request->get('phone4_type');
+        $phone1 = $request->request->get('phone1');
+        $phone2 = $request->request->get('phone2');
+        $phone3 = $request->request->get('phone3');
+        $phone4 = $request->request->get('phone4');
+        $date_created = date("Ymd");
+
+        $sql = "SELECT `email` FROM `$AF_DB`.`contacts` WHERE `email` = '$email'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {        
+            $this->addFlash('danger','The email ' . $email . ' is already registered.');
+            return $this->redirectToRoute('newcontact');
+        }
+
+        $sql = "INSERT INTO `$AF_DB`.`contacts`
+        (
+            `first`,`middle`,`last`,`address1`,`address2`,`city`,`state`,`province`,
+            `countryID`,`email`,`date_of_birth`,`phone1_type`,`phone2_type`,
+            `phone3_type`,`phone4_type`,`phone1`,`phone2`,`phone3`,`phone4`,
+            `date_created`,`zip`
+        ) VALUES (
+            ?,?,?,?,?,'$city','$state',?,
+            '$countryID','$email','$date_of_birth','$phone1_type','$phone2_type',
+            '$phone3_type','$phone4_type','$phone1','$phone2','$phone3','$phone4',
+            '$date_created','$zip'
+        )
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->bindValue(1, $first);
+        $result->bindValue(2, $middle);
+        $result->bindValue(3, $last);
+        $result->bindValue(4, $address1);
+        $result->bindValue(5, $address2);
+        $result->bindValue(6, $province);
+        $result->execute();
+
+        $this->addFlash('success','The contact was added');
+        return $this->redirectToRoute($route,[
+            'reservationID' => $reservationID,
+        ]);
+
     }
 
 }   	

@@ -63,7 +63,9 @@
 	<div class="col-sm-8">
 		<input type="button" value="Search Contacts" class="btn btn-success" 
 		onclick="search_pax(this.form)">&nbsp;
-		<input type="button" value="Add Contact" class="btn btn-primary">&nbsp;
+		<input type="button" value="Add Contact" class="btn btn-primary"
+		onclick="document.location.href='{{path('newcontact', {'reservationID': reservationID,'route': 'assignreservationcontact'})}}'">
+		&nbsp;
 	</div>
 </div>
 <div class="row top-buffer">

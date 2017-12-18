@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h2>Contacts
+		<input type="button" value="Add Contact" class="btn btn-success"
+		onclick="document.location.href='{{path('newcontact', {'route': 'listcontacts'}  )}}'">
+		</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<form action="#" method="post">
+<!-- do search -->
+</form>
+
+<div class="row top-buffer">
+	<div class="col-sm-8 table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><b>First Name</b></th>
+					<th><b>Middle</b></th>
+					<th><b>Last Name</b></th>
+					<th><b>City</b></th>
+					<th><b>Country</b></th>
+					<th><b>Registered</b></th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d in data %}
+			<tr>
+				<td>{{d.first}}</td>
+				<td>{{d.middle}}</td>
+				<td>{{d.last}}</td>
+				<td>{{d.city}}</td>
+				<td>{{d.country}}</td>
+				<td>{{d.created_date}}</td>
+				<td>
+					<form action="{{path('editcontacts')}}" method="post">
+					<input type="hidden" name="contactID" value="{{d.contactID}}">
+					<input type="submit" value="Edit" class="btn btn-primary">
+					</form>
+				</td>			
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

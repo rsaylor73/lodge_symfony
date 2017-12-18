@@ -189,7 +189,7 @@ class ResellerController extends Controller
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
-        $i = "";
+        $i = "0";
         $data = "";
         while ($row = $result->fetch()) {
             foreach ($row as $key=>$value) {
