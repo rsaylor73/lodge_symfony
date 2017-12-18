@@ -94,6 +94,8 @@ class ReservationController extends Controller
         $total_pax = $pax * $nights;
         $total_child = $children * $nights;
 
+        $grand_pax = $pax + $children;
+
         // check availability
         $sql = "
         SELECT
@@ -179,7 +181,7 @@ class ReservationController extends Controller
             'start_formatted' => $start_formatted,
             'end_formatted' => $end_formatted,
             'inventory' => $inventory,
-
+            'grand_pax' => $grand_pax,
         ]);
 
     }
@@ -320,7 +322,7 @@ class ReservationController extends Controller
             return $this->redirectToRoute('newreservation');
         }
 
-        $this->addFlash('success','The reservation was booked. Please assign a reseller agent, reservation contact and reservation guests.');
+        $this->addFlash('success','The reservation was booked. Please assign a reseller agent, primary contact and reservation guests.');
         return $this->redirectToRoute('viewreservation',[
             'reservationID' => $reservationID,
         ]);        

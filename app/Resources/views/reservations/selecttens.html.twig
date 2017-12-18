@@ -27,7 +27,17 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<div class="alert alert-info">Select one bed for each guest. If you are adding children please select the tents that support children.</div>
+		<div class="alert alert-info">Please select {{grand_pax}} beds. Select one bed for each guest. If you are adding children please select the tents that support children.</div>
+	</div>
+</div>
+
+<div id="toomuch" style="display:none">
+	<div class="row top-buffer">
+		<div class="col-sm-8">
+			<div class="alert alert-danger">
+				You have selected more then the number of guests requested.
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -54,23 +64,39 @@
 				</tr>
 			</thead>
 			<tbody>
-		{% for i in inventory %}
+			{% for i in inventory %}
 			<tr>
-				<td><input type="checkbox" name="room{{i.roomID}}_{{i.bed}}" value="checked"></td>
+				<td>
+					<!-- data-toggle="toggle" -->
+					<input type="checkbox" data-toggle="toggle" name="room{{i.roomID}}_{{i.bed}}" value="checked"
+					onchange="checkboxes()">
+				</td>
 				<td>{{i.description}}-{{i.bed}}</td>
 				<td>{{i.writeup}}</td>
 				<td>{{i.type}}</td>
 				<td>$ {{i.nightly_rate}}</td>
 			</tr>
-		{% endfor %}
+			{% endfor %}
 			</tbody>
 		</table>
 	</div>
 </div>
 
+<div id="goodtogo" style="display:none">
+	<div class="row top-buffer">
+		<div class="col-sm-8">
+			<div class="alert alert-success">
+				You have selected the proper number of beds. Click <b>Book Reservation</b> to continue.
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<input type="submit" value="Book Reservation" class="btn btn-success">&nbsp;
+		<div id="booknow" style="display:none">
+			<input type="submit" value="Book Reservation" class="btn btn-success">&nbsp;
+		</div>
 		<input type="button" value="Cancel" class="btn btn-warning" 
 		onclick="document.location.href='{{path('newreservation')}}'">
 	</div>
@@ -78,7 +104,31 @@
 
 </form>
 
-
+<script>
+function checkboxes(){
+    var max = {{grand_pax}};
+    var inputElems = document.getElementsByTagName("input"),
+    count = 0;
+    for (var i=0; i<inputElems.length; i++) {
+    if (inputElems[i].type === "checkbox" && inputElems[i].checked === true){
+        count++;
+        //alert(document.querySelectorAll('input[type="checkbox"]:checked').length);
+    }
+    if (count == "{{grand_pax}}") {
+    	document.getElementById('booknow').style.display='inline';
+    	document.getElementById('goodtogo').style.display='inline';
+    	window.scrollBy(0,500);
+    } else {
+    	document.getElementById('booknow').style.display='none';
+    	document.getElementById('goodtogo').style.display='none';
+        if (count > max) {
+            document.getElementById('toomuch').style.display='inline';
+        } else {
+            document.getElementById('toomuch').style.display='none';
+        }
+    }
+}}
+</script>
 
 
 

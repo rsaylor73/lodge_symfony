@@ -174,7 +174,8 @@
 <div class="row top-buffer">
 	<div class="col-sm-4">
 		<input type="submit" value="Save" class="btn btn-success">&nbsp;
-		<input type="button" value="Cancel" class="btn btn-warning">
+		<input type="button" value="Cancel" class="btn btn-warning"
+		onclick="document.location.href='{{app.request.headers.get('referer')}}'">
 	</div>
 </div>
 
