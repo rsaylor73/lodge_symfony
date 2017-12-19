@@ -146,6 +146,40 @@
 
 <div class="row top-buffer">
   <div class="col-sm-8">
+    <h3>Comp Space
+    <form action="{{path('compspace')}}" method="post" style="display:inline">
+    <input type="hidden" name="reservationID" value="{{reservationID}}">
+    <input type="submit" value="Add Comp Space" class="btn btn-primary">
+    </form>
+    </h3>
+  </div>
+</div>      
+
+{% for c in comp %}
+<div class="row top-buffer">
+  <div class="col-sm-8">
+  <input type="button" value="Remove Comp Space" class="btn btn-danger"
+  onclick="document.location.href='{{path('unsetcompspace', {'reservationID': reservationID, 'roomID': c.roomID, 'bed': c.bed} )}}' "
+  >
+  &nbsp;{{c.description}}-{{c.bed}}</div>
+
+</div>
+{% endfor %}
+
+{% if comp == "" %}
+<div class="row top-buffer">
+  <div class="col-sm-4">
+    <font color="blue">
+      There are no comp spaces assigned.
+    </font>
+  </div>
+</div>
+{% endif %}
+
+
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
     <h3>Discounts
     <form action="{{path('reservationdiscount')}}" method="post" style="display:inline">
     <input type="hidden" name="reservationID" value="{{reservationID}}">

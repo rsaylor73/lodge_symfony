@@ -95,6 +95,37 @@ class DollarsController extends Controller
             }
         }
 
+        // comp space
+        $sql = "
+        SELECT
+            `r`.`description`,
+            `i`.`roomID`,
+            `i`.`bed`
+
+        FROM
+            `inventory` i
+
+        LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
+
+        WHERE
+            `i`.`reservationID` = '$reservationID'
+            AND `i`.`nightly_rate` = '0'
+
+        GROUP BY `i`.`roomID`,`i`.`bed`
+
+        ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+        ";        
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $comp = "";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $comp[$i][$key] = $value;
+            }
+        }
+
         // discount history
         $discount_history = $this
         ->get('reservationdetails')
@@ -157,10 +188,141 @@ class DollarsController extends Controller
             'commission' => $commission,
             'comm_amount' => $comm_amount,
             'balance' => $balance,
-            'details' => $details,         
+            'details' => $details,
+            'comp' => $comp,         
+        ]);
+    }
+
+    /**
+     * @Route("/compspace", name="compspace")
+     */
+    public function compspaceAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+
+        $sql = "
+        SELECT
+            `r`.`description`,
+            `i`.`roomID`,
+            `i`.`bed`
+
+        FROM
+            `inventory` i
+
+        LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
+
+        WHERE
+            `i`.`reservationID` = '$reservationID'
+            AND `i`.`nightly_rate` != '0'
+
+        GROUP BY `i`.`roomID`,`i`.`bed`
+
+        ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $data = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data[$i][$key] = $value;
+            }
+            $i++;
+        }
+
+        return $this->render('discounts/compspace.html.twig',[
+            'reservationID' => $reservationID,
+            'tab' => '3',
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * @Route("/setcompspace", name="setcompspace")
+     */
+    public function setcompspaceAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $em = $this->getDoctrine()->getManager();
+
+        $reservationID = $request->query->get('reservationID');
+        $bed = $request->query->get('bed');
+        $roomID = $request->query->get('roomID');
+
+        $sql = "
+        UPDATE `inventory` 
+        SET `nightly_rate` = '0' 
+        WHERE 
+        `reservationID` = '$reservationID'
+        AND `roomID` = '$roomID'
+        AND `bed` = '$bed'
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $this->addFlash('success','The comp space was added.');
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
         ]);
     }
 
 
+    /**
+     * @Route("/unsetcompspace", name="unsetcompspace")
+     */
+    public function unsetcompspaceAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
 
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $em = $this->getDoctrine()->getManager();
+
+        $reservationID = $request->query->get('reservationID');
+        $bed = $request->query->get('bed');
+        $roomID = $request->query->get('roomID');
+
+        // get rate
+        $sql = "SELECT `nightly_rate` FROM `rooms` WHERE `id` = '$roomID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $nightly_rate = "0";
+        while ($row = $result->fetch()) {
+            $nightly_rate = $row['nightly_rate'];
+        }
+
+        $sql = "UPDATE `inventory` SET `nightly_rate` = '$nightly_rate'
+        WHERE `reservationID` = '$reservationID' AND `roomID` = '$roomID'
+        AND `bed` = '$bed'";        
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $this->addFlash('success','The comp space was removed.');
+        return $this->redirectToRoute('viewreservationdollars',[
+            'reservationID' => $reservationID,
+        ]);
+    }
 }
