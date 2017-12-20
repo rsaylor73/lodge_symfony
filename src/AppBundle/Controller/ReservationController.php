@@ -608,12 +608,47 @@ class ReservationController extends Controller
             $i++;
         }
 
+        // GIS History
+        $sql = "
+        SELECT
+            `u`.`first_name`,
+            `u`.`last_name`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            DATE_FORMAT(`g`.`date`, '%m/%d/%Y') AS 'date',
+            `g`.`time`
+
+        FROM
+            `gis_log` g
+
+        LEFT JOIN `$AF_DB`.`contacts` c ON `g`.`contactID` = `c`.`contactID`
+        LEFT JOIN `user` u ON `g`.`userID` = `u`.`id`
+
+        WHERE
+            `g`.`reservationID` = '$reservationID'
+
+        ORDER BY `g`.`date` DESC, `g`.`time` DESC
+        ";
+
+        $i = "0";
+        $gislog = "";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $gislog[$i][$key] = $value;
+            }
+            $i++;
+        }
+
         return $this->render('reservations/viewreservationguest.html.twig',[
             'reservationID' => $reservationID,
             'tab' => '2',
             'data' => $data,
             'details' => $details,
             'gisurl' => $gisurl,
+            'gislog' => $gislog,
         ]);
     }
 

@@ -156,6 +156,19 @@ class GisController extends Controller
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
 
+        // GIS Log
+        $date = date("Ymd");
+        $time = date("H:i:s");
+        $sql = "INSERT INTO `gis_log` 
+        (
+            `userID`,`date`,`reservationID`,`contactID`,`time`
+        ) VALUES (
+            '$userID','$date','$reservationID','$contactID','$time'
+        )
+        ";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        
         // GIS URL
         $url = $gisurl . "/" . $reservationID . "/" . $contactID . "/" . $inventoryID . "/" . $gisPW;
 

@@ -99,6 +99,35 @@
 		</table>
 	</div>
 </div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3>GIS Link Log:</h3>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>Agent</th>
+				<th>Guest</th>
+				<th>Date</th>
+				<th>Time</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for g in gislog %}
+			<tr>
+				<td>{{g.first_name}} {{g.last_name}}</td>
+				<td>{{g.first}} {{g.middle}} {{g.last}}</td>
+				<td>{{g.date}}</td>
+				<td>{{g.time}}</td>
+			</tr>
+			{% endfor %}
+			{% if gislog == "" %}
+				<tr><td colspan="4">
+					<font color="blue">There are no records of the GIS link being sent.</font>
+				</td></tr>
+			{% endif %}
+			</tbody>
+		</table>
 {% endblock %}
 
 {% block footer %}
