@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Select Tents</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-info">
+			Each additional guest will be counted as an adult. If you need to add chilren please create a new reservation.
+		</div>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2"><b>Check-In:</b></div>
+	<div class="col-sm-2">{{start_formatted}}</div>
+	<div class="col-sm-2"><b>Check-Out:</b></div>
+	<div class="col-sm-2">{{end_formatted}}</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-2"><b>Nights:</b></div>
+	<div class="col-sm-2">{{nights}}</div>
+</div>
+
+
+<form action="{{path('saveaddtoreservation')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<input type="hidden" name="nights" value="{{nights}}">
+<input type="hidden" name="start_date" value="{{start}}">
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-row table-striped table-hover">
+			<thead>
+				<tr>
+					<th><b>Select</b></th>
+					<th><b>Bed</b></th>
+					<th><b>Description</b></th>
+					<th><b>Type</b></th>
+					<th><b>Price per/night</b></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for i in inventory %}
+			<tr>
+				<td>
+					<!-- data-toggle="toggle" -->
+					<input type="checkbox" data-toggle="toggle" name="room{{i.roomID}}_{{i.bed}}" value="checked">
+				</td>
+				<td>{{i.description}}-{{i.bed}}</td>
+				<td>{{i.writeup}}</td>
+				<td>{{i.type}}</td>
+				<td>$ {{i.nightly_rate}}</td>
+			</tr>
+			{% endfor %}
+			{% if inventory == "" %}
+			<tr><td colspan="5">
+				<font color="blue">Additional inventory is not available to match the dates and nights of the parent reservation.</font>
+			</td></tr>
+			{% endif %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<input type="submit" value="Add Additional Guests" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning" 
+		onclick="document.location.href='{{path('viewreservationguest', {'reservationID': reservationID}  )}}'">
+	</div>
+</div>
+
+</form>
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

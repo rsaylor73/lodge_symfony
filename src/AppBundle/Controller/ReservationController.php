@@ -681,5 +681,288 @@ class ReservationController extends Controller
     }
 
 
+    /**
+     * @Route("/addtoreservation", name="addtoreservation")
+     */
+    public function addtoreservationAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+
+        $sql = "
+        SELECT
+            `i`.`locationID`
+
+        FROM
+            `reservations` r,
+            `inventory` i
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+            AND `r`.`reservationID` = `i`.`reservationID`
+
+        LIMIT 1
+        ";
+
+        $lodge = "";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $lodge = $row['locationID'];
+        }
+
+        $sql = "
+        SELECT
+            DATE_FORMAT(`r`.`checkin_date`,'%Y%m%d') AS 'checkin_date',
+            DATE_FORMAT(
+                DATE_ADD(`r`.`checkin_date`, INTERVAL `r`.`nights` DAY),
+                '%Y%m%d'
+            ) AS 'checkout_date',
+            `r`.`nights`
+
+        FROM
+            `reservations` r
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+            AND `r`.`status` = 'Active'
+
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $found = "0";
+        $pax = "0";
+        $children = "0";
+        $start = "";
+        $end = "";
+        while ($row = $result->fetch()) {
+            $found = "1";
+            $nights = $row['nights'];
+            $pax = "2";
+            $children = "0";
+            $start = $row['checkin_date'];
+            $end = $row['checkout_date'];
+        } 
+
+        if ($found == "0") {
+            $this->addFlash('danger','The reservation was not found to be active.');
+            return $this->redirectToRoute('viewreservationguest',[
+                'reservationID' => $reservationID,
+            ]);            
+        }
+
+        $total_pax = $pax * $nights;
+        $total_child = $children * $nights;
+
+
+        // check availability
+        $sql = "
+        SELECT
+            COUNT(CASE WHEN `i`.`status` = 'avail' AND `i`.`type` = 'adult' THEN `i`.`status` END) AS 'adult',
+            COUNT(CASE WHEN `i`.`status` = 'avail' AND `i`.`type` = 'child' THEN `i`.`status` END) AS 'child'
+
+        FROM 
+            `inventory` i
+
+
+        WHERE
+            1 
+            AND `i`.`locationID` = '$lodge' 
+            AND `i`.`date_code` BETWEEN '$start' AND '$end'
+
+        HAVING 
+            adult >= '$total_pax' AND child >= '$total_child'          
+        ";  
+
+        $found = "0";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+
+            $sql2 = "
+            SELECT
+                `i`.`type`,
+                `i`.`roomID`,
+                `i`.`typeID`,
+                `i`.`nightly_rate`,
+                `i`.`bed`,
+                `r`.`description`,
+                `r`.`writeup`,
+                `t`.`type`
+
+            FROM
+                `inventory` i, `rooms` r, `roomtype` t
+
+            WHERE
+                1
+                AND `i`.`date_code` BETWEEN '$start' AND '$end'
+                AND `i`.`status` = 'avail'
+                AND `i`.`locationID` = '$lodge'
+                AND `i`.`roomID` = `r`.`id`
+                AND `i`.`typeID` = `t`.`id`
+
+            GROUP BY `i`.`type`, `i`.`roomID`, `i`.`nightly_rate`, `i`.`bed`, `r`.`description`,
+            `r`.`writeup`,  `t`.`type` 
+
+            HAVING COUNT(`i`.`roomID`) >= $nights
+
+            ORDER BY `r`.`description` ASC    
+            ";  
+
+            $inventory = "";
+            $i = "0";
+            $result2 = $em->getConnection()->prepare($sql2);
+            $result2->execute();
+            while ($row2 = $result2->fetch()) {
+                foreach ($row2 as $key=>$value) {
+                    $inventory[$i][$key] = $value;
+                }
+                $i++;
+            }            
+            $found = "1";   
+        }
+
+        if ($found == "0") {
+            $this->addFlash('danger','The requested dates are not available.');
+            return $this->redirectToRoute('viewreservationguest');
+        }
+
+        $start_formatted = date("m/d/Y", strtotime($start));
+        $end_formatted = date("m/d/Y", strtotime($end));
+
+        return $this->render('reservations/addtoreservation.html.twig',[
+            'reservationID' => $reservationID,
+            'lodge' => $lodge,
+            'pax' => $pax,
+            'nights' => $nights,
+            'start' => $start,
+            'start_formatted' => $start_formatted,
+            'end' => $end,
+            'end_formatted' => $end_formatted,
+            'inventory' => $inventory,
+        ]);
+
+    }
+
+    /**
+     * @Route("/saveaddtoreservation", name="saveaddtoreservation")
+     */
+    public function saveaddtoreservationAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $reservationID = $request->request->get('reservationID');
+        $start = $request->request->get('start_date');
+        $nights = $request->request->get('nights');
+        $nights2 = $nights - 1;
+        $end = date("Ymd", strtotime($start . "+ $nights2 DAY"));
+
+        $sql = "
+        SELECT
+            `i`.`locationID`,
+            `r`.`pax`
+
+        FROM
+            `reservations` r,
+            `inventory` i
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+            AND `r`.`reservationID` = `i`.`reservationID`
+
+        LIMIT 1
+        ";
+
+        $lodge = "";
+        $pax = "0";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $lodge = $row['locationID'];
+            $pax = $row['pax'];
+        }
+
+        $sql = "
+        SELECT
+            `i`.`inventoryID`,
+            `i`.`type`,
+            `i`.`roomID`,
+            `i`.`typeID`,
+            `i`.`nightly_rate`,
+            `i`.`bed`,
+            `r`.`description`,
+            `r`.`writeup`,
+            `t`.`type`
+
+        FROM
+            `inventory` i, `rooms` r, `roomtype` t
+
+        WHERE
+            1
+            AND `i`.`date_code` BETWEEN '$start' AND '$end'
+            AND `i`.`status` = 'avail'
+            AND `i`.`locationID` = '$lodge'
+            AND `i`.`roomID` = `r`.`id`
+            AND `i`.`typeID` = `t`.`id`
+
+        
+        ORDER BY `r`.`description` ASC    
+        ";  
+        $test = "";
+        $test2 = "";
+        $inventory = "";
+        $found = "0";
+        $counter = "0";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $test = "room";
+            $test .= $row['roomID'];
+            $test .= "_";
+            $test .= $row['bed'];
+            $test2 = $request->request->get($test);
+            if ($test2 == "checked") {
+                $sql2 = "UPDATE `inventory` SET `status` = 'tentative', `reservationID` = '$reservationID' WHERE `inventoryID` = '$row[inventoryID]'";
+                $result2 = $em->getConnection()->prepare($sql2);
+                $result2->execute();
+                $found = "1";
+                $counter++;
+            }
+        }
+        if ($found == "0") {
+            $this->addFlash('danger','There was an error adding the additional tent(s).');
+            return $this->redirectToRoute('viewreservationguest',[
+                'reservationID' => $reservationID,
+            ]);             
+        } else {
+            // Increase the reservation PAX
+            $counter = $counter / $nights;
+            $pax = $pax + $counter;
+            $sql = "UPDATE `reservations` SET `pax` = '$pax' WHERE `reservationID` = '$reservationID'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();
+            
+            $this->addFlash('success','The additional tent(s) was added.');
+            return $this->redirectToRoute('viewreservationguest',[
+                'reservationID' => $reservationID,
+            ]);             
+        }
+
+    }
+
 
 }

@@ -77,6 +77,9 @@
 				<td>$ {{i.nightly_rate}}</td>
 			</tr>
 			{% endfor %}
+			{% if inventory == "" %}
+			<tr><td colspan="5"><font color="blue">The selected dates are not available.</font></td></tr>
+			{% endif %}
 			</tbody>
 		</table>
 	</div>

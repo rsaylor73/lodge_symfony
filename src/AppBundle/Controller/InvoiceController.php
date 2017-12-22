@@ -132,6 +132,55 @@ class InvoiceController extends Controller
         $print = "";
         $company = "";
 
+        // guests
+        $sql = "
+        SELECT
+            `r`.`description`,
+            `i`.`bed`,
+            `i`.`type` AS 'class',
+            `i`.`status`,
+            `t`.`type`,
+            `i`.`roomID`,
+            SUM(`i`.`nightly_rate`) AS 'nightly_rate',
+            `c`.`contactID`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            MIN(`i`.`inventoryID`) AS 'inventoryID',
+            `g`.`gisPW`
+
+        FROM
+            `inventory` i
+
+        LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
+        LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
+        LEFT JOIN `$AF_DB`.`contacts` c ON `i`.`contactID` = `c`.`contactID`
+        LEFT JOIN `gis` g 
+            ON 
+                `i`.`inventoryID` = `g`.`inventoryID`
+                AND `g`.`reservationID` = '$reservationID'
+                AND `g`.`contactID` = `c`.`contactID`
+
+        WHERE
+            `i`.`reservationID` = '$reservationID'
+
+        GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`,`i`.`roomID`,
+        `i`.`nightly_rate`
+
+        ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+        ";
+
+        $i = "0";
+        $guests = "";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $guests[$i][$key] = $value;
+            }
+            $i++;
+        }        
+
 
         switch ($mode) {
             case "view":
@@ -161,6 +210,7 @@ class InvoiceController extends Controller
                 'date' => $date,
                 'company' => $company,
                 'nights' => $details['nights'],
+                'guests' => $guests,
 
             ]);
             break;
@@ -193,6 +243,7 @@ class InvoiceController extends Controller
                 'date' => $date,
                 'company' => $company,
                 'nights' => $details['nights'],
+                'guests' => $guests,
             ]);
             break;
 
@@ -235,7 +286,8 @@ class InvoiceController extends Controller
                             'print' => $print,
                             'date' => $date,
                             'company' => $company,
-                            'nights' => $details['nights']
+                            'nights' => $details['nights'],
+                            'guests' => $guests,
                             )
                         ),
                         'text/html'

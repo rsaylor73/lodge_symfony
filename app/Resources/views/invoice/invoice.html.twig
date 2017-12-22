@@ -256,6 +256,37 @@ window.print();
 
                 <tr><td colspan="2"><br></td></tr>
 
+
+                <tr><td class="border-bottom" height="5" colspan="2"><h2>Guest Details</h2></td></tr>
+                <tr><td colspan="2">
+                  <table width="100%" border="0">
+                    <tr>
+                      <td width="33%" style="text-align:left"><b>Guest</b></td>
+                      <td width="33%" style="text-align:center"><b>Tent</b></td>
+                      <td width="33%" style="text-align:right"><b>Base Price</b></td>
+
+                    </tr>
+
+                    {% for g in guests %}
+                    <tr>
+                      <td width="33%" style="text-align:left">
+                        {% if g.contactID == "" %}
+                          Guest not assigned
+                        {% else %}
+                          {{g.first}} {{g.middle}} {{g.last}}
+                        {% endif %}
+                      </td>
+                      <td width="33%" style="text-align:center">{{g.description}}-{{g.bed}}</td>
+                      <td width="33%" style="text-align:right">$ {{g.nightly_rate|number_format(2, '.', ',')}}</td>
+
+                    </tr>
+                    {% endfor %}
+
+                  </table>
+
+                </td></tr>
+
+
                 <tr><td class="border-bottom" height="5" colspan="2"><h2>Balance Summary</h2></td></tr>
                 <tr><td><b>Lodge Rate:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{total}}</td></tr>
                 <tr><td><b>Transfers:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{transfer_total}}</td></tr>
