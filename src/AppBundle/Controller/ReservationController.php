@@ -950,9 +950,41 @@ class ReservationController extends Controller
             ]);             
         } else {
             // Increase the reservation PAX
-            $counter = $counter / $nights;
-            $pax = $pax + $counter;
-            $sql = "UPDATE `reservations` SET `pax` = '$pax' WHERE `reservationID` = '$reservationID'";
+            $sql = "
+            SELECT
+
+                `i`.`type` AS 'class'
+
+
+            FROM
+                `inventory` i
+
+            LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
+            LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
+
+
+            WHERE
+                `i`.`reservationID` = '$reservationID'
+
+            GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`,`i`.`roomID`
+
+            ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+
+            ";
+            $adult = "0";
+            $child = "0";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();
+            while ($row = $result->fetch()) {
+                if ($row['class'] == "adult") {
+                    $adult++;
+                }
+                if ($row['class'] == "child") {
+                    $child++;
+                }
+            }
+
+            $sql = "UPDATE `reservations` SET `pax` = '$adult', `children` = '$child' WHERE `reservationID` = '$reservationID'";
             $result = $em->getConnection()->prepare($sql);
             $result->execute();
             
