@@ -124,6 +124,7 @@ class DollarsController extends Controller
             foreach($row as $key=>$value) {
                 $comp[$i][$key] = $value;
             }
+            $i++;
         }
 
         // discount history

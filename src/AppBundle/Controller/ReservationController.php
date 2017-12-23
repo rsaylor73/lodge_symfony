@@ -993,8 +993,110 @@ class ReservationController extends Controller
                 'reservationID' => $reservationID,
             ]);             
         }
-
     }
 
+
+    /**
+     * @Route("/removetent", name="removetent") 
+     */
+    public function removetentAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('contacts');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $reservationID = $request->query->get('reservationID');
+        $roomID = $request->query->get('roomID');
+        $bunk = $request->query->get('bunk');
+        $inventoryID = $request->query->get('inventoryID');
+        $contactID = $request->query->get('contactID');
+
+        $em = $this->getDoctrine()->getManager();
+
+        // get rate
+        $sql = "SELECT `nightly_rate` FROM `rooms` WHERE `id` = '$roomID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $nightly_rate = "0";
+        while ($row = $result->fetch()) {
+            $nightly_rate = $row['nightly_rate'];
+        }
+
+        if($inventoryID != "") {
+            // remove GIS actions
+            $sql = "DELETE FROM `gis_action` WHERE `reservationID` = '$reservationID' AND `inventoryID` = '$inventoryID'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute(); 
+
+            // remove GIS travel details
+            $sql = "DELETE FROM `gis_travel_info` WHERE `reservationID` = '$reservationID' AND `inventoryID` = '$inventoryID'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();                         
+        }
+
+        // remove GIS
+        $sql = "DELETE FROM `gis` WHERE `reservationID` = '$reservationID' AND `contactID` = '$contactID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();        
+
+        // remove bunk
+        $sql = "
+        UPDATE 
+        `inventory` 
+        SET 
+        `nightly_rate` = '$nightly_rate',`reservationID` = '0',`contactID` = '0',`status` = 'avail'
+        WHERE 
+        `reservationID` = '$reservationID' 
+        AND `roomID` = '$roomID'
+        AND `bed` = '$bunk'";        
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        // Increase the reservation PAX
+        $sql = "
+        SELECT
+
+            `i`.`type` AS 'class'
+
+        FROM
+            `inventory` i
+
+        LEFT JOIN `rooms` r ON `i`.`roomID` = `r`.`id`
+        LEFT JOIN `roomtype` t ON `i`.`typeID` = `t`.`id`
+
+        WHERE
+            `i`.`reservationID` = '$reservationID'
+
+        GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`,`i`.`roomID`
+
+        ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+
+        ";
+        $adult = "0";
+        $child = "0";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            if ($row['class'] == "adult") {
+                $adult++;
+            }
+            if ($row['class'] == "child") {
+                $child++;
+            }
+        }
+
+        $sql = "UPDATE `reservations` SET `pax` = '$adult', `children` = '$child' WHERE `reservationID` = '$reservationID'";
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        $this->addFlash('success',"The tent was removed");
+        return $this->redirectToRoute('viewreservationguest',[
+            'reservationID' => $reservationID,
+        ]); 
+    }
 
 }

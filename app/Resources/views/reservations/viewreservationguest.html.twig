@@ -35,6 +35,7 @@
 					<th><b>Status</b></th>
 					<th><b>Room Type</b></th>
 					<th>&nbsp;</th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -92,7 +93,13 @@
 						onclick="return confirm('You are about to remove {{d.first}} {{d.middle}} {{d.last}} from this reservation. Click OK to continue.')">
 						</form>
 					{% endif %}
-				</td>				
+				</td>	
+				<td>
+				<button type="button" class="btn btn-danger" 
+				onclick="if(confirm('You are about to remove this space from the reservation. This will make the space available to others. Click OK to continue.')) { document.location.href='{{path('removetent', {'reservationID': reservationID, 'bunk': d.bed, 'roomID': d.roomID, 'inventoryID': d.inventoryID, 'contactID':d.contactID})}}'};">
+  					<i class="fa fa-trash-o fa-lg"></i> Remove
+  				</button>
+  				</td>							
 			</tr>
 			{% endfor %}
 			</tbody>
