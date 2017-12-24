@@ -41,6 +41,7 @@ class InvoiceController extends Controller
             ->getresdetails($reservationID);
 
         $guests = $details['pax'] + $details['children'];
+        $total_guests = $guests;
 
         // transfers
         $nights = $details['nights'] - 1;
@@ -211,6 +212,7 @@ class InvoiceController extends Controller
                 'company' => $company,
                 'nights' => $details['nights'],
                 'guests' => $guests,
+                'total_guests' => $total_guests,
 
             ]);
             break;

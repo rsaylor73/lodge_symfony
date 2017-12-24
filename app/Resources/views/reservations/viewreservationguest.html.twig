@@ -101,6 +101,129 @@
   				</button>
   				</td>							
 			</tr>
+
+			<tr>
+				<td colspan="9">
+					<table class="table">
+						<tr>
+							<td width="100"><b>GIS Status:</b></td>
+							<td>
+								Info:&nbsp;
+								{% if d.gis_guest_info == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_guest_info == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_guest_info == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Waiver:&nbsp;
+								{% if d.gis_waiver == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_waiver == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_waiver == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Policy:&nbsp;
+								{% if d.gis_policy == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_policy == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_policy == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Emergency:&nbsp;
+								{% if d.gis_emergency_contact == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_emergency_contact == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_emergency_contact == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Requests:&nbsp;
+								{% if d.gis_requests == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_requests == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_requests == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Insurance:&nbsp;
+								{% if d.gis_trip_insurance == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_trip_insurance == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_trip_insurance == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+							<td>
+								Travel:&nbsp;
+								{% if d.gis_travel_info == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_travel_info == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_travel_info == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>								
+							</td>
+							<td>
+								Confirmation:&nbsp;
+								{% if d.gis_confirmation == "pending" %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% elseif d.gis_confirmation == "complete" %}
+									<font color="#EF9633"> <!-- yellow -->
+								{% elseif d.gis_confirmation == "verified" %}
+									<font color="#3E9E4B"> <!-- green -->
+								{% else %}
+									<font color="#CC2B2F"> <!-- red -->
+								{% endif %}
+								<i class="fa fa-circle fa-2x" aria-hidden="true"></i>
+								</font>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+
 			{% endfor %}
 			</tbody>
 		</table>

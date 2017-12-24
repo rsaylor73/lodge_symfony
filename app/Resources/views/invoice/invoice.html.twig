@@ -249,6 +249,7 @@ window.print();
                 <table cellspacing="0" cellpadding="0" width="100%">
                 <tr><td class="border-bottom" height="5" colspan="2"><h2>Reservation Details</h2></td></tr>
 
+                <tr><td><b>Guests</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{total_guests}}</td></tr>
                 <tr><td><b>Nights</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{nights}}</td></tr>
                 <tr><td><b>Check-In</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{begin_date}}</td></tr>
                 <tr><td><b>Check-Out</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">{{end_date}}</td></tr>
@@ -288,11 +289,12 @@ window.print();
 
 
                 <tr><td class="border-bottom" height="5" colspan="2"><h2>Balance Summary</h2></td></tr>
-                <tr><td><b>Lodge Rate:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{total}}</td></tr>
-                <tr><td><b>Transfers:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{transfer_total}}</td></tr>
-                <tr><td><b>Payments:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{payment_total}}</td></tr>
-                <tr><td><b>Discounts:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{discount_total}}</td></tr>
-                <tr><td><b>Amount Due:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{balance}}</td></tr>
+                <tr><td><b>Lodge Rate:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{total|number_format(2, '.', ',')}}</td></tr>
+                <tr><td><b>Transfers:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{transfer_total|number_format(2, '.', ',')}}</td></tr>
+                <tr><td><b>Payments:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{payment_total|number_format(2, '.', ',')}}</td></tr>
+                <tr><td><b>Discounts:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{discount_total|number_format(2, '.', ',')}}</td></tr>
+                <tr><td><b>Commission:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{commission|number_format(2, '.', ',')}}</td></tr>
+                <tr><td><b>Amount Due:</b></td><td class="right" style="padding-bottom:5px; text-align:right; vertical-align: text-top;">${{balance|number_format(2, '.', ',')}}</td></tr>
 
 
                 </table>

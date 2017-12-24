@@ -42,7 +42,7 @@ class DollarsController extends Controller
         $sql = "
         SELECT
         	SUM(`i`.`nightly_rate`) AS 'total',
-        	MIN(`i`.`nightly_rate`) AS 'nightly_rate',
+        	MAX(`i`.`nightly_rate`) AS 'nightly_rate',
         	`r`.`pax`,
         	`r`.`children`,
         	`r`.`nights`,

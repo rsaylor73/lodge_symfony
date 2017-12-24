@@ -575,7 +575,15 @@ class ReservationController extends Controller
             `c`.`middle`,
             `c`.`last`,
             MIN(`i`.`inventoryID`) AS 'inventoryID',
-            `g`.`gisPW`
+            `g`.`gisPW`,
+            `a`.`gis_guest_info`,
+            `a`.`gis_waiver`,
+            `a`.`gis_policy`,
+            `a`.`gis_emergency_contact`,
+            `a`.`gis_requests`,
+            `a`.`gis_trip_insurance`,
+            `a`.`gis_travel_info`,
+            `a`.`gis_confirmation`
 
         FROM
             `inventory` i
@@ -588,6 +596,11 @@ class ReservationController extends Controller
                 `i`.`inventoryID` = `g`.`inventoryID`
                 AND `g`.`reservationID` = '$reservationID'
                 AND `g`.`contactID` = `c`.`contactID`
+        LEFT JOIN `gis_action` a
+            ON
+                `i`.`inventoryID` = `a`.`inventoryID`
+                AND `a`.`reservationID` = '$reservationID'
+                AND `a`.`contactID` = `c`.`contactID`
 
         WHERE
             `i`.`reservationID` = '$reservationID'
