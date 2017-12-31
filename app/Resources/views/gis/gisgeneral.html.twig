@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3><a href="{{path('gishome',{'reservationID': reservationID, 'bunk': bunk, 'roomID': roomID, 'inventoryID': inventoryID, 'contactID': contactID})}}">GIS Home</a> : General Information</h3>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Title:</label>
+	</div>
+	<div class="col-sm-2">
+		{{title}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="occupation">Occupation:</label>
+	</div>
+	<div class="col-sm-2">
+		{{occupation}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="first">First Name:</label>
+	</div>
+	<div class="col-sm-2">
+		{{first}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="phone1_type">{{phone1_type}} Phone:</label>
+	</div>
+	<div class="col-sm-2">
+		{{phone1}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="middle">Middle Name:</label>
+	</div>
+	<div class="col-sm-2">
+		{{middle}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="phone2">{{phone2_type}} Phone:</label>
+	</div>
+	<div class="col-sm-2">
+		{{phone2}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="last">Last Name:</label>
+	</div>
+	<div class="col-sm-2">
+		{{last}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="phone3">{{phone3_type}} Phone:</label>
+	</div>
+	<div class="col-sm-2">
+		{{phone3}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="preferred_name">Preferred Name:</label>
+	</div>
+	<div class="col-sm-2">
+		{{preferred_name}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="donottext" class="control-label">Text Notifications:</label>
+	</div>
+	<div class="col-sm-2">
+		{{donottext}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="gender">Gender:</label>
+	</div>
+	<div class="col-sm-2">
+		{{gender}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="email">Email:</label>
+	</div>
+	<div class="col-sm-2">
+		{{email}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="dob">Date Of Birth:</label>
+	</div>
+	<div class="col-sm-2">
+		{{dob}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="address1">Street Address:</label>
+	</div>
+	<div class="col-sm-2">
+		{{address1}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="address2">Apartment/Building:</label>
+	</div>
+	<div class="col-sm-2">
+		{{address2}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="city">City:</label>
+	</div>
+	<div class="col-sm-2">
+		{{city}}
+	</div>
+
+	<div class="col-sm-2">
+		<label for="province">Province/Territory:</label>
+	</div>
+	<div class="col-sm-2">
+		{{province}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="state">State:</label>
+	</div>
+	<div class="col-sm-2">
+		{{state}}
+	</div>
+
+	<div class="col-sm-2">		
+		<label for="zip">Zip:</label>
+	</div>
+	<div class="col-sm-2">
+		{{zip}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="country">Country:</label>
+	</div>
+	<div class="col-sm-2">
+		{{country}}
+	</div>
+</div>
+
+<!-- heading -->
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3>Passport Information</h3>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="nationality_countryID">Citizenship:</label>
+	</div>
+	<div class="col-sm-2">
+		{{nationality_countryID}}
+	</div>
+
+	<div class="col-sm-2">        
+		<label for="passport_number">Passport #:</label>
+	</div>
+	<div class="col-sm-2">
+		{{passport_number}}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="passport_exp">Passport Expiration:</label>
+	</div>
+	<div class="col-sm-2">
+		{{passport_exp}}
+	</div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

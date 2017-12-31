@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3><a href="{{path('gishome',{'reservationID': reservationID, 'bunk': bunk, 'roomID': roomID, 'inventoryID': inventoryID, 'contactID': contactID})}}">GIS Home</a> : Travel</h3>
+	</div>
+</div>
+
+{% if data == "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-8">
+			The guest has not provided any travel details.
+		</div>
+	</div>
+{% else %}
+	<div class="row top-buffer">
+		<div class="col-sm-8">
+			<h2>Arrivals</h2>
+		</div>
+	</div>
+
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.arrival_airport1}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.arrival_flight1}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.arrival_date_time1}}</div>
+	</div>
+
+	{% if data.arrival_airport2 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.arrival_airport2}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.arrival_flight2}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.arrival_date_time2}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.arrival_airport3 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.arrival_airport3}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.arrival_flight3}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.arrival_date_time3}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.arrival_airport4 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.arrival_airport4}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.arrival_flight4}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.arrival_date_time4}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.arrival_airport5 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.arrival_airport5}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.arrival_flight5}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.arrival_date_time5}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.hotel_arrival != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-2">Hotel:</div>
+		<div class="col-sm-2">{{data.hotel_arrival}}</div>
+	</div>
+	{% endif %}
+
+	<div class="row top-buffer">
+		<div class="col-sm-8">
+			<h2>Departures</h2>
+		</div>
+	</div>
+
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.departure_airport1}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.departure_flight1}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.departure_date_time1}}</div>
+	</div>
+
+	{% if data.departure_airport2 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.departure_airport2}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.departure_flight2}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.departure_date_time2}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.departure_airport3 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.departure_airport3}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.departure_flight3}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.departure_date_time3}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.departure_airport4 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.departure_airport4}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.departure_flight4}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.departure_date_time4}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.departure_airport5 != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-1">Airport:</div>
+		<div class="col-sm-2">{{data.departure_airport5}}</div>
+		<div class="col-sm-1">Flight:</div>
+		<div class="col-sm-2">{{data.departure_flight5}}</div>
+		<div class="col-sm-1">Date / Time:</div>
+		<div class="col-sm-2">{{data.departure_date_time5}}</div>
+	</div>
+	{% endif %}
+
+	{% if data.hotel_departure != "" %}
+	<div class="row top-buffer">
+		<div class="col-sm-2">Hotel:</div>
+		<div class="col-sm-2">{{data.hotel_departure}}</div>
+	</div>
+	{% endif %}
+
+
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

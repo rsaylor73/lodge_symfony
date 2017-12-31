@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3><a href="{{path('gishome',{'reservationID': reservationID, 'bunk': bunk, 'roomID': roomID, 'inventoryID': inventoryID, 'contactID': contactID})}}">GIS Home</a> : Insurance</h3>
+	</div>
+</div>
+
+{% if insurance == "no" %}
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		The guest has declined trip insurance.
+	</div>
+</div>
+{% elseif insurance == "" %}
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		The guest has not completed the trip insurance tab.
+	</div>
+</div>
+{% elseif insurance == "yes" %}
+<div class="row top-buffer">
+	<div class="col-sm-2">Insurance Company:</div>
+	<div class="col-sm-2">{{trip_company}}</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-2">Insurance Policy:</div>
+	<div class="col-sm-2">{{trip_policy}}</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-2">Date Issued:</div>
+	<div class="col-sm-2">{{date_issued}}</div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

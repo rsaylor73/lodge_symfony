@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3><a href="{{path('gishome',{'reservationID': reservationID, 'bunk': bunk, 'roomID': roomID, 'inventoryID': inventoryID, 'contactID': contactID})}}">GIS Home</a> : Emergency Contact</h3>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h2>Primary Emergency Contact Information</h2>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">First Name:</label>
+	</div>
+	<div class="col-sm-2">{{firstA}}</div>
+
+	<div class="col-sm-2">
+		<label for="occupation">Address:</label>
+	</div>
+	<div class="col-sm-2">{{address1A}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Last Name:</label>
+	</div>
+	<div class="col-sm-2">{{lastA}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Appartment/Unit:</label>
+	</div>
+	<div class="col-sm-2">{{address2A}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Relationship:</label>
+	</div>
+	<div class="col-sm-2">{{relationshipA}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">City:</label>
+	</div>
+	<div class="col-sm-2">{{cityA}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Home):</label>
+	</div>
+	<div class="col-sm-2">{{phone_homeA}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">State (US only):</label>
+	</div>
+	<div class="col-sm-2">{{stateA}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Work):</label>
+	</div>
+	<div class="col-sm-2">{{phone_workA}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Zip:</label>
+	</div>
+	<div class="col-sm-2">{{zipA}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Mobile):</label>
+	</div>
+	<div class="col-sm-2">{{phone_mobileA}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Country:</label>
+	</div>
+	<div class="col-sm-3">{{countryA}}</div>
+</div>
+
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Email:</label>
+	</div>
+	<div class="col-sm-2">{{emailA}}</div>
+</div>
+
+
+
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h2>Secondary Emergency Contact Information</h2>
+	</div>
+</div>
+
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">First Name:</label>
+	</div>
+	<div class="col-sm-2">{{firstB}}</div>
+
+	<div class="col-sm-2">
+		<label for="occupation">Address:</label>
+	</div>
+	<div class="col-sm-2">{{address1B}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Last Name:</label>
+	</div>
+	<div class="col-sm-2">{{lastB}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Appartment/Unit:</label>
+	</div>
+	<div class="col-sm-2">{{address2B}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Relationship:</label>
+	</div>
+	<div class="col-sm-2">{{relationshipB}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">City:</label>
+	</div>
+	<div class="col-sm-2">{{cityB}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Home):</label>
+	</div>
+	<div class="col-sm-2">{{phone_homeB}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">State (US only):</label>
+	</div>
+	<div class="col-sm-2">{{stateB}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Work):</label>
+	</div>
+	<div class="col-sm-2">{{phone_workB}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Zip:</label>
+	</div>
+	<div class="col-sm-2">{{zipB}}</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Phone (Mobile):</label>
+	</div>
+	<div class="col-sm-2">{{phone_mobileB}}</div>
+	<div class="col-sm-2">
+		<label for="occupation">Country:</label>
+	</div>
+	<div class="col-sm-3">{{countryB}}</div>
+</div>
+
+
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<label for="title">Email:</label>
+	</div>
+	<div class="col-sm-2">{{emailB}}</div>
+</div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

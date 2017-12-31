@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-2">&nbsp;</div>
+	<div class="col-sm-2">Incomplete</div>
+	<div class="col-sm-2">Complete</div>
+	<div class="col-sm-2">Verified</div>
+</div>
+
+{% if data == "" %}
+<br><br>
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<div class="alert alert-warning">The GIS for {{first}} {{last}} has not been started yet.</div>
+	</div>
+</div>
+{% endif %}
+
+<div id="status"></div>
+
+<form name="myform">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<input type="hidden" name="inventoryID" value="{{inventoryID}}">
+<input type="hidden" name="contactID" value="{{contactID}}">
+
+{% for d in data %}
+	{% for key,value in d %}
+		{% if key != "id" %}
+		<div class="row top-buffer">
+			<div class="col-sm-2">
+			{% if key != "Policy" and key != "Confirmation" %}
+			<a href="{{path('gis'~key|replace({' ':''}), {'reservationID': reservationID, 'inventoryID': inventoryID, 'contactID': contactID, 'bunk': bunk, 'roomID': roomID} ) }}">
+			{{key}}
+			</a>
+			{% else %}
+			{{key}}
+			{% endif %}
+			</div>
+			<div class="col-sm-2 alert alert-warning">
+				<input type="radio" name="{{key|replace({' ':''})}}" value="pending"
+				{% if value == "pending" %}checked{% endif %}
+				onchange="gisstatus(this.form)">
+			</div>
+			<div class="col-sm-2 alert alert-info">
+				<input type="radio" name="{{key|replace({' ':''})}}" value="complete"
+				{% if value == "complete" %}checked{% endif %}
+				onchange="gisstatus(this.form)">
+			</div>
+			<div class="col-sm-2 alert alert-success">
+				<input type="radio" name="{{key|replace({' ':''})}}" value="verified"
+				{% if value == "verified" %}checked{% endif %}
+				onchange="gisstatus(this.form)">
+			</div>
+		</div>
+		{% endif %}
+	{% endfor %}
+{% endfor %}
+
+</form>
+
+<script>
+function gisstatus(myform) {
+	$.get('{{path('gisstatus')}}',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#status").html(php_msg);
+	});
+}
+</script>
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

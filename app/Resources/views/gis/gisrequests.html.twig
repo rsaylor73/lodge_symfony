@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<style>
+.alert{
+   margin: 0;
+}
+</style>
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} ({{first}} {{middle}} {{last}})</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<h3><a href="{{path('gishome',{'reservationID': reservationID, 'bunk': bunk, 'roomID': roomID, 'inventoryID': inventoryID, 'contactID': contactID})}}">GIS Home</a> : Dietary Requests</h3>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% if special_passenger_details != "" %}
+			{{special_passenger_details}}
+		{% else %}
+			The guest did not list any special dietary requests
+		{% endif %}
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}

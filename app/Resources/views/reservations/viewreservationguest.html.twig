@@ -72,7 +72,12 @@
 						</tr>
 					</table>
 				</td>				
-				<td>{{d.description|capitalize}}</td>
+				<td>
+					{% if d.contactID != "" %}
+					<a href="{{path('gishome', {'reservationID': reservationID, 'bunk': d.bed, 'roomID': d.roomID, 'inventoryID': d.inventoryID, 'contactID':d.contactID})}}">{{d.description|capitalize}}</a></td>
+					{% else %}
+					{{d.description|capitalize}}
+					{% endif %}
 				<td>{{d.bed|capitalize}}</td>
 				<td>{{d.class|capitalize}}</td>
 				<td>{{d.status|capitalize}}</td>
@@ -103,10 +108,10 @@
 			</tr>
 
 			<tr>
-				<td colspan="9">
-					<table class="table">
+				<td>&nbsp;</td>
+				<td colspan="8">
+					<table width="100%">
 						<tr>
-							<td width="100"><b>GIS Status:</b></td>
 							<td>
 								Info:&nbsp;
 								{% if d.gis_guest_info == "pending" %}
