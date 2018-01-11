@@ -29,7 +29,7 @@ class ReportsController extends Controller
 
         $date = date("Ymd");
         $start = date("Ymd", strtotime($date . "-90 DAY"));
-        $end = date("Ymd", strtotime($date . "+90 DAY"));
+        $end = date("Ymd", strtotime($date . "+500 DAY"));
 
         $sql = "
         SELECT
