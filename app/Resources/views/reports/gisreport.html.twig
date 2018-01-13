@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+	{% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>GIS Report : {{date1a}} to {{date2a}}</h2>
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-striped">
+
+			
+				{% for key,value in lodge %}
+					<tr><td colspan="6"><h3>{{value}}</h3></td></tr>
+
+						<tr>
+							<th><b>Checkin Date</b></th>
+							<th><b>Reservation ID</b></th>
+							<th><b>Guest</b></th>
+							<th><b>GIS Sent</b></th>
+							<th><b>Waiver Complete</b></th>
+							<th><b>GIS Complete</b></th>
+						</tr>
+
+					{% for key2,value2 in data[value] %}
+						<tr>
+							<td>{{value2.checkin_date}}</td>
+							<td><a href="{{path('viewreservation', {'reservationID':value2.reservationID})}}">{{value2.reservationID}} {{value2.inventoryID}}</a></td>
+							<td>
+								{% if value2.first == "" %}
+									<font color="red">Guest not assigned</font>
+								{% else %}
+									{{value2.first}} {{value2.middle}} {{value2.last}}
+								{% endif %}
+							</td>
+							<td>
+								{% if value2.gis_sent == "Yes" %}
+									<font color="green">{{value2.gis_sent}}</font>
+								{% else %}
+									<font color="red">{{value2.gis_sent}}</font>
+								{% endif %}
+							</td>
+
+								
+							<td>
+								{% if value2.gis_waiver == "Yes" %}
+									<font color="green">{{value2.gis_waiver}}</font>
+								{% else %}
+									<font color="red">{{value2.gis_waiver}}</font>
+								{% endif %}
+							</td>
+
+							<td>
+								{% if value2.gis_confirmation == "Yes" %}
+									<font color="green">{{value2.gis_confirmation}}</font>
+								{% else %}
+									<font color="red">{{value2.gis_confirmation}}</font>
+								{% endif %}
+							</td>
+
+
+						</tr>						
+					{% endfor %}
+
+				{% endfor %}
+
+
+				{#
+				{% for d in data %}
+				<tr>
+					<td>{{d.checkin_date}}</td>
+					<td>{{d.reservationID}}</td>
+					<td>{{d.first}} {{d.middle}} {{d.last}}</td>
+					<td>TBD</td>
+					<td>TBD</td>
+					<td>TBD</td>
+				</tr>
+				{% endfor %}
+				#}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+
+{% endblock %}
+{% block footer %}
+	{% include('footer.html.twig') %}
+{% endblock %}
