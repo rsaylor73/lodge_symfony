@@ -258,7 +258,7 @@ class ReportsController extends Controller
             `i`.`locationID` = `l`.`id`
 
 
-        LEFT JOIN `devaf_reserve`.`contacts` c ON
+        LEFT JOIN `$AF_DB`.`contacts` c ON
             `i`.`contactID` = `c`.`contactID`
 
         WHERE
