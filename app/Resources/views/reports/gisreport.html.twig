@@ -32,7 +32,7 @@
 					{% for key2,value2 in data[value] %}
 						<tr>
 							<td>{{value2.checkin_date}}</td>
-							<td><a href="{{path('viewreservation', {'reservationID':value2.reservationID})}}">{{value2.reservationID}} {{value2.inventoryID}}</a></td>
+							<td><a href="{{path('viewreservation', {'reservationID':value2.reservationID})}}">{{value2.reservationID}}</a></td>
 							<td>
 								{% if value2.first == "" %}
 									<font color="red">Guest not assigned</font>
