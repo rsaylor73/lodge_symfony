@@ -22,7 +22,7 @@ class CheckinCommand extends ContainerAwareCommand
     {
 
         $doctrine = $this->getContainer()->get('doctrine');
-        $em = $doctrine->getEntityManager();
+        $em = $doctrine->getManager();
 		$sql = $this->getContainer()->get('commonservices')->checkin_report_query();
 
         $site_url = $this->getContainer()->getParameter('site_url');

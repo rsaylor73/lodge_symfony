@@ -38,5 +38,10 @@ parameters:
         - email1@yourname.com
         - email2@yourname.com  
 
+    # System Reports (Staff)
+    systemreport:
+        - email1@yourname.com
+        - email2@yourname.com    
+
     # GIS
     gisurl: https://subdomain.domain.com         

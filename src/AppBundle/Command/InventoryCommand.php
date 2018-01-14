@@ -22,7 +22,7 @@ class InventoryCommand extends ContainerAwareCommand
     {
 
         $doctrine = $this->getContainer()->get('doctrine');
-        $em = $doctrine->getEntityManager();
+        $em = $doctrine->getManager();
         $base_date = "";
 
         $sql = "SELECT `inventory_start_date`,`id` FROM `locations` WHERE `auto_inventory` = 'On'";
