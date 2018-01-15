@@ -159,7 +159,7 @@ class ReportsController extends Controller
     /**
      * @Route("/paymentsreport", name="paymentsreport")
      */
-    public function paymentsreportAction()
+    public function paymentsreportAction(Request $request)
     {
         /* user security needed in each controller function */
         $check = $this->get('customsecurity')->check_access('reservations');
@@ -173,6 +173,20 @@ class ReportsController extends Controller
         $date = date("Ymd");
         $start = date("Ymd", strtotime($date . "-90 DAY"));
 
+        $date1 = $request->request->get('date1');
+        $date2 = $request->request->get('date2');
+        $payment_type = $request->request->get('payment_type');
+
+        if (($date1 != "") && ($date2 != "")) {
+            $start = date("Ymd", strtotime($date1));
+            $date = date("Ymd", strtotime($date2));
+        }
+
+        $payment_type_sql = "";
+        if ($payment_type != "") {
+            $payment_type_sql = "AND `p`.`type` = '$payment_type'";
+        }
+
         $sql = "
         SELECT
             `p`.`reservationID`,
@@ -182,7 +196,8 @@ class ReportsController extends Controller
             `p`.`wire_description`,
             `p`.`amount`,
             DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date',
-            `r`.`status`
+            `r`.`status`,
+            DATE_FORMAT(`p`.`payment_date`, '%Y%m%d') AS 'payment_date_ymd'
 
         FROM
             `payments` p, `reservations` r
@@ -191,20 +206,59 @@ class ReportsController extends Controller
             1
             AND DATE_FORMAT(`p`.`payment_date`, '%Y%m%d') BETWEEN '$start' AND '$date'
             AND `p`.`reservationID` = `r`.`reservationID`
+            $payment_type_sql
 
         ORDER BY `p`.`payment_date` DESC
 
         ";
 
         $result = $em->getConnection()->prepare($sql);
-        $result->execute();        
+        $result->execute(); 
+        $last_date = "";
+        $date_code = "";
+
         $i = "0";
         $data = "";
         while ($row = $result->fetch()) {
+            $date_code = $row['payment_date_ymd'];
+            
+            $data[$i]['summary'] = "";
+
+            if (($last_date != $date_code) && ($last_date != "")) {
+
+                $sql2 = "
+                SELECT
+                    DATE_FORMAT(`p`.`payment_date`, '%Y%m%d') AS 'payment_date',
+                    DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date2',
+                    SUM(`p`.`amount`) AS 'amount'
+
+
+                FROM
+                    `payments` p, `reservations` r
+
+                WHERE
+                    1
+                    AND DATE_FORMAT(`p`.`payment_date`, '%Y%m%d') = '$last_date'
+                    AND `p`.`reservationID` = `r`.`reservationID`
+                    $payment_type_sql
+
+                GROUP BY DATE_FORMAT(`p`.`payment_date`, '%Y%m%d')
+
+                ORDER BY `p`.`payment_date` DESC
+                ";        
+                $result2 = $em->getConnection()->prepare($sql2);
+                $result2->execute(); 
+                while ($row2 = $result2->fetch()) {
+                    $data[$i]['summary'] = "SUBTOTAL (" . $row2['payment_date2'] . ")";
+                    $data[$i]['total'] = $row2['amount'];
+                }
+            }
+
             foreach ($row as $key=>$value) {
                 $data[$i][$key] = $value;
             }
             $i++;
+            $last_date = $date_code;
         }
 
         $date = date("m/d/Y");

@@ -12,13 +12,30 @@
 	</div>
 </div>
 
+<form action="{{path('paymentsreport')}}" method="post">
 <div class="row top-buffer">
-	<div class="col-sm-8">
-		<div class="alert alert-info">
-			Payments from the last 90 days.
-		</div>
+	<div class="col-sm-2">
+		<input type="text" name="date1" id="payment_date" readonly placeholder="Starting Date" class="form-control">
 	</div>
+	<div class="col-sm-2">
+		<input type="text" name="date2" id="payment_date2" readonly placeholder="Ending Date" class="form-control">
+	</div>
+	<div class="col-sm-2">
+		<select name="payment_type" class="form-control">
+			<option value="">All Payment Types</option>
+			<option>Check</option>
+			<option>Wire</option>
+			<option>Credit</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="submit" value="Search" class="btn btn-success">&nbsp;
+		<input type="button" value="Clear Filter" class="btn btn-warning" onclick="document.location.href='{{path('paymentsreport')}}'">
+	</div>
+
 </div>
+</form>
+
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
@@ -30,7 +47,33 @@
 				<th><b>Description</b></th>
 				<th><b>Payment Amount</b></th>
 			</tr>
+
+			{% set check = 0 %}
+			{% set wire = 0 %}
+			{% set credit = 0 %}
+
 			{% for d in data %}
+
+				{% if d.type == "Credit" %}
+					{% set credit = credit + d.amount %}
+				{% endif %}
+
+				{% if d.type == "Wire" %}
+					{% set wire = wire + d.amount %}
+				{% endif %}
+
+				{% if d.type == "Check" %}
+					{% set check = check + d.amount %}
+				{% endif %}
+	
+				{% if d.summary != "" %}
+				<tr style="background-color: #D8EDF6">
+					<td colspan="3">&nbsp;</td>
+					<td><b>{{d.summary}}</b></td>
+					<td><b>$ {{d.total|number_format(2, '.', ',')}}</b></td>
+				</tr>
+				{% endif %}
+
 			<tr>
 				<td>
 					<a href="{{path('viewreservation')}}/{{d.reservationID}}">{{d.reservationID}}</a>
@@ -52,6 +95,26 @@
 				<td>$ {{d.amount|number_format(2, '.', ',')}}</td>
 			</tr>
 			{% endfor %}
+
+
+			<tr>
+				<td colspan="5"><b>GRAND TOTAL</b></td>
+			</tr>
+			<tr>
+				<td colspan="3">&nbsp;</td>
+				<td><b>Total Check:</b></td>
+				<td>$ {{check|number_format(2, '.', ',')}}</td>
+			</tr>
+			<tr>
+				<td colspan="3">&nbsp;</td>
+				<td><b>Total Wire:</b></td>
+				<td>$ {{wire|number_format(2, '.', ',')}}</td>
+			</tr>			
+			<tr>
+				<td colspan="3">&nbsp;</td>
+				<td><b>Total Credit:</b></td>
+				<td>$ {{credit|number_format(2, '.', ',')}}</td>
+			</tr>
 		</table>
 	</div>
 </div>
