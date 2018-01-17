@@ -505,7 +505,7 @@ class ReportsController extends Controller
                 $data[$i]['c'] = $row['reservationID'];
                 $data[$i]['d'] = $row['first_name'] . " " . $row['last_name'];
                 $data[$i]['e'] = $row['checkin_date'];
-                if ($row['date_cancelled'] != "") {
+                if ($row['date_cancelled'] == "") {
                     $data[$i]['f'] = $row['total_pax'];
                     $data[$i]['g'] = "0";
                 } else {
