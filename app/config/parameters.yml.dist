@@ -22,6 +22,7 @@ parameters:
     site_url: 'https://sub.domain.com'
     site_name: 'Site Name'
     site_email: user@domain.com
+    site_path: /usr/local/dir
 
     # Aggressor Database
     AF_DB: databasename

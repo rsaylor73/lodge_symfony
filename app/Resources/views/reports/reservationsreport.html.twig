@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+	{% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+{% include('flash-messages.html.twig') %}
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Daily Reservations Report ({{date1}} to {{date2}})</h2>
+	</div>
+</div>
+
+<form action="{{path('reservationsreport')}}" method="post">
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<input type="text" name="reportdate1" id="report1_date" readonly placeholder="Starting Date" class="form-control">
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="reportdate2" id="report2_date" readonly placeholder="Ending Date" class="form-control">
+	</div>
+	<div class="col-sm-4">
+		<input type="checkbox" name="format" value="checked"> Export to Excel&nbsp;
+		<input type="submit" value="Search" class="btn btn-success">&nbsp;
+		<input type="button" value="Clear Filter" class="btn btn-warning" onclick="document.location.href='{{path('reservationsreport')}}'">
+	</div>
+
+</div>
+</form>
+
+{% set total_pax_res = "0" %}
+{% set total_pax_cxl = "0" %}
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th valign="top"><b>Date Booked</b></th>
+					<th valign="top"><b>Cxl Date</b></th>
+					<td valign="top"><b>Reservation</b></td>
+					<th valign="top"><b>Booker</b></th>
+					<th valign="top"><b>Check-In Date</b></th>
+					<th valign="top"><b># Pax (Res)</b></th>
+					<th valign="top"><b># Pax (Cxl)</b></th>
+					<th valign="top"><b>Reseller</b></th>
+					<th valign="top"><b>Cxl Reason</b></th>
+					<th valign="top"><b>Country</b></th>
+				</tr>
+			</thead>
+			<body>
+			{% for d in data %}
+			<tr>
+				<td>{{d.date_booked}}</td>
+				<td>{{d.date_cancelled}}</td>
+				<td><a href="{{path('viewreservation', {'reservationID': d.reservationID})}}">{{d.reservationID}}</a></td>
+				<td>{{d.first_name}} {{d.last_name}}</td>
+				<td>{{d.checkin_date}}</td>
+				<td>
+					{% if d.date_cancelled == "" %}
+						{% set total_pax_res = total_pax_res + d.total_pax%}
+						{% set total_pax = d.total_pax * 1 %}						
+						{{total_pax}}
+					{% else %}
+						0
+					{% endif %}
+				</td>
+				<td>
+					{% if d.date_cancelled == "" %}
+						0
+					{% else %}
+						{% set total_pax_cxl = total_pax_cxl + d.total_pax%}
+						{% set total_pax = d.total_pax * -1 %}
+						<font color="red">{{total_pax}}</font>
+					{% endif %}
+				</td>
+				<td>{{d.company}}</td>
+				<td>{{d.cxl_reason}}</td>
+				<td>{{d.country}}</td>
+			</tr>				
+			{% endfor %}
+			<tr>
+				<td colspan="5">&nbsp;</td>
+				<td><b>TTL (Res)</b></td>
+				<td><b>TTL (Cxl)</b></td>
+				<td><b>Net Pax</b></td>
+				<td colspan="2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="5">&nbsp;</td>
+				<td><b>{{total_pax_res}}</b></td>
+				<td><b>{{total_pax_cxl}}</b></td>
+				<td>
+					{% set net = total_pax_res - total_pax_cxl %}
+					<b>{{net}}</b>
+				</td>
+				<td colspan="2">&nbsp;</td>
+			</tr>
+			</body>
+		</table>
+	</div>
+</div>
+
+
+
+
+{% endblock %}
+{% block footer %}
+	{% include('footer.html.twig') %}
+{% endblock %}

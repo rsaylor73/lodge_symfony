@@ -7,17 +7,29 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use AppBundle\Entity\User;
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+ 
 class commonservices extends Controller
 {
     
     protected $em;
     protected $container;
+    protected $mailer;
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        ContainerInterface $container, 
+        \Swift_Mailer $mailer)
     {
         $this->em = $entityManager;
         $this->container = $container;
+        $this->mailer = $mailer;
 
     }
 
@@ -236,8 +248,6 @@ class commonservices extends Controller
 
         $results = "true";
 
-        $em = $this->getDoctrine()->getManager();
-
         $bed_map[0] = "A";
         $bed_map[1] = "B";
         $bed_map[2] = "C";
@@ -315,8 +325,6 @@ class commonservices extends Controller
 
         $results = "true";
 
-        $em = $this->getDoctrine()->getManager();
-
         $bed_map[0] = "A";
         $bed_map[1] = "B";
         $bed_map[2] = "C";
@@ -377,4 +385,75 @@ class commonservices extends Controller
         return($result);
     }    
 
+    public function reservationreportsexcel($data,$site_path)
+    {
+
+        $spreadsheet = new Spreadsheet();
+
+        $myWorkSheet1 = new Worksheet($spreadsheet, 'Daily Reservations');
+        $spreadsheet->addSheet($myWorkSheet1, 0);
+
+        // Header
+        $spreadsheet->getProperties()->setCreator('AggressorFleet')
+        ->setLastModifiedBy('AggressorFleet')
+        ->setTitle('Daily Reservations Report')
+        ->setSubject('Daily Reservations Report')
+        ->setDescription('Daily Reservations Report')
+        ->setKeywords('Daily Reservations Report')
+        ->setCategory('Daily Reservations Report');
+
+
+        // page 1
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+
+        $spreadsheet->getActiveSheet()
+        ->setCellValue('A1', 'Date Booked')
+        ->setCellValue('B1', 'Cxl Date')
+        ->setCellValue('C1', 'Reservation')
+        ->setCellValue('D1', 'Booker')
+        ->setCellValue('E1', 'Check-In Date')
+        ->setCellValue('F1', 'Pax (Res)')
+        ->setCellValue('G1', 'Pax (Cxl)')
+        ->setCellValue('H1', 'Reseller')
+        ->setCellValue('I1', 'Cxl Reason')
+        ->setCellValue('J1', 'Country');
+
+        // style
+        $spreadsheet->getActiveSheet()->getStyle('A1:J1')
+        ->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
+
+        $spreadsheet->getActiveSheet()->getStyle('A1:J1')->getFill()
+        ->setFillType(Fill::FILL_SOLID)
+        ->getStartColor()->setARGB(Color::COLOR_BLUE);  
+
+        $dataArray = $data;
+        $spreadsheet->getActiveSheet()->fromArray($dataArray, null, 'A2');
+        $spreadsheet->getActiveSheet()->getStyle('A1:J1')->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->setAutoFilter($spreadsheet->getActiveSheet()->calculateWorksheetDimension());
+
+        // Clean Up
+        $sheetIndex = $spreadsheet->getIndex(
+            $spreadsheet->getSheetByName('Worksheet')
+        );
+        $spreadsheet->removeSheetByIndex($sheetIndex);        
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Save
+        $filename = "dailyreservations.xlsx";
+
+        $writer = new Xlsx($spreadsheet);
+        $newfile = $site_path . "/reports/" . $filename;
+        $writer->save($newfile);      
+    }
 }

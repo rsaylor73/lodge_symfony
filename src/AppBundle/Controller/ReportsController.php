@@ -384,4 +384,186 @@ class ReportsController extends Controller
         ]);        
     }
 
+    /**
+     * @Route("/reservationsreport", name="reservationsreport")
+     */
+    public function reservationsreportAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+        $site_path = $this->container->getParameter('site_path');
+
+        $date = date("Ymd");
+        $start = date("Ymd", strtotime($date . "-30 DAY"));
+
+        $reportdate1 = $request->request->get('reportdate1');
+        $reportdate2 = $request->request->get('reportdate2');
+        $format = $request->request->get('format');
+
+        if (($reportdate1 != "") && ($reportdate2 != "")) {
+            $start = date("Ymd", strtotime($reportdate1));
+            $end = date("Ymd", strtotime($reportdate2));
+        }
+
+        $date1 = date("m/d/Y", strtotime($start));
+        $date2 = date("m/d/Y", strtotime($date));
+
+        $sql = "
+        (
+        SELECT
+            DATE_FORMAT(`r`.`date_booked`, '%m/%d/%Y') AS 'date_booked',
+            DATE_FORMAT(`r`.`cxl_date`, '%m/%d/%Y') AS 'date_cancelled',
+            `r`.`reservationID`,
+            `u`.`first_name`,
+            `u`.`last_name`,
+            DATE_FORMAT(`r`.`checkin_date`, '%m/%d/%Y') AS 'checkin_date',
+            `rs`.`company`,
+            `cxl`.`cxl_reason`,
+            `cn`.`country`,
+            `r`.`pax` + `r`.`children` AS 'total_pax'
+
+        FROM
+            `reservations` r
+
+        LEFT JOIN `user` u ON `r`.`userID` = `u`.`id`
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+        LEFT JOIN `inventory_cxl` cxl ON `r`.`reservationID` = `cxl`.`reservationID`
+        LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`countries` cn ON `c`.`countryID` = `cn`.`countryID`
+
+        WHERE
+            DATE_FORMAT(`r`.`date_booked`, '%Y%m%d') BETWEEN '$start' AND '$date'
+
+        GROUP BY `r`.`reservationID`
+
+        ORDER BY `r`.`date_booked`
+        ) UNION (
+        SELECT
+            DATE_FORMAT(`r`.`date_booked`, '%m/%d/%Y') AS 'date_booked',
+            DATE_FORMAT(`r`.`cxl_date`, '%m/%d/%Y') AS 'date_cancelled',
+            `r`.`reservationID`,
+            `u`.`first_name`,
+            `u`.`last_name`,
+            DATE_FORMAT(`r`.`checkin_date`, '%m/%d/%Y') AS 'checkin_date',
+            `rs`.`company`,
+            `cxl`.`cxl_reason`,
+            `cn`.`country`,
+            `r`.`pax` + `r`.`children` AS 'total_pax'
+
+        FROM
+            `reservations` r
+
+        LEFT JOIN `user` u ON `r`.`userID` = `u`.`id`
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+        LEFT JOIN `inventory_cxl` cxl ON `r`.`reservationID` = `cxl`.`reservationID`
+        LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
+        LEFT JOIN `$AF_DB`.`countries` cn ON `c`.`countryID` = `cn`.`countryID`
+
+        WHERE
+            DATE_FORMAT(`r`.`cxl_date`, '%Y%m%d') BETWEEN '$start' AND '$date'
+
+        GROUP BY `r`.`reservationID`
+
+        ORDER BY `r`.`date_booked`
+        )
+
+        ORDER BY `date_booked` DESC
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();  
+
+        if ($format == "") {
+            $data = "";
+            $i = 0;
+            while ($row = $result->fetch()) {
+                foreach ($row as $key=>$value) {
+                    $data[$i][$key] = $value;
+                }
+                $i++;
+            }
+
+            return $this->render('reports/reservationsreport.html.twig',[
+                'date1' => $date1,
+                'date2' => $date2,
+                'data' => $data
+            ]);
+        }  else {
+            // excel
+            $data = "";
+            $i = 0;
+            while ($row = $result->fetch()) {
+                $data[$i]['a'] = $row['date_booked'];
+                $data[$i]['b'] = $row['date_cancelled'];
+                $data[$i]['c'] = $row['reservationID'];
+                $data[$i]['d'] = $row['first_name'] . " " . $row['last_name'];
+                $data[$i]['e'] = $row['checkin_date'];
+                if ($row['date_cancelled'] != "") {
+                    $data[$i]['f'] = $row['total_pax'];
+                    $data[$i]['g'] = "0";
+                } else {
+                    $data[$i]['f'] = "0";
+                    $data[$i]['g'] = $row['total_pax'] * -1;
+                }
+                $data[$i]['h'] = $row['company'];
+                $data[$i]['i'] = $row['cxl_reason'];
+                $data[$i]['j'] = $row['country'];
+                $i++;
+            }
+            // call the service class
+            $this->get('commonservices')->reservationreportsexcel($data,$site_path); 
+            $filename = "dailyreservations.xlsx";
+            $newfile = $site_path . "/reports/" . $filename;
+
+            // send email
+            $usr = $this->get('security.token_storage')->getToken()->getUser();
+            $username = $usr->getUsername();
+
+            $site_name = $this->container->getParameter('site_name');
+            $site_email = $this->container->getParameter('site_email');
+
+            // check if active
+            $sql = "SELECT `email`,`first_name`,`last_name` FROM `user` WHERE `username` = '$username'";
+            $result = $em->getConnection()->prepare($sql);
+            $result->execute();        
+            $name = "";
+            $email = "";
+            while ($row = $result->fetch()) {
+                $name = $row['first_name'] . " " . $row['last_name'];
+                $email = $row['email'];
+            }
+
+            $title = "Daily Reservations Report";
+            $message = \Swift_Message::newInstance()
+              ->setFrom($site_email)
+              ->setTo($email)
+              ->setSubject($title)
+              ->setBody(
+                $this->renderView(
+                    'Emails/reservationsreport.html.twig',
+                    array(
+                        'name' => $name,
+                        'site_name' => $site_name,
+                        'date1' => $date1,
+                        'date2' => $date2
+                    )
+                ),'text/html'
+              )
+              ->attach(\Swift_Attachment::fromPath($newfile))
+            ;
+
+            $this->get('mailer')->send($message);             
+
+            $this->addFlash('success','Please check your email for the attached excel file');
+            return $this->redirectToRoute('reservationsreport');
+
+        }      
+    }
 }
