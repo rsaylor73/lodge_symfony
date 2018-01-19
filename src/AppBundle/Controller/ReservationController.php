@@ -220,9 +220,9 @@ class ReservationController extends Controller
         $start_date = $request->request->get('start_date');
 
         $sql = "INSERT INTO `reservations` 
-        (`userID`,`date_booked`,`status`,`pax`,`children`,`child1_age`,`child2_age`,`checkin_date`,`nights`)
+        (`userID`,`date_booked`,`status`,`pax`,`children`,`child1_age`,`child2_age`,`checkin_date`,`nights`,`locationID`)
         VALUES 
-        ('$userID',NOW(),'Active','$pax','$children','$childage1','$childage2','$start_date','$nights')";
+        ('$userID',NOW(),'Active','$pax','$children','$childage1','$childage2','$start_date','$nights','$lodge')";
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
         $reservationID = $em->getConnection()->lastInsertId();
@@ -385,7 +385,8 @@ class ReservationController extends Controller
             `r`.`child2_age`,
             `r`.`resellerID`,
             `r`.`resellerAgentID`,
-            `r`.`contactID`            
+            `r`.`contactID`,
+            `r`.`reservationType`            
         
         FROM
             `reservations` r, `user` u
@@ -411,6 +412,7 @@ class ReservationController extends Controller
         $resellerID = "";
         $resellerAgentID = "";
         $contactID = "";
+        $reservationType = "";
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
@@ -430,6 +432,7 @@ class ReservationController extends Controller
             $resellerID = $row['resellerID'];
             $resellerAgentID = $row['resellerAgentID'];
             $contactID = $row['contactID'];
+            $reservationType = $row['reservationType'];
         }
 
         // Reseller data
@@ -537,6 +540,7 @@ class ReservationController extends Controller
             'reselleragent_data' => $reselleragent_data,
             'contact_data' => $contact_data,
             'details' => $details,
+            'reservationType' => $reservationType,
         ]);
     }
 

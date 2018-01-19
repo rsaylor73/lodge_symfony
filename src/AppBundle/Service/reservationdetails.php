@@ -27,40 +27,48 @@ class reservationdetails extends Controller
 
         $AF_DB = $container->getParameter('AF_DB');
 
-    	$sql = "
-    	SELECT
-		`r`.`status`,
-		`r`.`pax`,
-		`r`.`children`,
-		`r`.`nights`,
-		`r`.`manual_commission_override`,
+        $sql = "
+        SELECT
+        `r`.`status`,
+        `r`.`pax`,
+        `r`.`children`,
+        `r`.`nights`,
+        `r`.`manual_commission_override`,
         DATE_FORMAT(`r`.`checkin_date`, '%m/%d/%Y') AS 'checkin_date',
         DATE_FORMAT(
             DATE_ADD(`r`.`checkin_date`, INTERVAL `r`.`nights` DAY),
             '%m/%d/%Y'
         ) AS 'checkout_date',
-		`c`.`first`,
-		`c`.`middle`,
-		`c`.`last`,
+        `c`.`first`,
+        `c`.`middle`,
+        `c`.`last`,
         `c`.`email`,
-		`c`.`address1`,
-		`c`.`address2`,
-		`c`.`city`,
-		`c`.`state`,
-		`c`.`province`,
-		`c`.`zip`,
+        `c`.`address1`,
+        `c`.`address2`,
+        `c`.`city`,
+        `c`.`state`,
+        `c`.`province`,
+        `c`.`zip`,
         `c`.`contactID`,
-		`ct`.`country`
+        `ct`.`country`,
+        DATE_FORMAT(`r`.`checkin_date`, '%M %e, %Y') AS 'checkin_date_invoice',
+        DATE_FORMAT(
+            DATE_ADD(`r`.`checkin_date`, INTERVAL `r`.`nights` DAY),
+            '%M %e, %Y'
+        ) AS 'checkout_date_invoice',
+        DATE_FORMAT(`r`.`date_booked`, '%M %e, %Y') AS 'date_booked_invoice',
+        `l`.`name` AS 'lodge_name',
+        `l`.`location` AS 'lodge_location'
 
-    	FROM
-    		`reservations` r
 
+        FROM
+            `reservations` r
         LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
         LEFT JOIN `$AF_DB`.`countries` ct ON `c`.`countryID` = `ct`.`countryID`
-
-    	WHERE
-    		`r`.`reservationID` = '$reservationID'
-    	";
+        LEFT JOIN `locations` l ON `r`.`locationID` = `l`.`id`
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+        ";
         $result = $em->getConnection()->prepare($sql);
         $result->execute();        
         $details = "";

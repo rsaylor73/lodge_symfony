@@ -26,6 +26,7 @@
 	<div class="col-sm-8"><h3>Details</h3></div>
 </div>
 
+<div id="ajax_results"></div>
 
 <div class="row top-buffer">
 	<div class="col-sm-3"><b>Invoice</b></div>
@@ -188,6 +189,42 @@
 	{% endif %}
 </div>
 
+<form name="myform">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+
+<div class="row top-buffer">
+	<div class="col-sm-3"><b>Reservation Type</b></div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-3">
+		<select name="reservationType" class="form-control" onchange="updateReservationType(this.form)">
+			<option value="{{reservationType}}">{{reservationType}} (Default)</option>
+			<option>Individuals</option>
+			<option>Groups</option>
+		</select>
+	</div>
+</div>
+</form>
+
+<script>
+function updateReservationType(myform) {
+	$.get('{{path('updatereservationtype')}}',
+	$(myform).serialize(),
+	function(php_msg) {
+		$("#ajax_results").html(php_msg);
+	});
+}
+
+function search_pax(myform) {
+	$.get('{{path('searchcontact')}}',
+	$(myform).serialize(),
+	function(php_msg) {
+	$("#ajax_results").html(php_msg);
+	});
+}
+
+
+</script>
 
 {% endblock %}
 

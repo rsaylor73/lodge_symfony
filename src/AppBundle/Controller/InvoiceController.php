@@ -116,7 +116,7 @@ class InvoiceController extends Controller
         // balance
         $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
 
-        $date = date("m/d/Y");
+        $date = date("F d, Y");
 
         // contact details
         $first = $details['first'];
@@ -182,10 +182,19 @@ class InvoiceController extends Controller
             $i++;
         }        
 
+        $payment_policy = $this->get('commonservices')->payment_policy($reservationID);
+        
+        $invoice_file = "";
+        if ($payment_policy['reservationType'] == "Individuals") {
+            $invoice_file = "invoice_individuals.html.twig";
+        } elseif ($payment_policy['reservationType'] == "Groups") {
+            $invoice_file = "invoice_groups.html.twig";
+        }
 
         switch ($mode) {
             case "view":
-            return $this->render('invoice/invoice.html.twig',[
+
+            return $this->render('invoice/'.$invoice_file,[
                 'reservationID' => $reservationID,
                 'tab' => '3',
                 'total' => $total,
@@ -213,13 +222,15 @@ class InvoiceController extends Controller
                 'nights' => $details['nights'],
                 'guests' => $guests,
                 'total_guests' => $total_guests,
+                'payment_policy' => $payment_policy,
+                'details' => $details,
 
             ]);
             break;
 
             case "print":
             $print = "Yes";
-            return $this->render('invoice/invoice.html.twig',[
+            return $this->render('invoice/'.$invoice_file,[
                 'reservationID' => $reservationID,
                 'tab' => '3',
                 'total' => $total,
@@ -246,6 +257,8 @@ class InvoiceController extends Controller
                 'company' => $company,
                 'nights' => $details['nights'],
                 'guests' => $guests,
+                'payment_policy' => $payment_policy,
+                'details' => $details,
             ]);
             break;
 
@@ -262,7 +275,7 @@ class InvoiceController extends Controller
                     ->setSubject($title)
                     ->setBody(
                         $this->renderView(
-                            'invoice/invoice.html.twig',
+                            'invoice/'.$invoice_file,
                             array(
                             'reservationID' => $reservationID,
                             'tab' => '3',
@@ -290,6 +303,8 @@ class InvoiceController extends Controller
                             'company' => $company,
                             'nights' => $details['nights'],
                             'guests' => $guests,
+                            'payment_policy' => $payment_policy,
+                            'details' => $details,
                             )
                         ),
                         'text/html'

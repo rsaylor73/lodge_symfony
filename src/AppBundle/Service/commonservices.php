@@ -456,4 +456,169 @@ class commonservices extends Controller
         $newfile = $site_path . "/reports/" . $filename;
         $writer->save($newfile);      
     }
+
+    public function payment_policy($reservationID) {
+        $em = $this->em;
+        $container = $this->container;
+
+        $sql = "
+        SELECT
+            `r`.`reservationType`,
+            DATE_FORMAT(`r`.`date_booked`, '%Y%m%d') AS 'reservation_date',
+            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') AS 'checkin_date',
+            `r`.`status`
+        FROM
+            `reservations` r
+
+        WHERE
+            `r`.`reservationID` = '$reservationID'
+        ";  
+
+        $reservationType = "";
+        $reservation_date = "";
+        $checkin_date = "";
+        $status = "";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        while ($row = $result->fetch()) {
+            $reservationType = $row['reservationType'];
+            $reservation_date = $row['reservation_date'];
+            $checkin_date = $row['checkin_date'];
+            $status = $row['status'];
+        }
+
+        // gets difference in days
+        $datetime1 = new \DateTime($reservation_date);
+        $datetime2 = new \DateTime($checkin_date);
+        $interval = $datetime1->diff($datetime2);
+        $days = $interval->format('%a');
+        
+        $deposit = "";
+        $deposit1_date = "";
+        $deposit2_date = "";
+        $deposit3_date = "";
+        $final_date = "";
+        $data = "";
+
+        switch ($reservationType) {
+            case "Individuals":
+                if ($days >= 90) {
+                    $deposit = "40";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    $final_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+
+                } else {
+                    $deposit = "100";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date));
+                    $final_date = date("F d, Y", strtotime($reservation_date));
+                }
+
+            break;
+
+            case "Groups":
+                if ($days >= 272) {
+                    /*
+                    (9 month rule)
+                    Deposit 1 = $1,500 (14 days)
+                    Deposit 2 = $3,500 (9 months **)
+                    Deposit 3 = 40%
+                    */
+                    $deposit = "40";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 272 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 90 day"));
+                    if ($test1 > $test2) {
+                        $deposit2_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                    } else {
+                        $deposit2_date = date("F d, Y", strtotime($reservation_date . "+ 272 day"));
+                    }
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 14 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 181 day"));
+                    if ($test1 > $test2) {
+                        $deposit3_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    } else {
+                        $deposit3_date = date("F d, Y", strtotime($checkin_date . "- 181 day"));
+                    }
+                    $final_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                } elseif (($days >= 181) && ($days < 272)) {
+                    /*
+                    (6 month rule)
+                    Deposit 1 = $1,500 (14 days)
+                    Deposit 2 = $3,500 (9 months **)
+                    Deposit 3 = 40%
+                    */
+                    $deposit = "40";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 14 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 181 day"));
+                    if ($test1 > $test2) {
+                        $deposit3_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    } else {
+                        $deposit3_date = date("F d, Y", strtotime($checkin_date . "- 181 day"));
+                    }
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 181 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 90 day"));
+                    if ($test1 > $test2) {
+                        $deposit2_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                    } else {
+                        $deposit2_date = date("F d, Y", strtotime($reservation_date . "+ 181 day"));
+                    }
+                    $final_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                } elseif (($days >= 90) && ($days < 181)) {
+                    /*
+                    (90 days to 6 month rule)
+                    Deposit 1 = $1,500 (14 days)
+                    Deposit 2 = $3,500 (9 months **)
+                    Deposit 3 = 40%
+                    */
+                    $deposit = "40";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 181 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 90 day"));
+                    if ($test1 > $test2) {
+                        $deposit2_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                    } else {
+                        $deposit2_date = date("F d, Y", strtotime($reservation_date . "+ 181 day"));
+                    }
+                    $test1 = date("Ymd", strtotime($reservation_date . "+ 14 day"));
+                    $test2 = date("Ymd", strtotime($checkin_date . "- 181 day"));
+                    if ($test1 > $test2) {
+                        $deposit3_date = date("F d, Y", strtotime($reservation_date . "+ 14 day"));
+                    } else {
+                        $deposit3_date = date("F d, Y", strtotime($checkin_date . "- 181 day"));
+                    }                    
+                    $final_date = date("F d, Y", strtotime($checkin_date . "- 90 day"));
+                } elseif ($days < 90) {
+                    // 100 % rule
+                    /*
+                    (Due now rule)
+                    Deposit 1 = $1,500 (14 days)
+                    Deposit 2 = $3,500 (9 months **)
+                    Deposit 3 = 40%
+                    */
+                    $deposit = "100";
+                    $deposit1_date = date("F d, Y", strtotime($reservation_date));
+                    $deposit2_date = date("F d, Y", strtotime($reservation_date));
+                    $deposit3_date = date("F d, Y", strtotime($reservation_date));
+                    $final_date = date("F d, Y", strtotime($reservation_date));
+                }
+
+            break;
+        }
+
+        $data['reservationType'] = $reservationType;
+        $data['deposit1_date'] = $deposit1_date;
+        $data['deposit2_date'] = $deposit2_date;
+        $data['deposit3_date'] = $deposit3_date;
+        $data['final_date'] = $final_date;
+        $data['deposit'] = $deposit;
+        return($data);
+
+
+    }
+
+
+
+
 }
