@@ -30,6 +30,8 @@ class InvoiceController extends Controller
         $site_url = $this->container->getParameter('site_url');
         $site_name = $this->container->getParameter('site_name');
         $site_email = $this->container->getParameter('site_email');
+        $site_path = $this->container->getParameter('site_path');
+        $cid1 = "";
 
         // tent total
         $total = $this
@@ -115,6 +117,7 @@ class InvoiceController extends Controller
 
         // balance
         $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
+        $res_total = ($total + $transfer_total)  - $discount_total - $comm_amount;
 
         $date = date("F d, Y");
 
@@ -184,6 +187,14 @@ class InvoiceController extends Controller
 
         $payment_policy = $this->get('commonservices')->payment_policy($reservationID);
         
+        if ($payment_policy['reservationType'] == "Individuals") {
+            $deposit_amount = $res_total * .40;
+            $final_amount = $res_total - $deposit_amount;
+        } elseif ($payment_policy['reservationType'] == "Groups") {
+            $deposit_amount = ($res_total - 5000) * .40;
+            $final_amount = ($res_total - 5000) - $deposit_amount;
+        }
+
         $invoice_file = "";
         if ($payment_policy['reservationType'] == "Individuals") {
             $invoice_file = "invoice_individuals.html.twig";
@@ -224,6 +235,13 @@ class InvoiceController extends Controller
                 'total_guests' => $total_guests,
                 'payment_policy' => $payment_policy,
                 'details' => $details,
+                'transfer_amount' => $transfer_amount,
+                'deposit_amount' => $deposit_amount,
+                'final_amount' => $final_amount,
+                'payment_history' => $payment_history,
+                'res_total' => $res_total,
+                'format' => 'html',
+                'site_url' => $site_url,
 
             ]);
             break;
@@ -259,6 +277,13 @@ class InvoiceController extends Controller
                 'guests' => $guests,
                 'payment_policy' => $payment_policy,
                 'details' => $details,
+                'transfer_amount' => $transfer_amount,
+                'deposit_amount' => $deposit_amount,
+                'final_amount' => $final_amount,
+                'payment_history' => $payment_history,
+                'res_total' => $res_total,
+                'format' => 'html',
+                'site_url' => $site_url,
             ]);
             break;
 
@@ -266,9 +291,11 @@ class InvoiceController extends Controller
                 $name = $details['first'] . " " . $details['last'];
                 $email = $details['email'];
 
+
                 $title = "Aggressor Safari Lodge Conf # $reservationID Invoice";
 
                 // send welcome email
+
                 $message = (new \Swift_Message($title))
                     ->setFrom($site_email)
                     ->setTo($email)
@@ -305,12 +332,22 @@ class InvoiceController extends Controller
                             'guests' => $guests,
                             'payment_policy' => $payment_policy,
                             'details' => $details,
+                            'transfer_amount' => $transfer_amount,
+                            'deposit_amount' => $deposit_amount,
+                            'final_amount' => $final_amount,
+                            'payment_history' => $payment_history,
+                            'res_total' => $res_total,
+                            'format' => 'email',
+                            'site_url' => $site_url,
                             )
                         ),
                         'text/html'
                     )
                 ;
+                //->attach(\Swift_Attachment::fromPath($image1)->setDisposition('inline'))
+
                 $this->get('mailer')->send($message);
+
                 $this->addFlash('success',"The invoice was emailed to $email.");
                 return $this->redirectToRoute('viewreservation',[
                     'reservationID' => $reservationID,

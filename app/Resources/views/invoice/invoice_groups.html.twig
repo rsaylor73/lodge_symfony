@@ -49,7 +49,18 @@ body,td,th {
 </head>
 <body>
 {# attach image #}
-<img src="{{asset('Logo-ResSystem-horizontal.jpg')}}" width="510" height="70" alt=""/>
+
+{% if print == "Yes" %}
+<script>
+window.print();
+</script>
+{% endif %}
+
+{% if format == "html" %}
+  <img src="{{asset('Logo-ResSystem-horizontal.jpg')}}" width="510" height="70" alt=""/>
+{% elseif format == "email" %}
+  <img src="{{site_url}}/Logo-ResSystem-horizontal.jpg" width="510" height="70" alt=""/>
+{% endif %}
 <table width="750" border="0" cellspacing="0" cellpadding="6">
   <tr>
     <td width="177" rowspan="3"> 
@@ -147,9 +158,6 @@ body,td,th {
       <strong>Tent Rate</strong>
     </td>
     <td width="90">
-      <strong>Discounts</strong>
-    </td>
-    <td width="90">
       <strong>Transfers</strong>
     </td>
     <td align="right" width="90">
@@ -157,20 +165,28 @@ body,td,th {
     </td>
   </tr>
   {# loop from guest list #}
+  {% for g in guests %}
   <tr>
     <td align="left">
-      Anthony Conway
+      {% if g.contactID == "" %}
+        Guest not assigned
+      {% else %}
+        {{g.first}} {{g.middle}} {{g.last}}
+      {% endif %}
     </td>
     <td>
-      Deluxe 03-B
+      {{g.description}}-{{g.bed}}
     </td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>$ {{g.nightly_rate|number_format(2, '.', ',')}}</td>
+    <td>$ {{transfer_amount|number_format(2, '.', ',')}}</td>
     <td align="right">
-      <div align="right">$1,400.00</div>
+      <div align="right">
+        {% set total_guest = g.nightly_rate + transfer_amount %}
+        $ {{total_guest|number_format(2, '.', ',')}}
+      </div>
     </td>
   </tr>
+  {% endfor %}
   {# end loop #}
 </table>
 
@@ -181,32 +197,65 @@ body,td,th {
         <span class="Sub-Title">Payment Schedule</span>
       </td>
     </tr>
+    
+
     <tr>
       <td width="207">
-        <strong>Deposit:</strong>
+        <strong>Non-refundable deposit:</strong>
       </td>
       <td width="125">
-        $1,876.00
+        $ 1,500.00
       </td>
       <td width="92" align="right">
         <strong>Due by:</strong>
       </td>
       <td width="292">
-        April 18, 2017
+        {{payment_policy.deposit1_date}}
       </td>
     </tr>
+
+    <tr>
+      <td width="207">
+        <strong>9 months deposit:</strong>
+      </td>
+      <td width="125">
+        $ 3,500.00
+      </td>
+      <td width="92" align="right">
+        <strong>Due by:</strong>
+      </td>
+      <td width="292">
+        {{payment_policy.deposit3_date}}
+      </td>
+    </tr>
+
+    <tr>
+      <td width="207">
+        <strong>6 months deposit:</strong>
+      </td>
+      <td width="125">
+        $ {{deposit_amount|number_format(2, '.', ',')}}
+      </td>
+      <td width="92" align="right">
+        <strong>Due by:</strong>
+      </td>
+      <td width="292">
+        {{payment_policy.deposit2_date}}
+      </td>
+    </tr>
+
     <tr>
       <td>
-        <strong>Final Payment:</strong>
+        <strong>90 days final payment:</strong>
       </td>
       <td>
-        $2,814.00
+        $ {{final_amount|number_format(2, '.', ',')}}
       </td>
       <td align="right">
         <strong>Due by:</strong>
       </td>
       <td>
-        January 7, 2018
+        {{payment_policy.final_date}}
       </td>
     </tr>
     <tr>
@@ -214,7 +263,8 @@ body,td,th {
         <strong>Total of Scheduled Payments:</strong>
       </td>
       <td>
-        $4,690.00
+        {% set total_schedule = 1500 + 3500 + deposit_amount + final_amount %}
+        $ {{total_schedule|number_format(2, '.', ',')}}
       </td>
       <td colspan="2" align="right">&nbsp;</td>
     </tr>
@@ -229,25 +279,34 @@ body,td,th {
       </td>
     </tr>
     <tr>
-      <td width="88">
+      <td width="118">
         <strong>Date:</strong>
       </td>
-      <td width="499">
+      <td width="479">
         <strong>Comment:</strong>
       </td>
-      <td width="137" align="right">
+      <td width="127" align="right">
         <strong>Amount:</strong>
       </td>
     </tr>
     {# loop payment history #}
+
+    {% for p in payment_history %}
+
     <tr>
-      <td>04/20/2017</td>
-      <td>Payment made online (CC - Visa) by CORINNE MILMOE</td>
+      <td>{{p.payment_date_invoice}}</td>
+      <td>{{p.credit_description}}{{p.check_description}}{{p.wire_description}}</td>
       <td align="right">
-        $1,876.00
+        $ {{p.amount|number_format(2, '.', ',')}}
       </td>
     </tr>
-      
+
+    {% endfor %}
+
+    {% if payment_history == "" %}
+    <tr><td colspan="3">There is not any payment history currently.</td></tr>
+    {% endif %}
+
     <tr>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
@@ -258,43 +317,50 @@ body,td,th {
 
 <table width="750" cellpadding="4" cellspacing="0">
   <tr>
-    <td colspan="4" bgcolor="#A8D472">
+    <td colspan="5" bgcolor="#A8D472">
       <span class="Sub-Title">Balance Summary</span>
     </td>
   </tr>
   <tr>
-    <td width="141" align="center">
+    <td width="150" align="center">
       <b>Total:</b>&nbsp;&nbsp;
     </td>
-    <td width="154" align="center">
+    <td width="150" align="center">
       <b>Less Commission:</b>&nbsp;
     </td>
-    <td width="155" align="center">
+    <td width="150" align="center">
       <b>Payments:</b>&nbsp;&nbsp;
     </td>
-    <td align="right" valign="bottom">
+    <td width="150" align="center">
+      <b>Discounts:</b>
+    </td>
+    <td width="150" align="right" valign="bottom">
       <b>Total Net Due:</b>
     </td>
   </tr>
   <tr>
     <td align="center">
-      &nbsp; $15,400.00
+      {% set res_total = res_total + comm_amount %} 
+      &nbsp; $ {{res_total|number_format(2, '.', ',')}}
     </td>
     <td align="center">
-      $350.00
+      $ {{comm_amount|number_format(2, '.', ',')}}
     </td>
     <td align="center">
-      $0.00
+      $ {{payment_total|number_format(2, '.', ',')}}
+    </td>
+    <td align="center">
+      $ {{discount_total|number_format(2, '.', ',')}}
     </td>
     <td align="right" valign="bottom">
-      $9,193.00
+      $ {{balance|number_format(2, '.', ',')}}
     </td>
   </tr>
   <tr>
-    <td colspan="4" align="right">&nbsp;</td>
+    <td colspan="5" align="right">&nbsp;</td>
   </tr>
   <tr>
-    <td colspan="4" bgcolor="#A8D472" class="Sub-Title">
+    <td colspan="5" bgcolor="#A8D472" class="Sub-Title">
       Reseller Information
     </td>
   </tr>
@@ -305,7 +371,7 @@ body,td,th {
   </tr>
   <tr>
     <td colspan="4">
-      <span class="content1smaller"><font color="#B80614"><img src="{{asset('CC-Accept.jpg')}}" alt="We Accept Credit Cards" width="170" height="62" hspace="10" align="right"><strong>Wire Transfer Instructions</strong></font><br>
+      <span class="content1smaller"><font color="#B80614"><img src="{{site_url}}/CC-Accept.jpg" alt="We Accept Credit Cards" width="170" height="62" hspace="10" align="right"><strong>Wire Transfer Instructions</strong></font><br>
       Regions Bank, 1219 Augusta West Parkway Augusta, Georgia 30909 USA<br>
       Swift # UPNBUS44           ABA # 062005690              Telex # 6737871 UPB MIA <br>
       For Credit to: WayneWorks Marine LLC, 209 Hudson Trace, Augusta, Georgia 30907<br>

@@ -33,7 +33,7 @@
 	</div>
 </div>
 <div class="row top-buffer">
-	<div class="col-sm-1"><input type="radio" name="email" value="{{email}}"></div>
+	<div class="col-sm-1"><input type="radio" name="email" {% if guest_email == "" %} checked {% endif %} value="{{email}}"></div>
 	<div class="col-sm-7">{{first}} {{middle}} {{last}} ({{email}})</div>
 </div>
 
@@ -43,7 +43,7 @@
 	</div>
 </div>
 <div class="row top-buffer">
-	<div class="col-sm-1"><input type="radio" name="email" checked value="{{guest_email}}"></div>
+	<div class="col-sm-1"><input type="radio" name="email" {% if guest_email != "" %} checked {% endif %} value="{{guest_email}}" {% if guest_email == "" %}disabled{% endif %}></div>
 	<div class="col-sm-7">{{guest_first}} {{guest_middle}} {{guest_last}} ({{guest_email}})</div>
 </div>
 

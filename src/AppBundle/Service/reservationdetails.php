@@ -115,7 +115,8 @@ class reservationdetails extends Controller
             `p`.`check_description`,
             `p`.`wire_description`,
             `p`.`amount`,
-            DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date'
+            DATE_FORMAT(`p`.`payment_date`, '%m/%d/%Y') AS 'payment_date',
+            DATE_FORMAT(`p`.`payment_date`, '%M %d, %Y') AS 'payment_date_invoice'
 
         FROM
             `payments` p

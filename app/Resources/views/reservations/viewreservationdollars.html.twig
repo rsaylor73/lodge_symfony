@@ -23,6 +23,27 @@
 {% endif %}
 
 <div class="row top-buffer">
+  <div class="col-sm-8">
+    <h3>Dates</h3>
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Reservation Date:</b></div>
+  <div class="col-sm-3">{{details.date_booked_invoice}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Deposit Due:</b></div>
+  <div class="col-sm-3">{{payment_policy.deposit1_date}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Balance Due:</b></div>
+  <div class="col-sm-3">{{payment_policy.final_date}}</div>
+</div>
+
+<div class="row top-buffer">
   <div class="col-sm-8"><h3>Dollars</h3></div>
 </div>
 
@@ -30,6 +51,16 @@
 <div class="row top-buffer">
   <div class="col-sm-3"><b>Nightly Rate:</b></div>
   <div class="col-sm-3">$ {{d.nightly_rate}} per guest</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Check-In Date:</b></div>
+  <div class="col-sm-3">{{details.checkin_date_invoice}}</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-3"><b>Check-Out Date:</b></div>
+  <div class="col-sm-3">{{details.checkout_date_invoice}}</div>
 </div>
 
 <div class="row top-buffer">

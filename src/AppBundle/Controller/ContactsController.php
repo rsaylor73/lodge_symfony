@@ -449,6 +449,9 @@ class ContactsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
         $contactID = $request->request->get('contactID');
+        if ($contactID == "") {
+            $contactID = $request->query->get('contactID');
+        }
 
         $sql = "
         SELECT
@@ -631,14 +634,6 @@ class ContactsController extends Controller
         $phone3 = $request->request->get('phone3');
         $phone4 = $request->request->get('phone4');
         $date_created = date("Ymd");
-
-        $sql = "SELECT `email` FROM `$AF_DB`.`contacts` WHERE `email` = '$email'";
-        $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-        while ($row = $result->fetch()) {        
-            $this->addFlash('danger','The email ' . $email . ' is already registered.');
-            return $this->redirectToRoute('newcontact');
-        }
 
         $sql = "INSERT INTO `$AF_DB`.`contacts`
         (

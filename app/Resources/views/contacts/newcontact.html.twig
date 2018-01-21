@@ -80,7 +80,16 @@
 <div class="row top-buffer">
 	<div class="col-sm-2">Country:</div>
 	<div class="col-sm-2">
-		<select name="countryID" class="form-control">
+		<select name="countryID" required class="form-control">
+			<option value="">Select</option>
+			<optgroup label="Top Countries">
+				<option value="2">USA</option>
+				<option value="24">Mexico</option>
+				<option value="9">Spain</option>
+				<option value="35">Russia</option>
+				<option value="19">Italy</option>
+			</optgroup>
+
 			{% for c in country %}
 				<option value="{{c.countryID}}">{{c.country}}</option>
 			{% endfor %}

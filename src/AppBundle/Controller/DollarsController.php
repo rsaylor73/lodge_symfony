@@ -175,6 +175,16 @@ class DollarsController extends Controller
 
         // balance
         $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
+        $res_total = ($total + $transfer_total)  - $discount_total - $comm_amount;
+
+        $payment_policy = $this->get('commonservices')->payment_policy($reservationID);
+        if ($payment_policy['reservationType'] == "Individuals") {
+            $deposit_amount = $res_total * .40;
+            $final_amount = $res_total - $deposit_amount;
+        } elseif ($payment_policy['reservationType'] == "Groups") {
+            $deposit_amount = ($res_total - 5000) * .40;
+            $final_amount = ($res_total - 5000) - $deposit_amount;
+        }
 
         return $this->render('reservations/viewreservationdollars.html.twig',[
             'reservationID' => $reservationID,
@@ -190,7 +200,8 @@ class DollarsController extends Controller
             'comm_amount' => $comm_amount,
             'balance' => $balance,
             'details' => $details,
-            'comp' => $comp,         
+            'comp' => $comp,
+            'payment_policy' => $payment_policy,         
         ]);
     }
 

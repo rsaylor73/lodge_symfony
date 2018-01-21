@@ -45,7 +45,7 @@
 					{% if d.contactID == "" %}
 						<font color=red>Guest Not Assigned</font>
 					{% else %}
-						{{d.first}} {{d.middle}} {{d.last}}
+						<a href="{{path('editcontacts', {'contactID': d.contactID })}}" target="_blank">{{d.first}} {{d.middle}} {{d.last}}</a>
 					{% endif %}
 				</td>
 				<td>
