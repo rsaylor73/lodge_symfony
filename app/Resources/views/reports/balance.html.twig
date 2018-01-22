@@ -12,48 +12,227 @@
 	</div>
 </div>
 
+
+
 <div class="row top-buffer">
-	<div class="col-sm-8">
+	<div class="col-sm-12">
 		<div class="alert alert-info">
-			The following reservations has a balance due within the past +/- 90 days from the Check-In date.
+			<h3>All Past Due</h3>
 		</div>
 	</div>
 </div>
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		TBD
+	</div>
+</div>
+
+
 
 <div class="row top-buffer">
-	<div class="col-sm-8">
-		<table class="table table-striped table-hover">
+	<div class="col-sm-12">
+		<div class="alert alert-info">
+			<h3>Next 90 Days</h3>
+		</div>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-12 table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th width="200">Name</th>
+					<th width="75">Conf</th>
+					<th width="200">Company</th>
+					<th width="200">Status</th>
+					<th width="200">Check-In</th>
+					<th width="100">Gross</th>
+					<th width="100">Net</th>
+					<th width="100">Disc</th>
+					<th width="100">Pmnts</th>
+					<th width="100">Comm</th>
+					<th width="100">Due</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d2 in data2 %}
 			<tr>
-				<th><b>Reservation #</b></th>
-				<th><b>Check-In Date</b></th>
-				<th><b>Nights</b></th>
-				<th><b>Primary Contact</b></th>
-				<th><b>Payments</b></th>
-				<th><b>Balance Due</b></th>
-			</tr>
-			{% for b in balance_details %}
-			<tr>
-				<td><a href="{{path('viewreservation')}}/{{b.reservationID}}">{{b.reservationID}}</a></td>
-				<td>{{b.checkin_date}}</td>
-				<td>{{b.nights}}</td>
 				<td>
-				{% if b.first == "" and b.last == "" %}
-					<font color="red">Not Assigned</font>
-				{% else %}
-					{{b.first}} {{b.last}}
-				{% endif %}
+					{% if d2.last == "" %}
+						<font color="red">Contact Missing</font>
+					{% else %}
+						{{d2.first}} {{d2.last}}
+					{% endif %}
 				</td>
-				<td>$ {{b.payment_total|number_format(2, '.', ',')}}</td>
-				<td>$ {{b.balance|number_format(2, '.', ',')}}</td>
+				<td>
+					<a href="{{path('viewreservation', {'reservationID': d2.reservationID})}}">{{d2.reservationID}}</a></td>
+				<td>
+					{% if d2.company == "" %}
+						<font color="red">Reseller Missing</font>
+					{% else %}
+						{{d2.company}}
+					{% endif %}
+				</td>
+				<td>
+					<div class="alert alert-danger">DEPOSIT PAST DUE</div>
+				</td>
+				<td>{{d2.checkin_date_formatted}}</td>
+				<td>$ {{d2.cron_grand_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set net = d2.cron_grand_total - d2.cron_discount_total %}
+					$ {{net|number_format(2, '.', ',')}}
+				</td>
+				<td>$ {{d2.cron_discount_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d2.cron_payments_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d2.cron_commission_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set due = d2.cron_grand_total - d2.cron_discount_total - d2.cron_payments_total - d2.cron_commission_total %}
+					$ {{due|number_format(2, '.', ',')}}
+				</td>
 			</tr>
 			{% endfor %}
+			</tbody>
 		</table>
 	</div>
 </div>
 
 
 
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<div class="alert alert-info">
+			<h3>90 Days to 6 Months</h3>
+		</div>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-12 table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th width="200">Name</th>
+					<th width="75">Conf</th>
+					<th width="200">Company</th>
+					<th width="200">Status</th>
+					<th width="200">Check-In</th>
+					<th width="100">Gross</th>
+					<th width="100">Net</th>
+					<th width="100">Disc</th>
+					<th width="100">Pmnts</th>
+					<th width="100">Comm</th>
+					<th width="100">Due</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d3 in data3 %}
+			<tr>
+				<td>
+					{% if d3.last == "" %}
+						<font color="red">Contact Missing</font>
+					{% else %}
+						{{d3.first}} {{d3.last}}
+					{% endif %}
+				</td>
+				<td>
+					<a href="{{path('viewreservation', {'reservationID': d3.reservationID})}}">{{d3.reservationID}}</a></td>
+				<td>
+					{% if d3.company == "" %}
+						<font color="red">Reseller Missing</font>
+					{% else %}
+						{{d3.company}}
+					{% endif %}
+				</td>
+				<td>
+					<div class="alert alert-danger">DEPOSIT PAST DUE</div>
+				</td>
+				<td>{{d3.checkin_date_formatted}}</td>
+				<td>$ {{d3.cron_grand_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set net = d3.cron_grand_total - d3.cron_discount_total %}
+					$ {{net|number_format(2, '.', ',')}}
+				</td>
+				<td>$ {{d3.cron_discount_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d3.cron_payments_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d3.cron_commission_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set due = d3.cron_grand_total - d3.cron_discount_total - d3.cron_payments_total - d3.cron_commission_total %}
+					$ {{due|number_format(2, '.', ',')}}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
 
+
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<div class="alert alert-info">
+			<h3>6 Months to 9 Months</h3>
+		</div>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-12 table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th width="200">Name</th>
+					<th width="75">Conf</th>
+					<th width="200">Company</th>
+					<th width="200">Status</th>
+					<th width="200">Check-In</th>
+					<th width="100">Gross</th>
+					<th width="100">Net</th>
+					<th width="100">Disc</th>
+					<th width="100">Pmnts</th>
+					<th width="100">Comm</th>
+					<th width="100">Due</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d4 in data4 %}
+			<tr>
+				<td>
+					{% if d4.last == "" %}
+						<font color="red">Contact Missing</font>
+					{% else %}
+						{{d4.first}} {{d4.last}}
+					{% endif %}
+				</td>
+				<td>
+					<a href="{{path('viewreservation', {'reservationID': d4.reservationID})}}">{{d4.reservationID}}</a></td>
+				<td>
+					{% if d4.company == "" %}
+						<font color="red">Reseller Missing</font>
+					{% else %}
+						{{d4.company}}
+					{% endif %}
+				</td>
+				<td>
+					<div class="alert alert-danger">DEPOSIT PAST DUE</div>
+				</td>
+				<td>{{d4.checkin_date_formatted}}</td>
+				<td>$ {{d4.cron_grand_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set net = d4.cron_grand_total - d4.cron_discount_total %}
+					$ {{net|number_format(2, '.', ',')}}
+				</td>
+				<td>$ {{d4.cron_discount_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d4.cron_payments_total|number_format(2, '.', ',')}}</td>
+				<td>$ {{d4.cron_commission_total|number_format(2, '.', ',')}}</td>
+				<td>
+					{% set due = d4.cron_grand_total - d4.cron_discount_total - d4.cron_payments_total - d4.cron_commission_total %}
+					$ {{due|number_format(2, '.', ',')}}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
 
 
 {% endblock %}

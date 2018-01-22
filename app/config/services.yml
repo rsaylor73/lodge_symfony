@@ -25,7 +25,7 @@ services:
     commonservices:
         class: AppBundle\Service\commonservices
         public: true
-        
+       
     # makes classes in src/AppBundle available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     AppBundle\:

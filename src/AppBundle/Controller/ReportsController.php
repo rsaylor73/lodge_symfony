@@ -25,136 +25,102 @@ class ReportsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
         $balance_details = "";
-        $i = "0";
+        $today = date("Ymd");
 
-        $date = date("Ymd");
-        $start = date("Ymd", strtotime($date . "-90 DAY"));
-        $end = date("Ymd", strtotime($date . "+500 DAY"));
+        // Past Due
+        $data1 = "";
 
-        $sql = "
-        SELECT
-            `r`.`reservationID`
-
-        FROM
-            `reservations` r
-
-        WHERE
-            `r`.`status` = 'Active'
-            AND DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
-
-        ";
-
+        // Next 90 days
+        $start = date("Ymd", strtotime($today . "+ 1 day"));
+        $end = date("Ymd", strtotime($today . "+ 91 day"));
+        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
         $result = $em->getConnection()->prepare($sql);
-        $result->execute();        
+        $result->execute();
+        $i = "0";
+        $data2 = "";
         while ($row = $result->fetch()) {
-            $reservationID = $row['reservationID'];
-
-            // tent total
-            $total = $this
-                ->get('reservationdetails')
-                ->tenttotal($reservationID); 
-
-            // reservation details
-            $details = $this
-                ->get('reservationdetails')
-                ->getresdetails($reservationID);
-            
-            $guests = $details['pax'] + $details['children'];
-
-            // transfers
-            $nights = $details['nights'] - 1;
-            $transfer_amount = $this
-                ->get('reservationdetails')
-                ->transfer_amount($nights);
-            $transfer_total = $transfer_amount * $guests;
-
-            // payment history
-            $payment_history = $this
-            ->get('reservationdetails')
-            ->payment_history($reservationID);   
-            
-            $payment_total = "0";
-            if(is_array($payment_history)) {
-                foreach($payment_history as $key=>$value) {
-                    foreach($value as $key2=>$value2) {
-                        if ($key2 == "amount") {
-                            $payment_total = $payment_total + $value2;
-                        }
-                    }
-                }
-            } 
-            
-            // discount history
-            $discount_history = $this
-            ->get('reservationdetails')
-            ->discount_history($reservationID);
-
-            $discount_total = "0";
-            if(is_array($discount_history)) {
-                foreach($discount_history as $key=>$value) {
-                    foreach($value as $key2=>$value2) {
-                        if ($key2 == "amount") {
-                            $discount_total = $discount_total + $value2;
-                        }
-                    }
-                }
+            foreach ($row as $key=>$value) {
+                $data2[$i][$key] = $value;
             }
-
-            // commission
-            $sql2 = "
-            SELECT
-                `rs`.`commission`
-            FROM
-                `reservations` r
-
-            LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
-
-            WHERE
-                `r`.`reservationID` = '$reservationID'
-            ";
-            $result2 = $em->getConnection()->prepare($sql2);
-            $result2->execute();
-            $commission = "0";
-            while ($row2 = $result2->fetch()) {
-                $commission = $row2['commission'];
-            }
-
-            $manual_commission_override = $details['manual_commission_override'];
-            if ($manual_commission_override > 0) {
-                $commission = $manual_commission_override;
-            }
-
-            if ($commission == "") {
-                $commission = "0";
-            }
-
-            $total_commissionable = $total - $discount_total;
-            $comm_amount = floor($total_commissionable * ($commission / 100));
-
-            // balance
-            $balance = ($total + $transfer_total)  - $discount_total - $comm_amount - $payment_total;
-
-            $balance_details[$i]['reservationID'] = $reservationID;
-            $balance_details[$i]['checkin_date'] = $details['checkin_date'];
-            $balance_details[$i]['nights'] = $details['nights'];
-            $balance_details[$i]['first'] = $details['first'];
-            $balance_details[$i]['last'] = $details['last'];
-            $balance_details[$i]['email'] = $details['email'];
-            $balance_details[$i]['balance'] = $balance;
-            $balance_details[$i]['payment_total'] = $payment_total;
-
-
             $i++;
-
         }
+
+        // 90 days to 6 months
+        $start = date("Ymd", strtotime($end . "+ 1 day"));
+        $end = date("Ymd", strtotime($start . "+ 6 months" . "+ 1 day"));
+        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $data3 = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data3[$i][$key] = $value;
+            }
+            $i++;
+        }
+
+        // 6 months to 9 months
+        $start = date("Ymd", strtotime($today . "+ 1 day" . "+ 6 month"));
+        $end = date("Ymd", strtotime($start . "+ 3 months" . "+ 1 day"));
+        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+        $i = "0";
+        $data4 = "";
+        while ($row = $result->fetch()) {
+            foreach ($row as $key=>$value) {
+                $data4[$i][$key] = $value;
+            }
+            $i++;
+        }
+
+
+
 
         $date = date("m/d/Y");
 
         return $this->render('reports/balance.html.twig',[
             'date' => $date,
-            'balance_details' => $balance_details,
+            'data1' => $data1,
+            'data2' => $data2,
+            'data3' => $data3,
+            'data4' => $data4,
         ]);        
     }
+
+    private function getBalanceReportQuery($start,$end,$AF_DB) {
+        $sql = "
+        SELECT
+            `rs`.`company`,
+            `c`.`first`,
+            `c`.`middle`,
+            `c`.`last`,
+            `r`.`reservationID`,
+            DATE_FORMAT(`r`.`checkin_date`, '%M %d, %Y') AS 'checkin_date_formatted',
+            `r`.`reservationType`,
+            `r`.`cron_grand_total`,
+            `r`.`cron_discount_total`,
+            `r`.`cron_payments_total`,
+            `r`.`cron_commission_total`,
+            `r`.`cron_deposit1_date`,
+            `r`.`cron_deposit2_date`,
+            `r`.`cron_deposit3_date`,
+            `r`.`cron_final_date`
+        FROM
+            `reservations` r
+
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+        LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
+
+        WHERE
+            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
+            AND `r`.`status` = 'Active'
+            AND `r`.`cron_grand_total` - `r`.`cron_discount_total` - `r`.`cron_payments_total` - `r`.`cron_commission_total` > '0'
+        ";
+        return($sql);
+    }
+
 
     /**
      * @Route("/paymentsreport", name="paymentsreport")

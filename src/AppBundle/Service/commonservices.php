@@ -618,7 +618,25 @@ class commonservices extends Controller
 
     }
 
+    public function getBalanceReportTemplate($start,$end) {
+        $em = $this->em;
 
+        $sql = "
+        SELECT
+
+
+        FROM
+            `reservations` r
+
+        WHERE
+            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
+            AND `r`.`status` = 'Active'
+            
+        ";
+
+
+
+    }
 
 
 }
