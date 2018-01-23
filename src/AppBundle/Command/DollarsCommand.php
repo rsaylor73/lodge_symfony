@@ -14,7 +14,7 @@ class DollarsCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:updatedollars')
-            ->setDescription('....')
+            ->setDescription('This should be ran hourly to update the dollars on a reservation.')
         ;
     }
 
@@ -136,9 +136,21 @@ class DollarsCommand extends ContainerAwareCommand
             $cron_payments_total = $payment_total;
             $cron_commission_total = $comm_amount;
             $cron_deposit1_date = $payment_policy['deposit1_date'];
+            if ($cron_deposit1_date != "") {
+                $cron_deposit1_date = date("Ymd", strtotime($cron_deposit1_date));
+            }
             $cron_deposit2_date = $payment_policy['deposit2_date'];
+            if ($cron_deposit2_date != "") {
+                $cron_deposit2_date = date("Ymd", strtotime($cron_deposit2_date));
+            }            
             $cron_deposit3_date = $payment_policy['deposit3_date'];
+            if ($cron_deposit3_date != "") {
+                $cron_deposit3_date = date("Ymd", strtotime($cron_deposit3_date));
+            }            
             $cron_final_date = $payment_policy['final_date'];
+            if ($cron_final_date != "") {
+                $cron_final_date = date("Ymd", strtotime($cron_final_date));
+            }            
 
             $sql = "UPDATE `reservations` SET
             `cron_grand_total` = '$cron_grand_total',
