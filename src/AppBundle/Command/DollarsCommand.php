@@ -27,14 +27,17 @@ class DollarsCommand extends ContainerAwareCommand
         $AF_DB = $this->getContainer()->getParameter('AF_DB');
 
         $date = date("Ymd");
+        $start = date("Ymd", strtotime($date . "-1 year"));
+        $end = date("Ymd", strtotime($date . "+300 day"));
 
         $sql0 = "
         SELECT
-            `r`.`reservationID`
+            `r`.`reservationID`,
+            `r`.`reservationType`
         FROM
             `reservations` r
         WHERE
-            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') > '$date'
+            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
             AND `r`.`status` = 'Active'
         ";
         $result0 = $em->getConnection()->prepare($sql0);
@@ -42,6 +45,7 @@ class DollarsCommand extends ContainerAwareCommand
 
         while ($row0 = $result0->fetch()) {
             $reservationID = $row0['reservationID'];
+            $reservationType = $row0['reservationType'];
 
             // tent total
             $total = $this->getContainer()
@@ -150,7 +154,49 @@ class DollarsCommand extends ContainerAwareCommand
             $cron_final_date = $payment_policy['final_date'];
             if ($cron_final_date != "") {
                 $cron_final_date = date("Ymd", strtotime($cron_final_date));
-            }            
+            }  
+
+            $date_test = date("Ymd");
+
+            $payment_status = "AWAITING DEPOSIT";
+            $final_amount = "";
+            switch($reservationType) {
+                case "Individuals":
+                    // Deposit
+                    if ($cron_payments_total > 1) {
+                        $payment_status = "DEPOSIT RECEIVED";
+                    }                
+                    if (($date_test > $cron_deposit1_date) && ($cron_payments_total < 1)) {
+                        $payment_status = "DEPOSIT PAST DUE";
+                    }
+                    if (($date_test > $cron_deposit1_date) && ($cron_payments_total > 1)) {
+                        $payment_status = "DEPOSIT RECEIVED";
+                    }
+                    // Final
+                    $final_amount = $cron_grand_total - $cron_discount_total - $cron_payments_total - $cron_commission_total;
+                    if (($date_test > $cron_final_date) && ($final_amount > 0)) {
+                        $payment_status = "FINAL PAYMENT PAST DUE";
+                    }
+                break;
+
+                case "Groups":
+                    // Deposit
+                    if ($cron_payments_total >= 1500) {
+                        $payment_status = "DEPOSIT RECEIVED";
+                    }
+                    if (($date_test > $cron_deposit1_date) && ($cron_payments_total < 1500)) {
+                        $payment_status = "DEPOSIT PAST DUE";
+                    }
+                    if (($date_test > $cron_deposit1_date) && ($cron_payments_total >= 1500)) {
+                        $payment_status = "DEPOSIT RECEIVED";
+                    }
+                    // Final
+                    $final_amount = $cron_grand_total - $cron_discount_total - $cron_payments_total - $cron_commission_total;
+                    if (($date_test > $cron_final_date) && ($final_amount > 0)) {
+                        $payment_status = "FINAL PAYMENT PAST DUE";
+                    }                                        
+                break;
+            }          
 
             $sql = "UPDATE `reservations` SET
             `cron_grand_total` = '$cron_grand_total',
@@ -160,7 +206,8 @@ class DollarsCommand extends ContainerAwareCommand
             `cron_deposit1_date` = '$cron_deposit1_date',
             `cron_deposit2_date` = '$cron_deposit2_date',
             `cron_deposit3_date` = '$cron_deposit3_date',
-            `cron_final_date` = '$cron_final_date'
+            `cron_final_date` = '$cron_final_date',
+            `cron_payment_status` = '$payment_status'
             WHERE `reservationID` = '$reservationID'
             ";
             $result = $em->getConnection()->prepare($sql);

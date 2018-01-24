@@ -25,15 +25,23 @@ class ReportsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
 
-        $date = date("Ymd");
-        $start = date("Ymd", strtotime($date . "-90 DAY"));
-        $end = date("Ymd", strtotime($date . "+500 DAY"));
         $date = date("m/d/Y");
 
 
         // Past Due
+        $start = date("Ymd", strtotime($date . "- 1 year"));
+        $end = date("Ymd", strtotime($date . "-1 day"));
+        $sql = $this->balance_report_sql($start,$end,$AF_DB);
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute(); 
         $data1 = "";
-
+        $i = "0";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $data1[$i][$key] = $value;
+            }
+            $i++;
+        }
         // 90 Days
         $start = date("Ymd", strtotime($date . "+ 1 day"));
         $end = date("Ymd", strtotime($start . "+ 90 day"));
@@ -96,6 +104,8 @@ class ReportsController extends Controller
             `r`.`cron_discount_total`,
             `r`.`cron_payments_total`,
             `r`.`cron_commission_total`,
+            `r`.`cron_payment_status`,
+            `r`.`reservationType`,
             `rs`.`company`,
             `c`.`first`,
             `c`.`last`,
