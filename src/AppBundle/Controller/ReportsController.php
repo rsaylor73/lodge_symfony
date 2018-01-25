@@ -24,61 +24,68 @@ class ReportsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
-        $balance_details = "";
-        $today = date("Ymd");
+
+        $date = date("m/d/Y");
+
 
         // Past Due
-        $data1 = "";
-
-        // Next 90 days
-        $start = date("Ymd", strtotime($today . "+ 1 day"));
-        $end = date("Ymd", strtotime($today . "+ 91 day"));
-        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
+        $start = date("Ymd", strtotime($date . "- 1 year"));
+        $end = date("Ymd", strtotime($date . "-1 day"));
+        $sql = $this->balance_report_sql($start,$end,$AF_DB);
         $result = $em->getConnection()->prepare($sql);
-        $result->execute();
+        $result->execute(); 
+        $data1 = "";
         $i = "0";
-        $data2 = "";
         while ($row = $result->fetch()) {
-            foreach ($row as $key=>$value) {
+            foreach($row as $key=>$value) {
+                $data1[$i][$key] = $value;
+            }
+            $i++;
+        }
+        // 90 Days
+        $start = date("Ymd", strtotime($date . "+ 1 day"));
+        $end = date("Ymd", strtotime($start . "+ 90 day"));
+        $sql = $this->balance_report_sql($start,$end,$AF_DB);
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute(); 
+        $data2 = "";
+        $i = "0";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
                 $data2[$i][$key] = $value;
             }
             $i++;
         }
 
-        // 90 days to 6 months
-        $start = date("Ymd", strtotime($end . "+ 1 day"));
-        $end = date("Ymd", strtotime($start . "+ 6 months" . "+ 1 day"));
-        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
+        // 90 Days To 6 Months
+        $start = date("Ymd", strtotime($date . "+ 91 day"));
+        $end = date("Ymd", strtotime($date . "+ 182 day"));
+        $sql = $this->balance_report_sql($start,$end,$AF_DB);
         $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-        $i = "0";
+        $result->execute(); 
         $data3 = "";
+        $i = "0";
         while ($row = $result->fetch()) {
-            foreach ($row as $key=>$value) {
+            foreach($row as $key=>$value) {
                 $data3[$i][$key] = $value;
             }
             $i++;
         }
 
-        // 6 months to 9 months
-        $start = date("Ymd", strtotime($today . "+ 1 day" . "+ 6 month"));
-        $end = date("Ymd", strtotime($start . "+ 3 months" . "+ 1 day"));
-        $sql = $this->getBalanceReportQuery($start,$end,$AF_DB);
+        // 6 Months To 9 Months
+        $start = date("Ymd", strtotime($date . "+ 182 day"));
+        $end = date("Ymd", strtotime($date . "+ 273 day"));
+        $sql = $this->balance_report_sql($start,$end,$AF_DB);
         $result = $em->getConnection()->prepare($sql);
-        $result->execute();
-        $i = "0";
+        $result->execute(); 
         $data4 = "";
+        $i = "0";
         while ($row = $result->fetch()) {
-            foreach ($row as $key=>$value) {
+            foreach($row as $key=>$value) {
                 $data4[$i][$key] = $value;
             }
             $i++;
         }
-
-
-
-
-        $date = date("m/d/Y");
 
         return $this->render('reports/balance.html.twig',[
             'date' => $date,
@@ -89,24 +96,22 @@ class ReportsController extends Controller
         ]);        
     }
 
-    private function getBalanceReportQuery($start,$end,$AF_DB) {
+    private function balance_report_sql($start,$end,$AF_DB) {
         $sql = "
         SELECT
-            `rs`.`company`,
-            `c`.`first`,
-            `c`.`middle`,
-            `c`.`last`,
             `r`.`reservationID`,
-            DATE_FORMAT(`r`.`checkin_date`, '%M %d, %Y') AS 'checkin_date_formatted',
-            `r`.`reservationType`,
             `r`.`cron_grand_total`,
             `r`.`cron_discount_total`,
             `r`.`cron_payments_total`,
             `r`.`cron_commission_total`,
-            `r`.`cron_deposit1_date`,
-            `r`.`cron_deposit2_date`,
-            `r`.`cron_deposit3_date`,
-            `r`.`cron_final_date`
+            `r`.`cron_payment_status`,
+            `r`.`reservationType`,
+            `rs`.`company`,
+            `c`.`first`,
+            `c`.`last`,
+            `c`.`contactID`,
+            DATE_FORMAT(`r`.`checkin_date`, '%M %d, %Y') AS 'checkin_date'
+
         FROM
             `reservations` r
 
@@ -114,13 +119,12 @@ class ReportsController extends Controller
         LEFT JOIN `$AF_DB`.`contacts` c ON `r`.`contactID` = `c`.`contactID`
 
         WHERE
-            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
-            AND `r`.`status` = 'Active'
-            AND `r`.`cron_grand_total` - `r`.`cron_discount_total` - `r`.`cron_payments_total` - `r`.`cron_commission_total` > '0'
+            `r`.`status` = 'Active'
+            AND DATE_FORMAT(`r`.`checkin_date`,'%Y%m%d') BETWEEN '$start' AND '$end'
+            AND `r`.`cron_grand_total` - `r`.`cron_discount_total` - `r`.`cron_payments_total` - `r`.`cron_commission_total` > 0
         ";
         return($sql);
     }
-
 
     /**
      * @Route("/paymentsreport", name="paymentsreport")
