@@ -73,27 +73,4 @@ class AjaxController extends Controller
 
     }
 
-    /**
-     * @Route("/updatereservationtype", name="updatereservationtype")
-     */
-    public function updatereservationtypeAction(Request $request)
-    {
-
-        /* user security needed in each controller function */
-        $check = $this->get('customsecurity')->check_access('reservations');
-        if ($check != "ok") {
-            return($check);
-        }
-
-        $em = $this->getDoctrine()->getManager(); 
-        $reservationID = $request->query->get('reservationID');   
-        $reservationType = $request->query->get('reservationType');
-
-        $sql = "UPDATE `reservations` SET `reservationType` = '$reservationType' WHERE `reservationID` = '$reservationID'";
-        
-        $result = $em->getConnection()->prepare($sql);
-        $result->execute();        
-
-        return $this->render('ajax/updatereservation.html.twig');
-    }
 }

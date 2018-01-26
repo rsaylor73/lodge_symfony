@@ -189,31 +189,41 @@
 	{% endif %}
 </div>
 
-<form name="myform">
-<input type="hidden" name="reservationID" value="{{reservationID}}">
-
 <div class="row top-buffer">
 	<div class="col-sm-3"><b>Reservation Type</b></div>
 </div>
 <div class="row top-buffer">
 	<div class="col-sm-3">
-		<select name="reservationType" class="form-control" onchange="updateReservationType(this.form)">
+		<form name="myform" action="{{path('updatereservationtype')}}" method="get">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<select name="reservationType" class="form-control" onchange="this.form.submit()">
 			<option value="{{reservationType}}">{{reservationType}} (Default)</option>
 			<option>Individuals</option>
 			<option>Groups</option>
 		</select>
+		</form>
 	</div>
+
+	{% if reservationType == "Groups" %}
+		{% if group_contracts == "Yes" %}
+		<div class="col-sm-2">
+			Group Contract Received: {{group_contracts}}
+		</div>
+		<div class="col-sm-4">
+			Received By: <a href="mailto:{{cu_email}}">{{cu_first_name}} {{cu_last_name}}</a> @ {{group_contracts_timestamp}}
+		{% else %}
+			<div class="col-sm-3">
+				<form name="myform" action="{{path('updatereservationgroupcontract')}}" method="get">
+				<input type="hidden" name="reservationID" value="{{reservationID}}">
+				Group Contract Received:&nbsp;
+				<input type="checkbox" name="group_contract" value="Yes" onchange="this.form.submit()"> Yes
+				</form>
+			</div>
+		{% endif %}
+	{% endif %}
 </div>
-</form>
 
 <script>
-function updateReservationType(myform) {
-	$.get('{{path('updatereservationtype')}}',
-	$(myform).serialize(),
-	function(php_msg) {
-		$("#ajax_results").html(php_msg);
-	});
-}
 
 function search_pax(myform) {
 	$.get('{{path('searchcontact')}}',
