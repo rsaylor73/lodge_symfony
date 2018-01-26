@@ -536,4 +536,81 @@ class ReportsController extends Controller
 
         }      
     }
+
+    /**
+     * @Route("/contractreport", name="contractreport")
+     */
+    public function contractreportAction(Request $request)
+    {
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+        /* end user security */
+
+        $em = $this->getDoctrine()->getManager();
+        $AF_DB = $this->container->getParameter('AF_DB');
+
+        $date1 = $request->request->get('date1');
+        $date2 = $request->request->get('date2');
+        $group_contracts = $request->request->get('group_contracts');
+
+        if (($date1 != "") && ($date2 != "")) {
+            $start = date("Ymd", strtotime($date1));
+            $end = date("Ymd", strtotime($date2));
+        } else {
+            $start = date("Ymd");
+            $end = date("Ymd", strtotime($start . "+30 day"));
+        }
+
+        $date1a = date("M d, Y", strtotime($start));
+        $date2a = date("M d, Y", strtotime($end));
+
+        $group_sql = "";
+        if ($group_contracts == "Yes") {
+            $group_sql = "AND `r`.`group_contracts` = 'Yes'";
+        } elseif ($group_contracts == "No") {
+            $group_sql = "AND `r`.`group_contracts` = ''";
+        }
+
+        $sql = "
+        SELECT
+            DATE_FORMAT(`r`.`date_booked`, '%M %d, %Y') AS 'date_booked',
+            DATE_FORMAT(`r`.`checkin_date`, '%M %d, %Y') AS 'checkin_date',
+            `r`.`reservationID`,
+            `rs`.`company`,
+            `r`.`group_contracts`
+        FROM
+            `reservations` r
+
+        LEFT JOIN `$AF_DB`.`resellers` rs ON `r`.`resellerID` = `rs`.`resellerID`
+
+        WHERE
+            DATE_FORMAT(`r`.`checkin_date`, '%Y%m%d') BETWEEN '$start' AND '$end'
+            AND `r`.`reservationType` = 'Groups'
+            $group_sql
+
+        ORDER BY `r`.`checkin_date` ASC
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute(); 
+
+        $data = "";
+        $i = "0";
+        while ($row = $result->fetch()) {
+            foreach($row as $key=>$value) {
+                $data[$i][$key] = $value;
+            }
+            $i++;
+        }        
+
+        return $this->render('reports/contractreport.html.twig',[
+            'date1a' => $date1a,
+            'date2a' => $date2a,
+            'data' => $data,
+        ]);  
+    }
+
 }

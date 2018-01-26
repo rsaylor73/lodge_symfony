@@ -386,14 +386,21 @@ class ReservationController extends Controller
             `r`.`resellerID`,
             `r`.`resellerAgentID`,
             `r`.`contactID`,
-            `r`.`reservationType`            
+            `r`.`reservationType`,
+            `r`.`group_contracts`,
+            DATE_FORMAT(`r`.`group_contracts_timestamp`, '%M %d, %Y') AS 'group_contracts_timestamp',
+            `cu`.`first_name` AS 'cu_first_name',
+            `cu`.`last_name` AS 'cu_last_name',
+            `cu`.`email` AS 'cu_email'            
         
         FROM
-            `reservations` r, `user` u
+            `reservations` r
+
+        LEFT JOIN `user` cu ON `r`.`group_contracts_user_received` = `cu`.`id`
+        LEFT JOIN `user` u ON `r`.`userID` = `u`.`id`
 
         WHERE
             `r`.`reservationID` = '$reservationID'
-            AND `r`.`userID` = `u`.`id`
         ";
 
         // init
@@ -413,6 +420,11 @@ class ReservationController extends Controller
         $resellerAgentID = "";
         $contactID = "";
         $reservationType = "";
+        $group_contracts = "";
+        $group_contracts_timestamp = "";
+        $cu_first_name = "";
+        $cu_last_name = "";
+        $cu_email = "";
 
         $result = $em->getConnection()->prepare($sql);
         $result->execute();
@@ -433,6 +445,11 @@ class ReservationController extends Controller
             $resellerAgentID = $row['resellerAgentID'];
             $contactID = $row['contactID'];
             $reservationType = $row['reservationType'];
+            $group_contracts = $row['group_contracts'];
+            $group_contracts_timestamp = $row['group_contracts_timestamp'];
+            $cu_first_name = $row['cu_first_name'];
+            $cu_last_name = $row['cu_last_name'];
+            $cu_email = $row['cu_email'];
         }
 
         // Reseller data
@@ -541,6 +558,11 @@ class ReservationController extends Controller
             'contact_data' => $contact_data,
             'details' => $details,
             'reservationType' => $reservationType,
+            'group_contracts' => $group_contracts,
+            'group_contracts_timestamp' => $group_contracts_timestamp,
+            'cu_first_name' => $cu_first_name,
+            'cu_last_name' => $cu_last_name,
+            'cu_email' => $cu_email,
         ]);
     }
 
@@ -1114,6 +1136,70 @@ class ReservationController extends Controller
         return $this->redirectToRoute('viewreservationguest',[
             'reservationID' => $reservationID,
         ]); 
+    }
+
+    /**
+     * @Route("/updatereservationtype", name="updatereservationtype")
+     */
+    public function updatereservationtypeAction(Request $request)
+    {
+
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+
+        $em = $this->getDoctrine()->getManager(); 
+        $reservationID = $request->query->get('reservationID');   
+        $reservationType = $request->query->get('reservationType');
+
+        $sql = "UPDATE `reservations` SET `reservationType` = '$reservationType' WHERE `reservationID` = '$reservationID'";
+        
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();        
+
+        //return $this->render('ajax/updatereservation.html.twig');
+        $this->addFlash('success','The reservation type was updated.');
+        return $this->redirectToRoute('viewreservation',[
+            'reservationID' => $reservationID,
+        ]);
+    }
+
+    /**
+     * @Route("/updatereservationgroupcontract", name="updatereservationgroupcontract")
+     */
+    public function updatereservationgroupcontractAction(Request $request)
+    {
+
+        /* user security needed in each controller function */
+        $check = $this->get('customsecurity')->check_access('reservations');
+        if ($check != "ok") {
+            return($check);
+        }
+
+        $em = $this->getDoctrine()->getManager(); 
+        $reservationID = $request->query->get('reservationID');
+        $usr = $this->get('security.token_storage')->getToken()->getUser();   
+        $userID = $usr->getId();
+        $date = date("Ymd");
+
+        $sql = "UPDATE `reservations` SET 
+        `group_contracts` = 'Yes',
+        `group_contracts_timestamp` = '$date',
+        `group_contracts_user_received` = '$userID'
+        WHERE `reservationID` = '$reservationID'
+        ";
+
+        $result = $em->getConnection()->prepare($sql);
+        $result->execute();
+
+        //return $this->render('ajax/updatereservation.html.twig');
+        $this->addFlash('success','The reservation group contract was updated.');
+        return $this->redirectToRoute('viewreservation',[
+            'reservationID' => $reservationID,
+        ]);
+
     }
 
 }

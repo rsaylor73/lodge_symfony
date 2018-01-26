@@ -33,7 +33,8 @@ class DollarsCommand extends ContainerAwareCommand
         $sql0 = "
         SELECT
             `r`.`reservationID`,
-            `r`.`reservationType`
+            `r`.`reservationType`,
+            `r`.`travel_package_eligible`
         FROM
             `reservations` r
         WHERE
@@ -46,6 +47,7 @@ class DollarsCommand extends ContainerAwareCommand
         while ($row0 = $result0->fetch()) {
             $reservationID = $row0['reservationID'];
             $reservationType = $row0['reservationType'];
+            $travel_package_eligible = $row0['travel_package_eligible'];
 
             // tent total
             $total = $this->getContainer()
@@ -198,6 +200,13 @@ class DollarsCommand extends ContainerAwareCommand
                 break;
             }          
 
+            // Travel package
+            $balance_test = "0";
+            $balance_test = $cron_grand_total - $cron_discount_total - $cron_payments_total - $cron_commission_total;
+            if (($balance_test <= 100) && ($travel_package_eligible == "")) {
+                $travel_package_eligible = date("Ymd");
+            }
+
             $sql = "UPDATE `reservations` SET
             `cron_grand_total` = '$cron_grand_total',
             `cron_discount_total` = '$cron_discount_total',
@@ -207,7 +216,8 @@ class DollarsCommand extends ContainerAwareCommand
             `cron_deposit2_date` = '$cron_deposit2_date',
             `cron_deposit3_date` = '$cron_deposit3_date',
             `cron_final_date` = '$cron_final_date',
-            `cron_payment_status` = '$payment_status'
+            `cron_payment_status` = '$payment_status',
+            `travel_package_eligible` = '$travel_package_eligible'
             WHERE `reservationID` = '$reservationID'
             ";
             $result = $em->getConnection()->prepare($sql);

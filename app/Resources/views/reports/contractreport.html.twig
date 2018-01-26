@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+	{% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Group Contract Report : {{date1a}} to {{date2a}}</h2>
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('#myTable').DataTable({
+    	"aaSorting": []
+    });
+});
+</script>
+
+<form action="{{path('contractreport')}}" method="post">
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		<input type="text" name="date1" id="report1_date" class="form-control" placeholder="Check-In Start Date" readonly>
+	</div>
+	<div class="col-sm-2">
+		<input type="text" name="date2" id="report2_date" class="form-control" placeholder="Check-In End Date" readonly>
+	</div>
+	<div class="col-sm-2">
+		<select name="group_contracts" class="form-control">
+			<option selected value="">All</option>
+			<option value="Yes">Yes Received</option>
+			<option value="No">Not Received</option>
+		</select>
+	</div>
+	<div class="col-sm-2">
+		<input type="submit" value="Search" class="btn btn-success">&nbsp;
+		<input type="button" value="Reset" class="btn btn-warning" onclick="document.location.href='{{path('contractreport')}}'">
+	</div>
+</div>
+
+</form>
+
+<div class="row top-buffer">
+	<div class="col-sm-8 table-responsive">
+		<table class="table table-striped" id="myTable">
+			<thead>
+				<tr>
+					<th>Conf #</th>
+					<th>Check-In Date</th>
+					<th>Book Date</th>
+					<th>Reseller Company</th>
+					<th>Contract Received</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for d in data %}
+			<tr>
+				<td>
+					<a href="{{path('viewreservation', {'reservationID':d.reservationID})}}">{{d.reservationID}}</a>
+				</td>
+				<td>{{d.checkin_date}}</td>
+				<td>{{d.date_booked}}</td>
+				<td>
+					{% if d.company == "" %}
+						<font color="red">Reseller Missing</font>
+					{% else %}
+						{{d.company}}
+					{% endif %}
+				</td>
+				<td>
+					{% if d.group_contracts == "Yes" %}
+						<font color="green"><b>Yes</b></font>
+					{% else %}
+						<font color="red"><b>No</b></font>
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+{% endblock %}
+{% block footer %}
+	{% include('footer.html.twig') %}
+{% endblock %}
