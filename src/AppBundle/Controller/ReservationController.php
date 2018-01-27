@@ -633,7 +633,7 @@ class ReservationController extends Controller
 
         GROUP BY `r`.`description`, `i`.`bed`, `i`.`type`, `i`.`status`, `i`.`type`,`i`.`roomID`
 
-        ORDER BY `r`.`description` ASC, `i`.`bed` ASC
+        ORDER BY `r`.`id` ASC, `i`.`bed` ASC
         ";
 
         $i = "0";
