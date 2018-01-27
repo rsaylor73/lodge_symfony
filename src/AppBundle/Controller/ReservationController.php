@@ -149,7 +149,7 @@ class ReservationController extends Controller
 
             HAVING COUNT(`i`.`roomID`) >= $nights
 
-            ORDER BY `r`.`description` ASC    
+            ORDER BY `r`.`id` ASC    
             ";	
             $inventory = "";
             $i = "0";
