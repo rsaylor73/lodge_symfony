@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}}</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    {% include('reservation_tabs.html.twig') %}
+  </div>
+</div>
+
+
+<div class="row top-buffer">
+  <div class="col-sm-8"><h3>Single Supplement Space</h3></div>
+</div>
+
+{% for d in data %}
+<div class="row top-buffer">
+	<div class="col-sm-2">
+		{{d.description}}-{{d.bed}}
+	</div>
+	<div class="col-sm-2">
+		<input type="button" value="Set Single Supplement" class="btn btn-primary"
+		onclick="document.location.href='{{path('setsinglespace', {'reservationID': reservationID, 'roomID': d.roomID, 'bed': d.bed} )}}'">
+	</div>
+</div>
+{% endfor %}
+
+
+
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}
