@@ -175,6 +175,7 @@
   <div class="col-sm-3">$ {{payment_total|number_format(2, '.', ',')}}</div>
 </div>
 
+{# comp space #}
 <div class="row top-buffer">
   <div class="col-sm-8">
     <h3>Comp Space
@@ -202,6 +203,41 @@
   <div class="col-sm-4">
     <font color="blue">
       There are no comp spaces assigned.
+    </font>
+  </div>
+</div>
+{% endif %}
+
+{# single supplement #}
+<div class="row top-buffer">
+  <div class="col-sm-8">
+    <h3>Single Supplement Space
+    {% if details.pax > 1 %}
+    <form action="{{path('singlespace')}}" method="post" style="display:inline">
+    <input type="hidden" name="reservationID" value="{{reservationID}}">
+    <input type="submit" value="Add Single Supplement Space" class="btn btn-primary">
+    </form>
+    {% endif %}
+    </h3>
+  </div>
+</div>      
+
+{% for c in single %}
+<div class="row top-buffer">
+  <div class="col-sm-8">
+  <input type="button" value="Remove Single Supplement Space" class="btn btn-danger"
+  onclick="document.location.href='{{path('unsetsinglespace', {'reservationID': reservationID, 'roomID': c.roomID, 'bed': c.bed} )}}' "
+  >
+  &nbsp;{{c.description}}-{{c.bed}}</div>
+
+</div>
+{% endfor %}
+
+{% if single == "" %}
+<div class="row top-buffer">
+  <div class="col-sm-4">
+    <font color="blue">
+      There are no single supplement spaces assigned.
     </font>
   </div>
 </div>
