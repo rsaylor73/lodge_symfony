@@ -237,10 +237,16 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<form action="{{path('addtoreservation')}}" method="post">
+		<form action="{{path('addtoreservation')}}" method="post" style="display:inline">
 		<input type="hidden" name="reservationID" value="{{reservationID}}">
 		<input type="submit" value="Add Additional Guest" class="btn btn-success btn-lg">
 		</form>
+		&nbsp;
+		<form action="{{path('moveguest')}}" method="post" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<input type="submit" value="Move Guests" class="btn btn-primary btn-lg">
+		</form>
+
 	</div>
 </div>
 

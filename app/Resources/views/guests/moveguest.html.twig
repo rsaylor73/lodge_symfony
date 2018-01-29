@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+    {% include('header.html.twig') %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row top-buffer">
+	<div class="col-sm-12">
+		<h2>Reservation # {{reservationID}} :: Move Guest(s)</h2>
+		{% include('flash-messages.html.twig') %}
+	</div>
+</div>
+
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		{% include('reservation_tabs.html.twig') %}
+	</div>
+</div>
+
+{% if details.status == "Cancelled" %}
+{% include('templates/cancel.html.twig') %}
+{% endif %}
+
+<form action="{{path('processmoveguest')}}" method="post">
+<input type="hidden" name="reservationID" value="{{reservationID}}">
+<div class="row top-buffer">
+	<div class="col-sm-4">
+		<table class="table table-striped">
+
+			<tr>
+				<td><b>Current Booked:</b></td>
+				<td><b>Select Guest</b></td>
+			</tr>
+			{% for d in data %}
+			<tr>
+				<td>
+					{{d.description}}-{{d.bed}}
+						{% if d.first == "" %}
+							<font color="red">Guest Not Assigned</font>
+						{% else %}
+							({{d.first}} {{d.middle}} {{d.last}})
+						{% endif %}
+				</td>
+				<td>
+					<input type="radio" name="inventoryID" value="{{d.inventoryID}}" required>
+				</td>
+			</tr>
+
+			{% endfor %}
+
+		</table>
+	</div>
+
+	<div class="col-sm-4">
+		<table class="table table-striped">
+			<tr>
+				<td><b>Available Spaces:</b></td>
+				<td><b>Select Space</b></td>
+			</tr>
+			{% if found == "1" %}
+				{% for i in inventory %}
+				<tr>
+					<td>{{i.description}}-{{i.bed}}</td>
+					<td>
+						<input type="radio" name="target" value="room{{i.roomID}}_{{i.bed}}" required>
+					</td>
+				</tr>
+				{% endfor %}
+			{% else %}
+			<tr>
+				<td><font color="red">Sorry, no spaces available to swap.</font></td>
+			</tr>
+			{% endif %}
+
+		</table>
+	</div>
+</div>
+<div class="row top-buffer">
+	<div class="col-sm-8">
+		<input type="submit" value="Move Guest" class="btn btn-success">&nbsp;
+		<input type="button" value="Cancel" class="btn btn-warning">
+	</div>
+</div>
+</form>
+
+
+{% endblock %}
+
+{% block footer %}
+    {% include('footer.html.twig') %}
+{% endblock %}
