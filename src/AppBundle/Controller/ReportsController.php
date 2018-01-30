@@ -252,6 +252,8 @@ class ReportsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $AF_DB = $this->container->getParameter('AF_DB');
+        $singlesupplement = $this->container->getParameter('singlesupplement');
+
         $data = "";
 
         $date1 = date("Y-m-d");
@@ -269,7 +271,10 @@ class ReportsController extends Controller
             `c`.`last`,
             `l`.`name`,
             DATE_FORMAT(`r`.`checkin_date`, '%m/%d/%Y') AS 'checkin_date',
-            `i`.`inventoryID`
+            `i`.`inventoryID`,
+            `i`.`nightly_rate`,
+            `rm`.`description`,
+            `i`.`bed`
 
         FROM
             `reservations` r
@@ -281,6 +286,8 @@ class ReportsController extends Controller
         LEFT JOIN `locations` l ON
             `i`.`locationID` = `l`.`id`
 
+        LEFT JOIN `rooms` rm ON `i`.`roomID` = `rm`.`id`
+
 
         LEFT JOIN `$AF_DB`.`contacts` c ON
             `i`.`contactID` = `c`.`contactID`
@@ -288,7 +295,7 @@ class ReportsController extends Controller
         WHERE
             `r`.`checkin_date` BETWEEN '$date1' AND '$date2' AND `r`.`status` = 'Active'
 
-        ORDER BY `l`.`name` ASC, `r`.`checkin_date` ASC
+        ORDER BY `l`.`name` ASC, `i`.`date_code` ASC, `i`.`roomID` ASC
 
         ";
 
@@ -351,6 +358,7 @@ class ReportsController extends Controller
             'date2a' => $date2a,
             'data' => $data,
             'lodge' => $lodge,
+            'singlesupplement' => $singlesupplement,
         ]);        
     }
 
@@ -371,7 +379,8 @@ class ReportsController extends Controller
         $site_path = $this->container->getParameter('site_path');
 
         $date = date("Ymd");
-        $start = date("Ymd", strtotime($date . "-30 DAY"));
+        //$start = date("Ymd", strtotime($date . "-30 DAY"));
+        $start = date("Ymd", strtotime('last Saturday'));
 
         $reportdate1 = $request->request->get('reportdate1');
         $reportdate2 = $request->request->get('reportdate2');

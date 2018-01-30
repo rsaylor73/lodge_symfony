@@ -43,13 +43,26 @@
 {% endif %}
 
 {% for d in data %}
+{% set ignore = "no" %}
+
+	{% for key,value in singlesupplement %}
+		{% if value == d.nightly_rate %}
+			{#<b>Single Supplement</b>#}
+			{% set ignore = "yes" %}
+		{% endif %}
+	{% endfor %}
+
 <div class="row">
 	<div class="col-sm-12 well">
 		<div class="row top-buffer">
 			<div class="col-sm-4"><b>{{d.description}}-{{d.bed}}</b></div>
 			<div class="col-sm-2">
 				{% if d.first == "" and d.last == "" %}
-					<font color="red">Guest not assigned</font>
+					{% if ignore == "yes" %}
+						<b>Single Supplement</b>
+					{% else %}
+						<font color="red">Guest not assigned</font>
+					{% endif %}
 				{% else %}				
 					{{d.first}} {{d.middle}} {{d.last}}
 				{% endif %}
@@ -61,14 +74,22 @@
 			<div class="col-sm-4"><b>PASSPORT|NATIONALITY</b></div>
 			<div class="col-sm-2">
 				{% if d.passport_number == "" %}
-					<font color="red">Passport is missing!</font>
+					{% if ignore == "yes" %}
+						N/A
+					{% else %}
+						<font color="red">Passport is missing!</font>
+					{% endif %}
 				{% else %}
 					{{d.passport_number}}
 				{% endif %}
 				</div>
 			<div class="col-sm-2">
 				{% if d.passport_nationality == "" %}
-					<font color="red">Country is missing!</font>
+					{% if ignore == "yes" %}
+						N/A
+					{% else %}
+						<font color="red">Country is missing!</font>
+					{% endif %}
 				{% else %}
 					{{d.passport_nationality}}
 				{% endif %}
@@ -86,7 +107,11 @@
 				{% if d.gis_confirmation == "complete" or d.gis_confirmation == "verified" %}
 					<font color="green">Yes</font>
 				{% else %}
-					<font color="red">No</font>
+					{% if ignore == "yes" %}
+						N/A
+					{% else %}
+						<font color="red">No</font>
+					{% endif %}
 				{% endif %}
 			</div>
 		</div>

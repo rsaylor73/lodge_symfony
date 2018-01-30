@@ -29,6 +29,7 @@ class CheckinCommand extends ContainerAwareCommand
         $site_name = $this->getContainer()->getParameter('site_name');
         $site_email = $this->getContainer()->getParameter('site_email');
         $email = $this->getContainer()->getParameter('checkinreport');
+        $singlesupplement = $this->getContainer()->getParameter('singlesupplement');
 
         $nice_date = date("d M Y");
 
@@ -54,10 +55,11 @@ class CheckinCommand extends ContainerAwareCommand
             ->setSubject($title)
             ->setBody(
                 $this->getContainer()->get('templating')->render(
-                    'lodge/checkinreport_email_base64.html.twig',
+                    'lodge/checkinreport_email.html.twig',
                     array(
                         'date' => $nice_date,
 			            'data' => $data,
+                        'singlesupplement' => $singlesupplement,
 			            'format' => 'email',
                     )
                 ),

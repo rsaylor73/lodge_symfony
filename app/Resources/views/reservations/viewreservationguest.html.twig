@@ -42,8 +42,18 @@
 			{% for d in data %}
 			<tr>
 				<td>
+					{% set ignore = "no" %}
 					{% if d.contactID == "" %}
-						<font color=red>Guest Not Assigned</font>
+						{% for key,value in singlesupplement %}
+							{% if value == d.nightly_rate %}
+								<b>Single Supplement</b>
+								{% set ignore = "yes" %}
+							{% endif %}
+						{% endfor %}
+
+						{% if ignore == "no" %}
+							<font color=red>Guest Not Assigned</font>
+						{% endif %}
 					{% else %}
 						<a href="{{path('editcontacts', {'contactID': d.contactID })}}" target="_blank">{{d.first}} {{d.middle}} {{d.last}}</a>
 					{% endif %}
@@ -56,7 +66,7 @@
 								<input type="hidden" name="reservationID" value="{{reservationID}}">
 								<input type="hidden" name="inventoryID" value="{{d.inventoryID}}">
 								<input type="hidden" name="guest_contactID" value="{{d.contactID}}">
-								<button type="submit" class="btn btn-success">
+								<button type="submit" class="btn btn-success" {% if ignore == "yes" %}disabled{% endif %}>
 									<i class="glyphicon glyphicon-share"></i>
 								</button>
 								</form>
@@ -237,10 +247,16 @@
 
 <div class="row top-buffer">
 	<div class="col-sm-8">
-		<form action="{{path('addtoreservation')}}" method="post">
+		<form action="{{path('addtoreservation')}}" method="post" style="display:inline">
 		<input type="hidden" name="reservationID" value="{{reservationID}}">
 		<input type="submit" value="Add Additional Guest" class="btn btn-success btn-lg">
 		</form>
+		&nbsp;
+		<form action="{{path('moveguest')}}" method="post" style="display:inline">
+		<input type="hidden" name="reservationID" value="{{reservationID}}">
+		<input type="submit" value="Move Guests" class="btn btn-primary btn-lg">
+		</form>
+
 	</div>
 </div>
 
