@@ -587,6 +587,7 @@ class ReservationController extends Controller
 
         $details = $this->get('reservationdetails')->getresdetails($reservationID);
         $gisurl = $this->container->getParameter('gisurl');
+        $singlesupplement = $this->container->getParameter('singlesupplement');
 
         $sql = "
         SELECT
@@ -596,6 +597,7 @@ class ReservationController extends Controller
             `i`.`status`,
             `t`.`type`,
             `i`.`roomID`,
+            `i`.`nightly_rate`,
             `c`.`contactID`,
             `c`.`first`,
             `c`.`middle`,
@@ -688,6 +690,7 @@ class ReservationController extends Controller
             'details' => $details,
             'gisurl' => $gisurl,
             'gislog' => $gislog,
+            'singlesupplement' => $singlesupplement,
         ]);
     }
 

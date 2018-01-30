@@ -141,13 +141,13 @@
   </style>
 
   <style type="text/css" media="only screen and (max-width: 650px)">
-    @media only screen and (max-width: 650px) {
+    @media only screen and (max-width: 950px) {
       * {
         font-size: 16px !important;
       }
 
       table[class*="w320"] {
-        width: 320px !important;
+        width: 520px !important;
       }
 
       td[class="mobile-center"],
@@ -202,17 +202,34 @@
       <tr>
         <td align="center">
           <center>
-            <table class="w320" cellspacing="0" cellpadding="0" width="500">
+            <table class="w320" cellspacing="0" cellpadding="0" width="700">
               <tr>
                 <td class="body-padding mobile-padding">
 
+                {% if data == "" %}
+                <br><b>There are no guests checking in today.</b><br>
+                {% endif %}
+
                   {% for d in data %}
+                  {% set ignore = "no" %}
+
+                    {% for key,value in singlesupplement %}
+                      {% if value == d.nightly_rate %}
+                        {#<b>Single Supplement</b>#}
+                        {% set ignore = "yes" %}
+                      {% endif %}
+                    {% endfor %}
+
                   <table cellspacing="0" cellpadding="0" width="100%">
                     <tr>
                       <td><b>{{d.description}}-{{d.bed}}</b></td>
                       <td>
                         {% if d.first == "" and d.last == "" %}
-                          <font color="red">Guest not assigned</font>
+                          {% if ignore == "yes" %}
+                            <b>Single Supplement</b>
+                          {% else %}
+                            <font color="red">Guest not assigned</font>
+                          {% endif %}
                         {% else %}        
                           {{d.first}} {{d.middle}} {{d.last}}
                         {% endif %}
@@ -225,14 +242,22 @@
                       <td><b>PASSPORT|NATIONALITY</b></td>
                       <td>
                         {% if d.passport_number == "" %}
-                          <font color="red">Passport is missing!</font>
+                          {% if ignore == "yes" %}
+                            N/A
+                          {% else %}
+                            <font color="red">Passport is missing!</font>
+                          {% endif %}
                         {% else %}
                           {{d.passport_number}}
                         {% endif %}
                       </td>
                       <td colspan="2">
                         {% if d.passport_nationality == "" %}
-                          <font color="red">Country is missing!</font>
+                          {% if ignore == "yes" %}
+                            N/A
+                          {% else %}
+                            <font color="red">Country is missing!</font>
+                          {% endif %}
                         {% else %}
                           {{d.passport_nationality}}
                         {% endif %}
@@ -251,7 +276,11 @@
                       {% if d.gis_confirmation == "complete" or d.gis_confirmation == "verified" %}
                         <font color="green">Yes</font>
                       {% else %}
-                        <font color="red">No</font>
+                        {% if ignore == "yes" %}
+                          N/A
+                        {% else %}
+                          <font color="red">No</font>
+                        {% endif %}
                       {% endif %}
                       </td>
                     </tr>
@@ -284,7 +313,7 @@
       <tr>
         <td style="border-top:1px solid #B3B3B3;" align="center">
           <center>
-            <table class="w320" cellspacing="0" cellpadding="0" width="500" bgcolor="#E5E5E5">
+            <table class="w320" cellspacing="0" cellpadding="0" width="700" bgcolor="#E5E5E5">
               <tr>
                 <td>
                   <table cellpadding="0" cellspacing="0" width="100%" bgcolor="#E5E5E5">

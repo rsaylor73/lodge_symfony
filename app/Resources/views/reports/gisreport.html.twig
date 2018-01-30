@@ -18,33 +18,50 @@
 
 			
 				{% for key,value in lodge %}
-					<tr><td colspan="6"><h3>{{value}}</h3></td></tr>
+					<tr><td colspan="7"><h3>{{value}}</h3></td></tr>
 
 						<tr>
 							<th><b>Checkin Date</b></th>
 							<th><b>Reservation ID</b></th>
 							<th><b>Guest</b></th>
+							<th><b>Bunk</b></th>
 							<th><b>GIS Sent</b></th>
 							<th><b>Waiver Complete</b></th>
 							<th><b>GIS Complete</b></th>
 						</tr>
 
 					{% for key2,value2 in data[value] %}
+						{% set ignore = "no" %}
+						{% for key3,value3 in singlesupplement %}
+							{% if value3 == value2.nightly_rate %}
+								<b>Single Supplement</b>
+								{% set ignore = "yes" %}
+							{% endif %}
+						{% endfor %}
 						<tr>
 							<td>{{value2.checkin_date}}</td>
 							<td><a href="{{path('viewreservation', {'reservationID':value2.reservationID})}}">{{value2.reservationID}}</a></td>
 							<td>
 								{% if value2.first == "" %}
-									<font color="red">Guest not assigned</font>
+									{% if ignore == "yes" %}
+										<b>Single Supplement</b>
+									{% else %}
+										<font color="red">Guest not assigned</font>
+									{% endif %}
 								{% else %}
 									{{value2.first}} {{value2.middle}} {{value2.last}}
 								{% endif %}
 							</td>
+							<td>{{value2.description}}-{{value2.bed}}</td>
 							<td>
 								{% if value2.gis_sent == "Yes" %}
 									<font color="green">{{value2.gis_sent}}</font>
 								{% else %}
-									<font color="red">{{value2.gis_sent}}</font>
+									{% if ignore == "yes" %}
+										N/A
+									{% else %}
+										<font color="red">{{value2.gis_sent}}</font>
+									{% endif %}
 								{% endif %}
 							</td>
 
@@ -53,7 +70,11 @@
 								{% if value2.gis_waiver == "Yes" %}
 									<font color="green">{{value2.gis_waiver}}</font>
 								{% else %}
-									<font color="red">{{value2.gis_waiver}}</font>
+									{% if ignore == "yes" %}
+										N/A
+									{% else %}
+										<font color="red">{{value2.gis_waiver}}</font>
+									{% endif %}
 								{% endif %}
 							</td>
 
@@ -61,7 +82,11 @@
 								{% if value2.gis_confirmation == "Yes" %}
 									<font color="green">{{value2.gis_confirmation}}</font>
 								{% else %}
-									<font color="red">{{value2.gis_confirmation}}</font>
+									{% if ignore == "yes" %}
+										N/A
+									{% else %}
+										<font color="red">{{value2.gis_confirmation}}</font>
+									{% endif %}
 								{% endif %}
 							</td>
 

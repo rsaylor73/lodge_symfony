@@ -167,6 +167,7 @@ class commonservices extends Controller
             `ct`.`country` AS 'passport_nationality',
             `rm`.`description`,
             `i`.`bed`,
+            `i`.`nightly_rate`,
             `g`.`gis_confirmation`            
 
         FROM

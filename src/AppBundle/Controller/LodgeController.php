@@ -24,6 +24,7 @@ class LodgeController extends Controller
 
     	$em = $this->getDoctrine()->getManager();
     	$AF_DB = $this->container->getParameter('AF_DB');
+        $singlesupplement = $this->container->getParameter('singlesupplement');
 
         $date = $request->request->get('date');
         $date2 = $request->query->get('date2');
@@ -57,7 +58,7 @@ class LodgeController extends Controller
 
         $render = 'lodge/checkinreport.html.twig';
         if ($format == 'print') {
-            $render = 'lodge/checkinreport_email_base64.html.twig';
+            $render = 'lodge/checkinreport_email.html.twig';
         }
 
         return $this->render($render,[
@@ -65,6 +66,7 @@ class LodgeController extends Controller
             'data' => $data,
             'date2' => $date,
             'format' => 'web',
+            'singlesupplement' => $singlesupplement,
         ]); 
     }
 
